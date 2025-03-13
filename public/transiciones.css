@@ -1,0 +1,123 @@
+/* Estilos para las transiciones entre páginas */
+.login-container {
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s ease-in-out, filter 1s ease;
+    transform-style: preserve-3d;
+    will-change: transform, opacity, filter;
+    position: relative;
+    z-index: 1;
+}
+
+.login-container.transitioning {
+    opacity: 0.3;
+    transform: scale(0.95) rotateY(15deg);
+    filter: blur(4px) brightness(0.8);
+}
+
+.login-container.diagonal-to-register {
+    transform: scale(1.05) rotateY(45deg);
+    opacity: 0;
+}
+
+.login-container.diagonal-to-login {
+    transform: scale(1.05) rotateY(-45deg);
+    opacity: 0;
+}
+
+.login-container.transitioning-in {
+    opacity: 1;
+    transform: scale(1) rotateY(0);
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-name: expandIn;
+}
+
+.login-container.diagonal-from-login {
+    animation-name: diagonalFromLogin;
+}
+
+.login-container.diagonal-from-register {
+    animation-name: diagonalFromRegister;
+}
+
+@keyframes expandIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) rotateY(15deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotateY(0);
+    }
+}
+
+@keyframes diagonalFromLogin {
+    0% {
+        transform: scale(1.1) rotateY(-45deg);
+        opacity: 0;
+        filter: blur(4px);
+    }
+    100% {
+        transform: scale(1) rotateY(0);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+@keyframes diagonalFromRegister {
+    0% {
+        transform: scale(1.1) rotateY(45deg);
+        opacity: 0;
+        filter: blur(4px);
+    }
+    100% {
+        transform: scale(1) rotateY(0);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+/* Estilos para los formularios y overlays */
+.login-container .form-container,
+.login-container .overlay-container {
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out, filter 0.7s ease-out;
+}
+
+.login-container.transitioning .form-container,
+.login-container.transitioning .overlay-container {
+    opacity: 0.4;
+    transform: translateY(40px);
+    filter: brightness(0.7);
+}
+
+.login-container.transitioning-in .form-container,
+.login-container.transitioning-in .overlay-container {
+    animation: restoreElements 0.8s ease-out forwards;
+    animation-delay: 0.6s;
+}
+
+@keyframes restoreElements {
+    0% {
+        opacity: 0.4;
+        transform: translateY(50px);
+        filter: brightness(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: brightness(1);
+    }
+}
+
+/* Estilos para los campos de entrada y los botones */
+.login-container input,
+.login-container button {
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out, filter 0.6s ease-out;
+}
+
+.login-container.transitioning input,
+.login-container.transitioning button {
+    opacity: 0.5;
+    transform: translateY(15px);
+    filter: brightness(0.8);
+}
