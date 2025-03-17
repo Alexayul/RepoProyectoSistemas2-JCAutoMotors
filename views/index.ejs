@@ -4,30 +4,839 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JCAutomotors - Inicio</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Animate.css para algunas animaciones predefinidas -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Racing+Sans+One&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #a51314;
+            --secondary: #050506;
+            --accent: #f7f7f7;
+            --dark: #701106;
+            --light: #f7f7f7;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* Header y Navegación */
+        .site-header {
+            background-color: var(--dark);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-text {
+            font-family: 'Racing Sans One', cursive;
+            color: var(--primary);
+            margin: 0;
+            font-size: 1.8rem;
+        }
+    
+        .navbar-nav .nav-link {
+            color: var(--light);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background-image: url('https://i.pinimg.com/736x/47/4f/f4/474ff4fd6332aaefdf6a355fb412ce81.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: local;
+            padding: 20px 0; /* Ajusta el padding según lo necesites */
+        }
+    
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .btn-primary:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    
+        /* Características */
+        .features {
+            padding: 5rem 0;
+            background-color: var(--secondary);
+        }
+    
+        .section-title {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background-color: var(--primary);
+            bottom: -10px;
+            left: 0;
+        }
+        
+        .feature-box {
+            padding: 2rem;
+            text-align: center;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(230, 57, 70, 0.1);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .feature-icon i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        /* Motos destacadas */
+        .featured-bikes {
+            padding: 5rem 0;
+            background-color: var(--secondary);
+        }
+        
+        .bike-card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .bike-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .bike-img {
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .bike-price {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+        
+        .bike-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .bike-spec {
+            text-align: center;
+        }
+        
+        .bike-spec i {
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)), url('/api/placeholder/1400/500') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 5rem 1rem;
+            position: relative;
+        }
+        
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .cta-text {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .btn-light {
+            background-color: white;
+            color: var(--secondary);
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .btn-light:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-brand {
+            font-family: 'Racing Sans One', cursive;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links h5 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                background-color: var(--secondary);
+                padding: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+        }
+        
+        /* Efecto de carga para las motos */
+        .bike-loader {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        .mission-vision-values .mission-card {
+            transition: transform 0.3s ease-in-out;
+            border: none;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        .mission-vision-values .mission-card:hover {
+            transform: scale(1.05);
+        }
+    
+        .map-container iframe {
+            max-width: 100%;
+            height: 400px;
+        }
+    
+    </style>
+    
 </head>
-<body style="min-height: 100vh; display: flex; flex-direction: column;">
-    <header>
-        <h1 style="text-align: center;">Bienvenido a JCAutomotors</h1>
+<body>
+    <!-- Header y Navegación -->
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <div class="logo-container">
+                    <h1 class="logo-text">JCAutomotors</h1>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon">
+                        <i class="bi bi-list text-light fs-2"></i>
+                    </span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">
+                                <i class="bi bi-house-door me-1"></i>Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin">
+                                <i class="bi bi-speedometer2 me-1"></i>Administración
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/empleados">
+                                <i class="bi bi-people me-1"></i>Empleado
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/catalogo">
+                                <i class="bi bi-bicycle me-1"></i>Catálogo
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/direccion">
+                                <i class="bi bi-geo-alt me-1"></i>Ubicación
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </header>
-    <nav style="text-align: center;">
-        <ul style="list-style: none; padding: 0; display: flex; justify-content: center; gap: 20px;">
-            <li><a href="/">Inicio</a></li>
-            <li><a href="/admin">Administración</a></li>
-            <li><a href="/empleados">Empleado</a></li>
-            <li><a href="/catalogo">Catálogo de motos</a></li>
-            <li><a href="/direccion">Nuestra dirección</a></li>
-        </ul>
-    </nav>
-    <main style="flex: 1; text-align: center;">
-        <p>Seleccione una opción del menú.</p>
-    </main>
-    <footer style="margin-top: auto; text-align: center; padding: 10px;">
-        <p>Síguenos en nuestras redes sociales:</p>
-        <ul style="list-style: none; padding: 0; display: flex; justify-content: center; gap: 20px;">
-            <li><a href="#">Facebook</a></li>
-            <li><a href="#">Twitter</a></li>
-            <li><a href="#">Instagram</a></li>
-        </ul>
-    </footer>
-</body>
-</html>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">Pasión por las Dos Ruedas</h1>
+            <p class="hero-text">Descubre nuestra amplia colección de motocicletas de alta calidad. Desde motos deportivas hasta cruisers clásicas, tenemos lo que buscas con las mejores condiciones del mercado.</p>
+            <a href="/catalogo" class="btn btn-primary">Ver catálogo <i class="bi bi-arrow-right ms-2"></i></a>
+        </div>
+    </section>
+
+    
+        <!-- Características -->
+        <section class="features">
+            <div class="container">
+                <h2 class="text-center section-title">¿Por qué elegirnos?</h2>
+                <div class="row">
+                    <div class="col-md-4 feature-item">
+                        <div class="feature-box">
+                            <div class="feature-icon">
+                                <i class="bi bi-trophy"></i>
+                            </div>
+                            <h3 class="feature-title">Calidad Garantizada</h3>
+                            <p>Todas nuestras motocicletas pasan por rigurosos controles de calidad antes de llegar a tus manos.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 feature-item">
+                        <div class="feature-box">
+                            <div class="feature-icon">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <h3 class="feature-title">Mejores Precios</h3>
+                            <p>Ofrecemos precios competitivos y planes de financiamiento flexibles adaptados a tu presupuesto.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 feature-item">
+                        <div class="feature-box">
+                            <div class="feature-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <h3 class="feature-title">Servicio Experto</h3>
+                            <p>Nuestro equipo de profesionales está siempre disponible para asesorarte en tu compra o mantenimiento.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Misión, Visión y Valores -->
+        <section class="mission-vision-values py-5 bg-light">
+            <div class="container text-center">
+                <h2 class="section-title mb-4">Nuestra Empresa</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mission-card">
+                            <div class="card-body">
+                                <i class="bi bi-bullseye display-4 text-primary"></i>
+                                <h3 class="fw-bold mt-3">Misión</h3>
+                                <p>Brindar a nuestros clientes motocicletas de calidad, con un servicio excepcional y asesoramiento experto, garantizando seguridad y satisfacción en cada compra.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mission-card">
+                            <div class="card-body">
+                                <i class="bi bi-eye display-4 text-success"></i>
+                                <h3 class="fw-bold mt-3">Visión</h3>
+                                <p>Ser la concesionaria líder en Bolivia en la venta de motocicletas, destacándonos por nuestra innovación, calidad de servicio y compromiso con nuestros clientes.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mission-card">
+                            <div class="card-body">
+                                <i class="bi bi-award display-4 text-warning"></i>
+                                <h3 class="fw-bold mt-3">Valores</h3>
+                                <ul class="list-unstyled mt-2">
+                                    <li><i class="bi bi-check-circle text-primary"></i> Compromiso con la calidad</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Atención al cliente de excelencia</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Integridad y transparencia</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Innovación y pasión por las motos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <!-- Motos destacadas -->
+        <section class="featured-bikes">
+            <div class="container">
+                <h2 class="text-center section-title">Motos Destacadas</h2>
+                <div class="row">
+                    <div class="col-md-4 bike-item">
+                        <div class="card bike-card">
+                            <!-- Imagen de la moto -->
+                            <img src="https://global-fs.webike-cdn.net/@japan/magazine/wp-content/uploads/2023/08/YAMAHA_MT-07_01_M.jpg" class="card-img-top" alt="Yamaha MT-07">
+                            <span class="bike-price">Bob. 99,999</span>
+                            <div class="card-body">
+                                <h5 class="card-title">Yamaha MT-07</h5>
+                                <p class="card-text">Una naked deportiva con un rendimiento excepcional y estilo agresivo.</p>
+                                <div class="bike-details">
+                                    <div class="bike-spec">
+                                        <i class="bi bi-speedometer"></i>
+                                        <p>689 cc</p>
+                                    </div>
+                                    <div class="bike-spec">
+                                        <i class="bi bi-lightning"></i>
+                                        <p>74 HP</p>
+                                    </div>
+                                    <div class="bike-spec">
+                                        <i class="bi bi-fuel-pump"></i>
+                                        <p>4.2 L/100km</p>
+                                    </div>
+                                </div>
+                                <a href="/catalogo/mt-07" class="btn btn-primary w-100 mt-3">Ver detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 bike-item">
+                        <div class="card bike-card">
+                            <!-- Imagen de la moto -->
+                            <img src="https://cdn.bikedekho.com/processedimages/honda/2025-cbr650r/source/2025-cbr650r6787a8c8c0f76.jpg" class="card-img-top" alt="Honda CBR650R">
+                            
+                            <span class="bike-price">Bob. 99,999</span>
+                            <div class="card-body">
+                                <h5 class="card-title">Honda CBR650R</h5>
+                                <p class="card-text">Deportiva de gama media con un equilibrio perfecto entre potencia y manejo.</p>
+                                <div class="bike-details">
+                                    <div class="bike-spec">
+                                        <i class="bi bi-speedometer"></i>
+                                        <p>649 cc</p>
+                                    </div>
+                                    <div class="bike-spec">
+                                        <i class="bi bi-lightning"></i>
+                                        <p>94 HP</p>
+                                    </div>
+                                    <div class="bike-spec">
+                                        <i class="bi bi-fuel-pump"></i>
+                                        <p>4.9 L/100km</p>
+                                    </div>
+                                </div>
+                                <a href="/catalogo/cbr650r" class="btn btn-primary w-100 mt-3">Ver detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 bike-item">
+                        <div class="card bike-card">
+                            <!-- Imagen de la moto -->
+                            <img src="https://cdn.motor1.com/images/mgl/VR137/s3/desde-usd-9-990-la-kawasaki-z400-2019-ya-esta-a-la-venta.jpg" class="card-img-top" alt="Kawasaki Z400">
+                            
+                            <span class="bike-price">Bob. 99,999</span>
+                            <div class="card-body">
+                                <h5 class="card-title">Kawasaki Z400</h5>
+                                <p class="card-text">Una naked ligera con gran agilidad y economía de combustible.</p>
+                                <div class="bike-details">
+                                    <div class="bike-spec">
+                                        <i class="bi bi-speedometer"></i>
+                                        <p>399 cc</p>
+                                    </div>
+                                    <div class="bike-spec">
+                                        <i class="bi bi-lightning"></i>
+                                        <p>45 HP</p>
+                                    </div>
+                                    <div class="bike-spec">
+                                        <i class="bi bi-fuel-pump"></i>
+                                        <p>3.8 L/100km</p>
+                                    </div>
+                                </div>
+                                <a href="/catalogo/z400" class="btn btn-primary w-100 mt-3">Ver detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Sección del Mapa -->
+        <section class="map-section py-5 bg-light">
+            <div class="container text-center">
+                <h2 class="section-title mb-4">Nuestra Ubicación</h2>
+                <p>Ven a visitarnos en nuestra concesionaria de motos. Te esperamos con los mejores modelos y atención personalizada.</p>
+                
+                <div class="row align-items-center mt-4">
+                    <!-- Información de la dirección -->
+                    <div class="col-md-4 text-md-start">
+                        <h4 class="fw-bold">📍 JCAutomotors - La Paz</h4>
+                        <p><i class="bi bi-geo-alt-fill text-primary"></i> Av. Motociclistas 123, La Paz, Bolivia</p>
+                        <p><i class="bi bi-telephone-fill text-primary"></i> (123) 456-7890</p>
+                        <p><i class="bi bi-envelope-fill text-primary"></i> info@jcautomotors.com</p>
+                        <a href="https://www.google.com/maps/dir/-16.5012689,-68.1187461/-16.4876677,-68.1245551/@-16.4946033,-68.1265953,16z/data=!3m1!4b1!4m4!4m3!1m1!4e1!1m0?entry=ttu&g_ep=EgoyMDI1MDMxMi4wIKXMDSoASAFQAw%3D%3D" 
+                        target="_blank" 
+                        class="btn btn-primary mt-2">
+                            Abrir en Google Maps <i class="bi bi-arrow-up-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Mapa con marcador -->
+                    <div class="col-md-8">
+                        <div class="map-container rounded shadow">
+                            <iframe 
+                                width="100%" 
+                                height="400" 
+                                style="border:0; border-radius: 10px;" 
+                                loading="lazy" 
+                                allowfullscreen 
+                                referrerpolicy="no-referrer-when-downgrade" 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3794.653425932307!2d-68.1265953!3d-16.4946033!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m4!4m3!1m1!4e1!1m0!3e0">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <h2 class="cta-title">¿Listo para encontrar tu moto ideal?</h2>
+                <p class="cta-text">Visita nuestro concesionario hoy mismo y déjanos ayudarte a encontrar la motocicleta perfecta para ti. Ofrecemos pruebas de manejo y asesoramiento personalizado.</p>
+                <a href="/direccion" class="btn btn-light">Visítanos hoy <i class="bi bi-geo-alt ms-2"></i></a>
+            </div>
+        </section>
+    
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <div class="footer-brand">JCAutomotors</div>
+                        <p>Tu concesionario de confianza con más de 15 años de experiencia en el mundo de las motocicletas.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="bi bi-facebook"></i></a>
+                            <a href="#"><i class="bi bi-twitter"></i></a>
+                            <a href="#"><i class="bi bi-instagram"></i></a>
+                            <a href="#"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 mb-4 footer-links">
+                        <h5>Enlaces rápidos</h5>
+                        <ul>
+                            <li><a href="/">Inicio</a></li>
+                            <li><a href="/catalogo">Catálogo</a></li>
+                            <li><a href="/nosotros">Sobre nosotros</a></li>
+                            <li><a href="/contacto">Contacto</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-4 mb-4 footer-links">
+                        <h5>Servicios</h5>
+                        <ul>
+                            <li><a href="/servicios/financiamiento">Financiamiento</a></li>
+                            <li><a href="/servicios/mantenimiento">Mantenimiento</a></li>
+                            <li><a href="/servicios/seguro">Seguros</a></li>
+                            <li><a href="/servicios/accesorios">Accesorios</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-4 mb-4 footer-links">
+                        <h5>Contacto</h5>
+                        <ul>
+                            <li><i class="bi bi-geo-alt me-2"></i> Av. Motociclistas 123</li>
+                            <li><i class="bi bi-telephone me-2"></i> (123) 456-7890</li>
+                            <li><i class="bi bi-envelope me-2"></i> info@jcautomotors.com</li>
+                            <li><i class="bi bi-clock me-2"></i> Lun-Sáb: 9:00 - 18:00</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2025 JCAutomotors. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </footer>
+    
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- Scripts para animaciones -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Animación del hero
+                setTimeout(() => {
+                    document.querySelector('.hero-title').style.animation = 'fadeInUp 1s forwards';
+                }, 300);
+                
+                setTimeout(() => {
+                    document.querySelector('.hero-text').style.animation = 'fadeInUp 1s forwards';
+                }, 600);
+                
+                setTimeout(() => {
+                    document.querySelector('.hero .btn').style.animation = 'fadeInUp 1s forwards';
+                }, 900);
+                
+                // Animación de las características
+                const observerFeatures = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.opacity = '1';
+                                entry.target.style.transform = 'translateY(0)';
+                            }, index * 200);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                document.querySelectorAll('.feature-box').forEach(box => {
+                    observerFeatures.observe(box);
+                });
+                
+                // Animación de las motos
+                const observerBikes = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.opacity = '1';
+                                entry.target.style.transform = 'translateY(0)';
+                                
+                                // Reemplazar el loader con la imagen real después de una animación
+                                const loader = entry.target.querySelector('.bike-loader');
+                                if (loader) {
+                                    setTimeout(() => {
+                                        const img = document.createElement('img');
+                                        img.src = `/api/placeholder/400/250`;
+                                        img.classList.add('card-img-top', 'bike-img');
+                                        img.alt = entry.target.querySelector('.card-title').textContent;
+                                        loader.parentNode.replaceChild(img, loader);
+                                    }, 1000);
+                                }
+                            }, index * 200);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                document.querySelectorAll('.bike-card').forEach(card => {
+                    observerBikes.observe(card);
+                });
+                
+                // Animación del CTA
+                const observerCTA = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.opacity = '1';
+                                entry.target.style.transform = 'translateY(0)';
+                            }, index * 300);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                document.querySelectorAll('.cta-title, .cta-text, .cta-section .btn').forEach(element => {
+                    observerCTA.observe(element);
+                });
+                
+                // Efecto de paralaje para el hero
+                window.addEventListener('scroll', function() {
+                    const scrollPosition = window.scrollY;
+                    const heroSection = document.querySelector('.hero');
+                    if (heroSection) {
+                        heroSection.style.backgroundPositionY = `${scrollPosition * 0.5}px`;
+                    }
+                });
+                
+                // Navbar cambio de color al hacer scroll
+                window.addEventListener('scroll', function() {
+                    const navbar = document.querySelector('.site-header');
+                        navbar.style.backgroundColor = 'var(--dark)';
+                        navbar.style.padding = '0';
+                });
+            });
+        </script>
+    </body>
+    </html>
