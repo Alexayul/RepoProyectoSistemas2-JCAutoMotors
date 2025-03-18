@@ -4,25 +4,216 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administrador</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+        main {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 10px;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .chart-container {
+            margin-top: 20px;
+        }
+        @media (max-width: 600px) {
+            ul {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
 </head>
-<body style="min-height: 100vh; display: flex; flex-direction: column;">
+<body>
     <header>
-        <h1 style="text-align: center;">Panel de Administrador</h1>
+        <h1>Panel de Administrador</h1>
     </header>
-    <main style="flex: 1; text-align: center;">
-        <ul style="list-style: none; padding: 0; display: flex; justify-content: center; gap: 20px;">
+    <main>
+        <ul>
             <li><a href="#">Gestionar Empleados</a></li>
             <li><a href="#">Ver Reportes</a></li>
-            <li><a href="#">Cerrar Sesión</a></li>
+            <li><a href="/">Cerrar Sesión</a></li>
         </ul>
+        <div class="chart-container">
+            <canvas id="salesChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="incomeChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="expensesChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="pieChart"></canvas>
+        </div>
+        <button onclick="generatePDF()">Generar Reporte PDF</button>
     </main>
-    <footer style="margin-top: auto; text-align: center; padding: 10px;">
+    <footer>
         <p>Síguenos en nuestras redes sociales:</p>
-        <ul style="list-style: none; padding: 0; display: flex; justify-content: center; gap: 20px;">
+        <ul>
             <li><a href="#">Facebook</a></li>
             <li><a href="#">Twitter</a></li>
             <li><a href="#">Instagram</a></li>
         </ul>
     </footer>
+    <script>
+        // Datos de ejemplo para los gráficos
+        const salesData = {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+            datasets: [{
+                label: 'Ventas de Motos',
+                data: [15, 20, 10, 30, 25, 40],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const incomeData = {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+            datasets: [{
+                label: 'Ingresos',
+                data: [5000, 7000, 8000, 6000, 9000, 10000],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const expensesData = {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+            datasets: [{
+                label: 'Egresos',
+                data: [2000, 3000, 2500, 4000, 3500, 4500],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const pieData = {
+            labels: ['Ventas', 'Ingresos', 'Egresos'],
+            datasets: [{
+                data: [40, 35, 25],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        // Configuración de los gráficos
+        const salesConfig = {
+            type: 'bar',
+            data: salesData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const incomeConfig = {
+            type: 'line',
+            data: incomeData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const expensesConfig = {
+            type: 'line',
+            data: expensesData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const pieConfig = {
+            type: 'pie',
+            data: pieData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        };
+
+        // Renderizar los gráficos
+        const salesChart = new Chart(document.getElementById('salesChart'), salesConfig);
+        const incomeChart = new Chart(document.getElementById('incomeChart'), incomeConfig);
+        const expensesChart = new Chart(document.getElementById('expensesChart'), expensesConfig);
+        const pieChart = new Chart(document.getElementById('pieChart'), pieConfig);
+
+        // Función para generar el PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("Reporte de Gestión de Ventas", 10, 10);
+            doc.addImage(salesChart.toBase64Image(), 'PNG', 10, 20, 180, 80);
+            doc.addPage();
+            doc.addImage(incomeChart.toBase64Image(), 'PNG', 10, 20, 180, 80);
+            doc.addPage();
+            doc.addImage(expensesChart.toBase64Image(), 'PNG', 10, 20, 180, 80);
+            doc.addPage();
+            doc.addImage(pieChart.toBase64Image(), 'PNG', 10, 20, 180, 80);
+            doc.save('reporte_gestion_ventas.pdf');
+        }
+    </script>
 </body>
 </html>
