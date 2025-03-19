@@ -4,6 +4,9 @@ const mongoose = require('mongoose'); //Importa mongoose
 
 const app = express();
 
+//Servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Conexión a MongoDB Atlas
 const mongoURI = 'mongodb+srv://jcautomotors2:jcautomotors88!@clusterjcautomotors.gy742.mongodb.net/?retryWrites=true&w=majority&appName=ClusterJCAutomotors';
 mongoose.connect(mongoURI, { 
