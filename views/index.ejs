@@ -24,7 +24,7 @@
         
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #ffffff;
+            background-color: #000000;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -38,8 +38,9 @@
             padding: 0;
             position: sticky;
             top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            min-height: 70px; /* Ajusta según tu preferencia */
         }
         
         .logo-container {
@@ -47,13 +48,12 @@
             align-items: center;
         }
         
-        .logo-text {
-            font-family: 'Racing Sans One', cursive;
-            color: var(--primary);
-            margin: 0;
-            font-size: 1.8rem;
+        .logo-img {
+            width: 150px;  /* Ajusta el tamaño según necesidad */
+            height: auto;  /* Mantiene la proporción */
+            max-height: 120px;
         }
-    
+
         .navbar-nav .nav-link {
             color: var(--light);
             font-weight: 600;
@@ -84,27 +84,48 @@
         
         /* Hero Section */
         .hero {
-            background-image: url('https://i.pinimg.com/736x/47/4f/f4/474ff4fd6332aaefdf6a355fb412ce81.jpg');
+            background-image: url('https://i.pinimg.com/736x/b3/d2/84/b3d2849207c587a8139954c88f1b3779.jpg');
             background-size: cover;
             background-position: center;
-            background-attachment: local;
-            padding: 20px 0; /* Ajusta el padding según lo necesites */
+            background-attachment: fixed; /* Fijar imagen para un efecto más dinámico */
+            min-height: 80vh; /* Altura mínima para que se vea amplio */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            padding: 3rem 1rem;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Oscurece la imagen para mayor contraste */
+            z-index: 1;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
         }
     
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 700;
-            margin-bottom: 1.5rem;
-            opacity: 0;
-            transform: translateY(30px);
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out;
         }
         
         .hero p {
             font-size: 1.25rem;
-            max-width: 800px;
-            margin: 0 auto 2rem;
-            opacity: 0;
-            transform: translateY(30px);
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1.2s ease-out;
         }
         
         .btn-primary {
@@ -115,8 +136,7 @@
             text-transform: uppercase;
             border-radius: 30px;
             transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(30px);
+            animation: fadeInUp 1.5s ease-out;
         }
         
         .btn-primary:hover {
@@ -124,6 +144,12 @@
             border-color: #c82333;
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #c82333;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
     
         /* Características */
@@ -204,6 +230,23 @@
             transition: all 0.3s ease;
             opacity: 0;
             transform: translateY(20px);
+            height: 490px; /* Ajusta según el diseño deseado */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-text {
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
         }
         
         .bike-card:hover {
@@ -216,6 +259,12 @@
             object-fit: cover;
         }
         
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
         .bike-price {
             position: absolute;
             top: 10px;
@@ -429,8 +478,9 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
+                <!-- Logo -->
                 <div class="logo-container">
-                    <h1 class="logo-text">JCAutomotors</h1>
+                    <img src="/logo.png" alt="JCAutomotors Logo" class="logo-img">
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon">
@@ -648,37 +698,112 @@
 
 
         <!-- Sección del Mapa -->
-        <section class="map-section py-5 bg-light">
-            <div class="container text-center">
-                <h2 class="section-title mb-4">Nuestra Ubicación</h2>
-                <p>Ven a visitarnos en nuestra concesionaria de motos. Te esperamos con los mejores modelos y atención personalizada.</p>
+        <section class="map-section py-5" style="background-color: var(--accent);">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="section-title fw-bold" style="color: var(--primary);">Encuéntranos Fácilmente</h2>
+                    <div class="divider mx-auto my-3" style="width: 80px; height: 3px; background-color: var(--primary);"></div>
+                    <p class="lead">Visítanos en nuestra concesionaria de motos y descubre los mejores modelos con atención personalizada.</p>
+                </div>
                 
-                <div class="row align-items-center mt-4">
-                    <!-- Información de la dirección -->
-                    <div class="col-md-4 text-md-start">
-                        <h4 class="fw-bold">📍 JCAutomotors - La Paz</h4>
-                        <p><i class="bi bi-geo-alt-fill text-primary"></i> Av. Motociclistas 123, La Paz, Bolivia</p>
-                        <p><i class="bi bi-telephone-fill text-primary"></i> (123) 456-7890</p>
-                        <p><i class="bi bi-envelope-fill text-primary"></i> info@jcautomotors.com</p>
-                        <a href="https://www.google.com/maps/dir/-16.5012689,-68.1187461/-16.4876677,-68.1245551/@-16.4946033,-68.1265953,16z/data=!3m1!4b1!4m4!4m3!1m1!4e1!1m0?entry=ttu&g_ep=EgoyMDI1MDMxMi4wIKXMDSoASAFQAw%3D%3D" 
-                        target="_blank" 
-                        class="btn btn-primary mt-2">
-                            Abrir en Google Maps <i class="bi bi-arrow-up-right"></i>
-                        </a>
+                <div class="row align-items-center gy-4">
+                    <!-- Información de contacto y ubicación -->
+                    <div class="col-lg-4">
+                        <div class="contact-info p-4 bg-white rounded shadow-sm">
+                            <h4 class="fw-bold mb-4 border-bottom pb-2" style="color: var(--primary);">
+                                <i class="bi bi-shop"></i> JC AUTOMOTORS - La Paz
+                            </h4>
+                            
+                            <div class="contact-details">
+                                <div class="d-flex mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="bi bi-geo-alt-fill fs-4" style="color: var(--primary);"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Dirección:</strong><br>
+                                        Av. Tejada Sorzano entre Calles Puerto Rico y Costa Rica #855. Edif. Dica, La Paz, Bolivia
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="bi bi-telephone-fill fs-4" style="color: var(--primary);"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Teléfono:</strong><br>
+                                        <a href="tel:+591 77530498" class="text-decoration-none" style="color: var(--secondary);">(591) 77530498</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="bi bi-envelope-fill fs-4" style="color: var(--primary);"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Email:</strong><br>
+                                        <a href="mailto:info@jcautomotors.com" class="text-decoration-none" style="color: var(--secondary);">info@jcautomotors.com</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex mb-3">
+                                    <div class="contact-icon me-3">
+                                        <i class="bi bi-clock-fill fs-4" style="color: var(--primary);"></i>
+                                    </div>
+                                    <div>
+                                        <strong>Horario:</strong><br>
+                                        Lun-Vie: 8:00 - 18:00<br>
+                                        Sábado: 8:00 - 12:00
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <a href="https://www.google.com/maps/place/JC+AUTOMOTORS/@-16.4875264,-68.1249366,20z/data=!4m6!3m5!1s0x915f213723448c1d:0x2631228765055366!8m2!3d-16.4875389!4d-68.124481!16s%2Fg%2F11mx74vgrt?hl=en&entry=ttu&g_ep=EgoyMDI1MDMxMi4wIKXMDSoASAFQAw%3D%3D" 
+                                target="_blank" 
+                                class="btn w-100 d-flex align-items-center justify-content-center" 
+                                style="background-color: var(--primary); color: var(--light);">
+                                    <i class="bi bi-map me-2"></i> Cómo llegar
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Mapa con marcador -->
-                    <div class="col-md-8">
-                        <div class="map-container rounded shadow">
+                    <div class="col-lg-8">
+                        <div class="map-container rounded shadow position-relative">
+                            <div class="map-overlay position-absolute top-0 end-0 p-2 bg-white m-3 rounded shadow-sm d-none d-md-block">
+                                <span class="badge rounded-pill" style="background-color: var(--primary);">JC AUTOMOTORS</span>
+                            </div>
                             <iframe 
                                 width="100%" 
-                                height="400" 
+                                height="450" 
                                 style="border:0; border-radius: 10px;" 
                                 loading="lazy" 
                                 allowfullscreen 
                                 referrerpolicy="no-referrer-when-downgrade" 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3794.653425932307!2d-68.1265953!3d-16.4946033!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m4!4m3!1m1!4e1!1m0!3e0">
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d238.80852813670455!2d-68.1249366!3d-16.4875264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x915f213723448c1d%3A0x2631228765055366!2sJC%20AUTOMOTORS!5e0!3m2!1sen!2sus!4v1710810075891!5m2!1sen!2sus">
                             </iframe>
+                        </div>
+                        
+                        <div class="row mt-3 g-2">
+                            <div class="col-sm-4">
+                                <div class="p-3 bg-white rounded shadow-sm text-center">
+                                    <i class="bi bi-p-circle-fill fs-4" style="color: var(--primary);"></i>
+                                    <p class="mb-0 mt-2"><small>Estacionamiento gratuito</small></p>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="p-3 bg-white rounded shadow-sm text-center">
+                                    <i class="bi bi-cup-hot-fill fs-4" style="color: var(--primary);"></i>
+                                    <p class="mb-0 mt-2"><small>Café de cortesía</small></p>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="p-3 bg-white rounded shadow-sm text-center">
+                                    <i class="bi bi-wifi fs-4" style="color: var(--primary);"></i>
+                                    <p class="mb-0 mt-2"><small>WiFi disponible</small></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -730,9 +855,10 @@
                         <h5>Contacto</h5>
                         <ul>
                             <li><i class="bi bi-geo-alt me-2"></i> Av. Motociclistas 123</li>
-                            <li><i class="bi bi-telephone me-2"></i> (123) 456-7890</li>
+                            <li><i class="bi bi-telephone me-2"></i> (591) 77530498</li>
                             <li><i class="bi bi-envelope me-2"></i> info@jcautomotors.com</li>
-                            <li><i class="bi bi-clock me-2"></i> Lun-Sáb: 9:00 - 18:00</li>
+                            <li><i class="bi bi-clock me-2"></i> Lun-Sáb: 8:00 - 18:00</li>
+                            <li><i class="bi bi-clock me-2"></i> Sáb: 8:00 - 12:00</li>
                         </ul>
                     </div>
                 </div>
@@ -833,7 +959,7 @@
                 // Navbar cambio de color al hacer scroll
                 window.addEventListener('scroll', function() {
                     const navbar = document.querySelector('.site-header');
-                        navbar.style.backgroundColor = 'var(--dark)';
+                        navbar.style.backgroundColor = 'rgba(112, 17, 6, 0.8)';
                         navbar.style.padding = '0';
                 });
             });
