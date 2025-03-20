@@ -58,28 +58,7 @@ app.post('/login', async (req, res) => {
         res.status(500).send("Error interno del servidor");
     }
 });
-const motoSchema = new mongoose.Schema({
-    modelo: String,
-    marca: String,
-    precio: Number,
-    imagen: String,
-    especificaciones: {
-        tipo: String,
-        cilindrada: Number,
-        velocidad_maxima: Number,
-        peso: Number,
-        combustible: String
-    }
-}, { collection: 'Moto' }); // Asegura que use la colección 'Moto'
-app.get('/catalogo', async (req, res) => {
-    try {
-        const motos = await Moto.find();
-        res.render('catalogo', { motos });
-    } catch (error) {
-        console.error('❌ Error al obtener motos:', error);
-        res.status(500).send('Error al obtener motos');
-    }
-});
+
 
 
 app.set('view engine', 'ejs');
