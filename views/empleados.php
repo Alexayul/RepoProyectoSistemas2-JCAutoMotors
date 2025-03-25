@@ -1,24 +1,21 @@
+<php?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JCAutomotors - Dirección</title>
+    <title>Panel de Empleados</title>
 </head>
 <body style="min-height: 100vh; display: flex; flex-direction: column;">
     <header>
-        <h1 style="text-align: center;">Nuestra Dirección</h1>
+        <h2 style="text-align: center;">Bienvenido, Empleado</h2>
     </header>
-    <nav style="text-align: center;">
-        <ul style="list-style: none; padding: 0; display: flex; justify-content: center; gap: 20px;">
-            <li><a href="/">Inicio</a></li>
-            <li><a href="/admin">Administración</a></li>
-            <li><a href="/empleados">Empleado</a></li>
-            <li><a href="/catalogo">Catálogo</a></li>
-        </ul>
-    </nav>
     <main style="flex: 1; text-align: center;">
-        <p>Aquí puedes encontrar nuestra ubicación.</p>
+        <ul style="list-style: none; padding: 0; display: flex; justify-content: center; gap: 20px;">
+            <li><a href="#">Ver Horario</a></li>
+            <li><a href="#">Solicitar Permiso</a></li>
+            <li><a href="#">Cerrar Sesión</a></li>
+        </ul>
     </main>
     <footer style="margin-top: auto; text-align: center; padding: 10px;">
         <p>Síguenos en nuestras redes sociales:</p>
@@ -30,3 +27,4 @@
     </footer>
 </body>
 </html>
+</php>

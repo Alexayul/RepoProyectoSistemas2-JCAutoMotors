@@ -1,3 +1,4 @@
+<php?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/catalogo.css">
+    <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/catalogo.css">
 </head>
 <body>
     <header class="site-header">
@@ -16,7 +17,7 @@
             <div class="container">
                 <!-- Logo -->
                 <div class="logo-container">
-                    <img src="/logo.png" alt="JCAutomotors Logo" class="logo-img">
+                    <img src="/RepoProyectoSistemas2-JCAutoMotors/public/logo.png" alt="JCAutomotors Logo" class="logo-img">
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon">
@@ -26,22 +27,22 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="/">
+                            <a class="nav-link" href="/JCAutomotors/index.php">
                                 <i class="bi bi-house-door me-1"></i>Inicio
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin">
+                            <a class="nav-link" href="./login.php">
                                 <i class="bi bi-speedometer2 me-1"></i>Administración
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/login">
+                            <a class="nav-link" href="./login.php">
                                 <i class="bi bi-people me-1"></i>Empleado
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/catalogo">
+                            <a class="nav-link active" href="catalogo.php">
                                 <i class="bi bi-bicycle me-1"></i>Catálogo
                             </a>
                         </li>
@@ -385,7 +386,7 @@
                     <h5>Enlaces rápidos</h5>
                     <ul>
                         <li><a href="/">Inicio</a></li>
-                        <li><a href="/catalogo">Catálogo</a></li>
+                        <li><a href="views/catalogo.php">Catálogo</a></li>
                         <li><a href="/nosotros">Sobre nosotros</a></li>
                         <li><a href="/contacto">Contacto</a></li>
                     </ul>
@@ -415,25 +416,7 @@
             </div>
         </div>
     </footer>
-    <script>
-        // Selecciona todos los botones con la clase "ver-detalles"
-        const botonesVerDetalles = document.querySelectorAll('.ver-detalles');
-
-        // Itera sobre cada botón
-        botonesVerDetalles.forEach((boton) => {
-            // Escucha el evento "click" en cada botón
-            boton.addEventListener('click', () => {
-                // Obtén el ID del modal desde el atributo "data-modal-id"
-                const modalId = boton.getAttribute('data-modal-id');
-
-                // Selecciona el modal correspondiente
-                const modal = new bootstrap.Modal(document.getElementById(modalId));
-
-                // Abre el modal
-                modal.show();
-            });
-        });
-    </script>
+    <script src="public/catalogo.js"></script>
 </body>
 </html>
 
