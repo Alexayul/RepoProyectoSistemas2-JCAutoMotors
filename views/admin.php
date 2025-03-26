@@ -1,3 +1,4 @@
+<php?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,56 +7,7 @@
     <title>Panel de Administrador</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            text-align: center;
-            padding: 20px;
-        }
-        main {
-            flex: 1;
-            text-align: center;
-            padding: 20px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        footer {
-            margin-top: auto;
-            text-align: center;
-            padding: 10px;
-        }
-        canvas {
-            max-width: 100%;
-            height: auto;
-        }
-        button {
-            padding: 10px 15px;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-        .chart-container {
-            margin-top: 20px;
-        }
-        @media (max-width: 600px) {
-            ul {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/admin.css">
 </head>
 <body>
     <header>
@@ -65,7 +17,7 @@
         <ul>
             <li><a href="#">Gestionar Empleados</a></li>
             <li><a href="#">Ver Reportes</a></li>
-            <li><a href="/">Cerrar Sesión</a></li>
+            <li><a href="/RepoProyectoSistemas2-JCAutoMotors/index.php">Cerrar Sesión</a></li>
         </ul>
         <div class="chart-container">
             <canvas id="salesChart"></canvas>
@@ -217,3 +169,4 @@
     </script>
 </body>
 </html>
+</php>

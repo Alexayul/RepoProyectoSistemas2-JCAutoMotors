@@ -1,3 +1,4 @@
+<php?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,465 +13,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Racing+Sans+One&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary: #a51314;
-            --secondary: #050506;
-            --accent: #f7f7f7;
-            --dark: #701106;
-            --light: #f7f7f7;
-        }
-        
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #000000;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-        
-        /* Header y Navegación */
-        .site-header {
-            background-color: var(--dark);
-            padding: 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            min-height: 70px; /* Ajusta según tu preferencia */
-        }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo-img {
-            width: 150px;  /* Ajusta el tamaño según necesidad */
-            height: auto;  /* Mantiene la proporción */
-            max-height: 120px;
-        }
-
-        .navbar-nav .nav-link {
-            color: var(--light);
-            font-weight: 600;
-            padding: 1rem 1.25rem;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: var(--primary);
-        }
-        
-        .navbar-nav .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 3px;
-            background-color: var(--primary);
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: width 0.3s ease;
-        }
-        
-        .navbar-nav .nav-link:hover::after {
-            width: 80%;
-        }
-        
-        /* Hero Section */
-        .hero {
-            background-image: url('https://i.pinimg.com/736x/b3/d2/84/b3d2849207c587a8139954c88f1b3779.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed; /* Fijar imagen para un efecto más dinámico */
-            min-height: 80vh; /* Altura mínima para que se vea amplio */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            padding: 3rem 1rem;
-        }
-
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Oscurece la imagen para mayor contraste */
-            z-index: 1;
-        }
-
-        .hero .container {
-            position: relative;
-            z-index: 2;
-            max-width: 800px;
-        }
-    
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            animation: fadeInUp 1s ease-out;
-        }
-        
-        .hero p {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-            animation: fadeInUp 1.2s ease-out;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            padding: 0.75rem 2rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            animation: fadeInUp 1.5s ease-out;
-        }
-        
-        .btn-primary:hover {
-            background-color: #c82333;
-            border-color: #c82333;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .btn-primary:hover {
-            background-color: #c82333;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-    
-        /* Características */
-        .features {
-            padding: 5rem 0;
-            background-color: var(--secondary);
-        }
-    
-        .section-title {
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 3rem;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            width: 50%;
-            height: 4px;
-            background-color: var(--primary);
-            bottom: -10px;
-            left: 0;
-        }
-        
-        .feature-box {
-            padding: 2rem;
-            text-align: center;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        
-        .feature-box:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(230, 57, 70, 0.1);
-            border-radius: 50%;
-            margin: 0 auto 1.5rem;
-        }
-        
-        .feature-icon i {
-            font-size: 2.5rem;
-            color: var(--primary);
-        }
-        
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--dark);
-        }
-        
-        /* Motos destacadas */
-        .featured-bikes {
-            padding: 5rem 0;
-            background-color: var(--secondary);
-        }
-        
-        .bike-card {
-            border: none;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            height: 490px; /* Ajusta según el diseño deseado */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card-body {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-text {
-            flex-grow: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-        }
-        
-        .bike-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        
-        .bike-img {
-            height: 200px;
-            object-fit: cover;
-        }
-        
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-            width: 100%;
-        }
-
-        .bike-price {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--primary);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 30px;
-            font-weight: 600;
-        }
-        
-        .bike-details {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-        }
-        
-        .bike-spec {
-            text-align: center;
-        }
-        
-        .bike-spec i {
-            color: var(--primary);
-            margin-bottom: 0.25rem;
-        }
-        
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)), url('/api/placeholder/1400/500') center/cover no-repeat;
-            color: white;
-            text-align: center;
-            padding: 5rem 1rem;
-            position: relative;
-        }
-        
-        .cta-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        
-        .cta-text {
-            font-size: 1.1rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        
-        .btn-light {
-            background-color: white;
-            color: var(--secondary);
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        
-        .btn-light:hover {
-            background-color: var(--primary);
-            color: white;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--secondary);
-            color: white;
-            padding: 3rem 0 1rem;
-        }
-        
-        .footer-brand {
-            font-family: 'Racing Sans One', cursive;
-            color: var(--primary);
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .footer-links h5 {
-            color: white;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-        
-        .footer-links ul {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .footer-links li {
-            margin-bottom: 0.75rem;
-        }
-        
-        .footer-links a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: var(--primary);
-            padding-left: 5px;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-            transition: all 0.3s ease;
-        }
-        
-        .social-links a:hover {
-            background-color: var(--primary);
-            transform: translateY(-5px);
-        }
-        
-        .copyright {
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-        }
-        
-        /* Animaciones */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Media Queries */
-        @media (max-width: 768px) {
-            .navbar-nav {
-                background-color: var(--secondary);
-                padding: 1rem;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
-            
-            .section-title {
-                font-size: 1.75rem;
-            }
-        }
-        
-        /* Efecto de carga para las motos */
-        .bike-loader {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% {
-                background-position: -200% 0;
-            }
-            100% {
-                background-position: 200% 0;
-            }
-        }
-        .mission-vision-values .mission-card {
-            transition: transform 0.3s ease-in-out;
-            border: none;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-    
-        .mission-vision-values .mission-card:hover {
-            transform: scale(1.05);
-        }
-    
-        .map-container iframe {
-            max-width: 100%;
-            height: 400px;
-        }
-    
-    </style>
+    <link rel="stylesheet" href="public/index.css">
+    <link rel="stylesheet" href="public/transiciones.css">
     
 </head>
 <body>
@@ -480,7 +24,7 @@
             <div class="container">
                 <!-- Logo -->
                 <div class="logo-container">
-                    <img src="/logo.png" alt="JCAutomotors Logo" class="logo-img">
+                    <img src="public/logo.png" alt="JCAutomotors Logo" class="logo-img">
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon">
@@ -490,27 +34,27 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" href="/">
+                            <a class="nav-link active" href="index.php">
                                 <i class="bi bi-house-door me-1"></i>Inicio
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin">
+                            <a class="nav-link" href="views/login.php">
                                 <i class="bi bi-speedometer2 me-1"></i>Administración
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/login">
+                            <a class="nav-link" href="views/login.php">
                                 <i class="bi bi-people me-1"></i>Empleado
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/catalogo">
+                            <a class="nav-link" href="views/catalogo.php">
                                 <i class="bi bi-bicycle me-1"></i>Catálogo
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/direccion">
+                            <a class="nav-link" href="views/direccion.php">
                                 <i class="bi bi-geo-alt me-1"></i>Ubicación
                             </a>
                         </li>
@@ -525,7 +69,7 @@
         <div class="container">
             <h1 class="hero-title">Pasión por las Dos Ruedas</h1>
             <p class="hero-text">Descubre nuestra amplia colección de motocicletas de alta calidad. Desde motos deportivas hasta cruisers clásicas, tenemos lo que buscas con las mejores condiciones del mercado.</p>
-            <a href="/catalogo" class="btn btn-primary">Ver catálogo <i class="bi bi-arrow-right ms-2"></i></a>
+            <a href="views/catalogo.php" class="btn btn-primary">Ver catálogo <i class="bi bi-arrow-right ms-2"></i></a>
         </div>
     </section>
 
@@ -870,99 +414,7 @@
     
         <!-- Bootstrap Bundle with Popper -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script src="public/index.js"></script>
         
-        <!-- Scripts para animaciones -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Animación del hero
-                setTimeout(() => {
-                    document.querySelector('.hero-title').style.animation = 'fadeInUp 1s forwards';
-                }, 300);
-                
-                setTimeout(() => {
-                    document.querySelector('.hero-text').style.animation = 'fadeInUp 1s forwards';
-                }, 600);
-                
-                setTimeout(() => {
-                    document.querySelector('.hero .btn').style.animation = 'fadeInUp 1s forwards';
-                }, 900);
-                
-                // Animación de las características
-                const observerFeatures = new IntersectionObserver((entries) => {
-                    entries.forEach((entry, index) => {
-                        if (entry.isIntersecting) {
-                            setTimeout(() => {
-                                entry.target.style.opacity = '1';
-                                entry.target.style.transform = 'translateY(0)';
-                            }, index * 200);
-                        }
-                    });
-                }, { threshold: 0.1 });
-                
-                document.querySelectorAll('.feature-box').forEach(box => {
-                    observerFeatures.observe(box);
-                });
-                
-                // Animación de las motos
-                const observerBikes = new IntersectionObserver((entries) => {
-                    entries.forEach((entry, index) => {
-                        if (entry.isIntersecting) {
-                            setTimeout(() => {
-                                entry.target.style.opacity = '1';
-                                entry.target.style.transform = 'translateY(0)';
-                                
-                                // Reemplazar el loader con la imagen real después de una animación
-                                const loader = entry.target.querySelector('.bike-loader');
-                                if (loader) {
-                                    setTimeout(() => {
-                                        const img = document.createElement('img');
-                                        img.src = `/api/placeholder/400/250`;
-                                        img.classList.add('card-img-top', 'bike-img');
-                                        img.alt = entry.target.querySelector('.card-title').textContent;
-                                        loader.parentNode.replaceChild(img, loader);
-                                    }, 1000);
-                                }
-                            }, index * 200);
-                        }
-                    });
-                }, { threshold: 0.1 });
-                
-                document.querySelectorAll('.bike-card').forEach(card => {
-                    observerBikes.observe(card);
-                });
-                
-                // Animación del CTA
-                const observerCTA = new IntersectionObserver((entries) => {
-                    entries.forEach((entry, index) => {
-                        if (entry.isIntersecting) {
-                            setTimeout(() => {
-                                entry.target.style.opacity = '1';
-                                entry.target.style.transform = 'translateY(0)';
-                            }, index * 300);
-                        }
-                    });
-                }, { threshold: 0.1 });
-                
-                document.querySelectorAll('.cta-title, .cta-text, .cta-section .btn').forEach(element => {
-                    observerCTA.observe(element);
-                });
-                
-                // Efecto de paralaje para el hero
-                window.addEventListener('scroll', function() {
-                    const scrollPosition = window.scrollY;
-                    const heroSection = document.querySelector('.hero');
-                    if (heroSection) {
-                        heroSection.style.backgroundPositionY = `${scrollPosition * 0.5}px`;
-                    }
-                });
-                
-                // Navbar cambio de color al hacer scroll
-                window.addEventListener('scroll', function() {
-                    const navbar = document.querySelector('.site-header');
-                        navbar.style.backgroundColor = 'rgba(112, 17, 6, 0.8)';
-                        navbar.style.padding = '0';
-                });
-            });
-        </script>
     </body>
     </html>
