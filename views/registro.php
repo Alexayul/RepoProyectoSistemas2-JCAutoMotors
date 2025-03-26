@@ -149,9 +149,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto JC Motors - Registro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/registro.css">
-    <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/transiciones.css">
-    <script src="/RepoProyectoSistemas2-JCAutoMotors/public/transiciones.js"></script>
+    <link rel="stylesheet" href="../public/registro.css">
+    <link rel="stylesheet" href="../public/transiciones.css">
+    <script src="../public/transiciones.js"></script>
     <style>
         .error-message {
             color: red;

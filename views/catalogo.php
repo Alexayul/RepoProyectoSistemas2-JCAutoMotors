@@ -1,23 +1,62 @@
-<php?>
+<?php
+include '../config/conexion.php';
+
+try {
+    // Verificar si la conexión está establecida
+    if (!isset($conn)) {
+        throw new Exception("Error en la conexión con la base de datos.");
+    }
+    $brandFilter = isset($_GET['brand']) ? $_GET['brand'] : '';
+
+    // Consulta para obtener las motocicletas con su respectivo modelo y marca
+    $query = "
+    SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, 
+           M.color, M.precio, M.estado, M.fecha_ingreso, M.cantidad 
+    FROM MOTOCICLETA M
+    INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
+";
+    
+    if ($brandFilter) {
+        $query .= " WHERE MM.marca = :marca";
+    }
+
+    $stmt = $conn->prepare($query);
+
+    // Si hay filtro de marca, bindear el valor de la marca
+    if ($brandFilter) {
+        $stmt->bindParam(':marca', $brandFilter, PDO::PARAM_STR);
+    }
+
+    $stmt->execute();
+    $motocicletas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die("Error al cargar los datos: " . $e->getMessage());
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JCAutomotors - Catálogo</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Racing+Sans+One&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/catalogo.css">
+    <link rel="stylesheet" href="../public/catalogo.css">
 </head>
 <body>
     <header class="site-header">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
-                <!-- Logo -->
                 <div class="logo-container">
-                    <img src="/RepoProyectoSistemas2-JCAutoMotors/public/logo.png" alt="JCAutomotors Logo" class="logo-img">
+                    <img src="../public/logo.png" alt="JCAutomotors Logo" class="logo-img">
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon">
@@ -26,349 +65,129 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/JCAutomotors/index.php">
-                                <i class="bi bi-house-door me-1"></i>Inicio
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="./login.php">
-                                <i class="bi bi-speedometer2 me-1"></i>Administración
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="./login.php">
-                                <i class="bi bi-people me-1"></i>Empleado
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="catalogo.php">
-                                <i class="bi bi-bicycle me-1"></i>Catálogo
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/direccion">
-                                <i class="bi bi-geo-alt me-1"></i>Ubicación
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="../index.php"><i class="bi bi-house-door me-1"></i>Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="./login.php"><i class="bi bi-speedometer2 me-1"></i>Administración</a></li>
+                        <li class="nav-item"><a class="nav-link" href="./login.php"><i class="bi bi-people me-1"></i>Empleado</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="catalogo.php"><i class="bi bi-bicycle me-1"></i>Catálogo</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/direccion"><i class="bi bi-geo-alt me-1"></i>Ubicación</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-   
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <h1 class="hero-title">Explora Nuestro Catálogo de Motos</h1>
-            <p class="hero-text">Encuentra la moto perfecta para tus aventuras. Calidad, potencia y estilo al mejor precio.</p>
+            <p class="hero-text">
+    Encuentra la moto perfecta para tus aventuras. Con calidad, potencia y estilo, cada modelo está diseñado para ofrecerte una experiencia única, ya sea en la carretera, senderos o la ciudad.
+</p>
         </div>
     </section>
 
-    <!-- Filter Bar -->
-    <div class="container py-5">
-        <div class="filter-bar">
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <h4 class="mb-3 mb-md-0">Filtrar por marca:</h4>
-                </div>
-                <div class="col-md-9">
-                    <button class="btn btn-dark filter-btn active" data-filter="all">Todas</button>
-                    <button class="btn btn-dark filter-btn" data-filter="yamaha">Yamaha</button>
-                    <button class="btn btn-dark filter-btn" data-filter="honda">Honda</button>
-                    <button class="btn btn-dark filter-btn" data-filter="kawasaki">Kawasaki</button>
-                    <button class="btn btn-dark filter-btn" data-filter="suzuki">Suzuki</button>
-                    <button class="btn btn-dark filter-btn" data-filter="ducati">Ducati</button>
-                </div>
+    <main class="custom-container mt-5 pt-5">
+    <form method="GET" class="mb-4">
+        <div class="d-flex justify-content-start align-items-center flex-wrap">
+            <label for="brandFilter" class="me-2" style="color:white">Filtrar por marca:</label>
+            <div class="brand-buttons">
+                <button type="submit" name="brand" value="" class="btn btn-secondary ms-2">Todas</button>
+                <?php
+                    $brandStmt = $conn->prepare("SELECT DISTINCT marca FROM MODELO_MOTO");
+                    $brandStmt->execute();
+                    $brands = $brandStmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($brands as $brand) {
+                        echo "<button type='submit' name='brand' value='" . htmlspecialchars($brand['marca']) . "' class='btn btn-primary ms-2'>" . htmlspecialchars($brand['marca']) . "</button>";
+                    }
+                ?>
             </div>
         </div>
+    </form>
+</main>
 
-        <div class="row">
-            <!-- Yamaha MT-07 -->
-            <div class="col-md-4 moto-card" data-brand="yamaha">
-                <div class="card">
-                    <img src="https://global-fs.webike-cdn.net/@japan/magazine/wp-content/uploads/2023/08/YAMAHA_MT-07_01_M.jpg" alt="Yamaha MT-07">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Yamaha MT-07</h5>
-                        <div class="mb-3">
-                            <span class="badge bg-secondary">Naked</span>
-                            <span class="badge bg-secondary">689cc</span>
-                        </div>
-                        <p class="card-text">Motor de 689cc, ideal para ciudad y carretera.</p>
-                        <div class="price-tag">Bs. 15.000</div>
-                        <button class="btn btn-primary ver-detalles" data-bs-toggle="modal" data-bs-target="#modalMT07">
-                            <i class="bi bi-info-circle"></i> Ver detalles
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="modal fade" id="modalMT07" tabindex="-1" aria-labelledby="modalLabelCB500X" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabelCB500X">Honda CB500X</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <img src="https://global-fs.webike-cdn.net/@japan/magazine/wp-content/uploads/2023/08/YAMAHA_MT-07_01_M.jpg" alt="Honda CB500X" class="img-fluid">
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Especificaciones:</h6>
-                                    <table class="table table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <th>Motor</th>
-                                                <td>471cc, 2 cilindros en paralelo</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Potencia</th>
-                                                <td>47 CV a 8,500 rpm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Par motor</th>
-                                                <td>43 Nm a 7,000 rpm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Suspensión delantera</th>
-                                                <td>Horquilla telescópica</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Suspensión trasera</th>
-                                                <td>Monoshock</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Precio</th>
-                                                <td>Bs. 15.000</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+
+    <main class="custom-container mt-5 pt-5">    
+        <?php if ($motocicletas): ?>
+            <div class="row motorcycle-grid">
+                <?php foreach ($motocicletas as $moto): ?>
+                    <div class="col-md-6 mb-4">
+                        <div class="motorcycle-card">
+                            <img src="../public/imagenes/<?php echo htmlspecialchars($moto['moto_id']); ?>.jpg" 
+                                 alt="<?php echo htmlspecialchars($moto['modelo']); ?>"
+                                 onerror="this.src='https://via.placeholder.com/400x250?text=Moto+<?php echo urlencode($moto['modelo']); ?>'">
+                            <div class="motorcycle-details">
+                                <h2><?php echo htmlspecialchars($moto['modelo']); ?></h2>
+                                <h6><?php echo htmlspecialchars($moto['marca']); ?></h6>
+                                <div class="price">Bs. <?php echo number_format($moto['precio']); ?></div>
+                                <button class="btn btn-details" data-bs-toggle="modal" data-bs-target="#motorcycleModal"
+                                        data-marca="<?php echo htmlspecialchars($moto['marca']); ?>"
+                                        data-modelo="<?php echo htmlspecialchars($moto['modelo']); ?>"
+                                        data-cilindrada="<?php echo htmlspecialchars($moto['cilindrada']); ?>"
+                                        data-color="<?php echo htmlspecialchars($moto['color']); ?>"
+                                        data-precio="<?php echo number_format($moto['precio']); ?>"
+                                        data-estado="<?php echo htmlspecialchars($moto['estado']); ?>"
+                                        data-fecha="<?php echo htmlspecialchars($moto['fecha_ingreso']); ?>"
+                                        data-cantidad="<?php echo htmlspecialchars($moto['cantidad']); ?>">
+                                    Ver Detalles
+                                </button>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Comprar ahora</button>
-                        </div>
                     </div>
-                </div>
+                <?php endforeach; ?>
             </div>
-        
-            <!-- Ducati Panigale V2 -->
-            <div class="col-md-4 moto-card" data-brand="ducati">
-                <div class="card">
-                    <img src="https://www.excelenciasdelmotor.com/sites/default/files/2022-07/portadmoto.jpg" alt="Ducati Panigale V2">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Ducati Panigale V2</h5>
-                        <div class="mb-3">
-                            <span class="badge bg-secondary">Sport</span>
-                            <span class="badge bg-secondary">955cc</span>
-                        </div>
-                        <p class="card-text">Una moto de alto rendimiento, con un motor de 955cc.</p>
-                        <div class="price-tag">Bs. 40.000</div>
-                        <button class="btn btn-primary ver-detalles" data-bs-toggle="modal" data-bs-target="#modalPanigaleV2">
-                            <i class="bi bi-info-circle"></i> Ver detalles
-                        </button>
-                    </div>
-                </div>
+        <?php else: ?>
+            <div class="alert alert-info text-center">
+                No hay motocicletas disponibles en este momento.
             </div>
-            <div class="modal fade" id="modalPanigaleV2" tabindex="-1" aria-labelledby="modalLabelNinja400" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabelNinja400">Kawasaki Ninja 400</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <?php endif; ?>
+    </main>
+
+    <!-- Motorcycle Details Modal -->
+    <div class="modal fade" id="motorcycleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img id="modalImage" src="" alt="Motorcycle Image" class="img-fluid rounded">
                         </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <img src="https://www.excelenciasdelmotor.com/sites/default/files/2022-07/portadmoto.jpg" alt="Kawasaki Ninja 400" class="img-fluid">
+                        <div class="col-md-6">
+                            <div class="motorcycle-specs">
+                                <div class="spec-item">
+                                    <span class="spec-label">Marca:</span>
+                                    <span class="spec-value" id="modalBrand"></span>
                                 </div>
-                                <div class="col-md-6">
-                                    <h6>Especificaciones:</h6>
-                                    <table class="table table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <th>Motor</th>
-                                                <td>399cc, 2 cilindros en paralelo</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Potencia</th>
-                                                <td>45 CV a 10,000 rpm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Par motor</th>
-                                                <td>38 Nm a 8,000 rpm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Suspensión delantera</th>
-                                                <td>Horquilla telescópica</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Suspensión trasera</th>
-                                                <td>Monoshock</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Precio</th>
-                                                <td>Bs. 40.000</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="spec-item">
+                                    <span class="spec-label">Modelo:</span>
+                                    <span class="spec-value" id="modalModel"></span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Cilindrada:</span>
+                                    <span class="spec-value" id="modalCilindrada"></span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Color:</span>
+                                    <span class="spec-value" id="modalColor"></span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Precio:</span>
+                                    <span class="spec-value" id="modalPrice"></span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Estado:</span>
+                                    <span class="spec-value" id="modalState"></span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Comprar ahora</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <!-- Kawasaki Ninja 400 -->
-            <div class="col-md-4 moto-card" data-brand="kawasaki">
-                <div class="card">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Kawasaki_Ninja_400_KRT_SlantView_resized.jpg" alt="Kawasaki Ninja 400">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Kawasaki Ninja 400</h5>
-                        <div class="mb-3">
-                            <span class="badge bg-secondary">Sport</span>
-                            <span class="badge bg-secondary">399cc</span>
-                        </div>
-                        <p class="card-text">Una moto deportiva ligera y ágil, perfecta para principiantes y expertos.</p>
-                        <div class="price-tag">Bs. 12.000</div>
-                        <button class="btn btn-primary ver-detalles" data-bs-toggle="modal" data-bs-target="#modalNinja400">
-                            <i class="bi bi-info-circle"></i> Ver detalles
-                        </button>
-                    </div>
-                </div>
-            </div>
-        
-            <!-- Modal for Kawasaki Ninja 400 -->
-            <div class="modal fade" id="modalNinja400" tabindex="-1" aria-labelledby="modalLabelNinja400" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabelNinja400">Kawasaki Ninja 400</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Kawasaki_Ninja_400_KRT_SlantView_resized.jpg" alt="Kawasaki Ninja 400" class="img-fluid">
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Especificaciones:</h6>
-                                    <table class="table table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <th>Motor</th>
-                                                <td>399cc, 2 cilindros en paralelo</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Potencia</th>
-                                                <td>45 CV a 10,000 rpm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Par motor</th>
-                                                <td>38 Nm a 8,000 rpm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Suspensión delantera</th>
-                                                <td>Horquilla telescópica</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Suspensión trasera</th>
-                                                <td>Monoshock</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Precio</th>
-                                                <td>Bs. 12.000</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Comprar ahora</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <!-- Honda CB500X -->
-            <div class="col-md-4 moto-card" data-brand="honda">
-                <div class="card">
-                    <img src="https://www.mundomotero.com/wp-content/uploads/2020/09/Honda_CB500X_2022_08.jpg" alt="Honda CB500X">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Honda CB500X</h5>
-                        <div class="mb-3">
-                            <span class="badge bg-secondary">Adventure</span>
-                            <span class="badge bg-secondary">471cc</span>
-                        </div>
-                        <p class="card-text">Una moto versátil para aventuras en carretera y fuera de ella.</p>
-                        <div class="price-tag">Bs. 18.000</div>
-                        <button class="btn btn-primary ver-detalles" data-bs-toggle="modal" data-bs-target="#modalCB500X">
-                            <i class="bi bi-info-circle"></i> Ver detalles
-                        </button>
-                    </div>
-                </div>
-            </div>
-        
-            <!-- Modal for Honda CB500X -->
-            <div class="modal fade" id="modalCB500X" tabindex="-1" aria-labelledby="modalLabelCB500X" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabelCB500X">Honda CB500X</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <img src="https://www.mundomotero.com/wp-content/uploads/2020/09/Honda_CB500X_2022_08.jpg" alt="Honda CB500X" class="img-fluid">
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Especificaciones:</h6>
-                                    <table class="table table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <th>Motor</th>
-                                                <td>471cc, 2 cilindros en paralelo</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Potencia</th>
-                                                <td>47 CV a 8,500 rpm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Par motor</th>
-                                                <td>43 Nm a 7,000 rpm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Suspensión delantera</th>
-                                                <td>Horquilla telescópica</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Suspensión trasera</th>
-                                                <td>Monoshock</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Precio</th>
-                                                <td>Bs. 18.000</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Comprar ahora</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
     <footer>
         <div class="container">
             <div class="row">
@@ -392,22 +211,11 @@
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 mb-4 footer-links">
-                    <h5>Servicios</h5>
-                    <ul>
-                        <li><a href="/servicios/financiamiento">Financiamiento</a></li>
-                        <li><a href="/servicios/mantenimiento">Mantenimiento</a></li>
-                        <li><a href="/servicios/seguro">Seguros</a></li>
-                        <li><a href="/servicios/accesorios">Accesorios</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-4 mb-4 footer-links">
                     <h5>Contacto</h5>
                     <ul>
-                        <li><i class="bi bi-geo-alt me-2"></i> Av. Tejada Sorzano entre Calles Puerto Rico y Costa Rica #855. Edif. Dica, La Paz, Bolivia</li>
+                        <li><i class="bi bi-geo-alt me-2"></i> Av. Tejada Sorzano, La Paz, Bolivia</li>
                         <li><i class="bi bi-telephone me-2"></i> (591) 77530498</li>
                         <li><i class="bi bi-envelope me-2"></i> jcautomotors2@gmail.com</li>
-                        <li><i class="bi bi-clock me-2"></i> Lun-Sáb: 8:00 - 18:00</li>
-                        <li><i class="bi bi-clock me-2"></i> Sáb: 8:00 - 12:00</li>
                     </ul>
                 </div>
             </div>
@@ -416,8 +224,30 @@
             </div>
         </div>
     </footer>
-    <script src="public/catalogo.js"></script>
+
+    <script src="../public/catalogo.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('motorcycleModal');
+            modal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const modalImage = modal.querySelector('#modalImage');
+                const modalBrand = modal.querySelector('#modalBrand');
+                const modalModel = modal.querySelector('#modalModel');
+                const modalCilindrada = modal.querySelector('#modalCilindrada');
+                const modalColor = modal.querySelector('#modalColor');
+                const modalPrice = modal.querySelector('#modalPrice');
+                const modalState = modal.querySelector('#modalState');
+
+                modalImage.src = `../public/imagenes/${button.dataset.marca}-${button.dataset.modelo}.jpg`;
+                modalBrand.textContent = button.dataset.marca;
+                modalModel.textContent = button.dataset.modelo;
+                modalCilindrada.textContent = button.dataset.cilindrada;
+                modalColor.textContent = button.dataset.color;
+                modalPrice.textContent = `$${button.dataset.precio}`;
+                modalState.textContent = button.dataset.estado;
+            });
+        });
+    </script>
 </body>
 </html>
-
-    
