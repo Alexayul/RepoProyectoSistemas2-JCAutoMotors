@@ -151,7 +151,7 @@
             </div>
         </section>
     
-        <!-- Motos destacadas -->
+
         <section class="featured-bikes">
             <div class="container">
                 <h2 class="text-center section-title">Motos Destacadas</h2>
@@ -242,7 +242,7 @@
 
 
         <!-- Sección del Mapa -->
-        <section class="map-section py-5" style="background-color: var(--accent);">
+        <section class="map-section py-5" style="background-color: #f7f7f7;">
             <div class="container">
                 <div class="text-center mb-5">
                     <h2 class="section-title fw-bold" style="color: var(--primary);">Encuéntranos Fácilmente</h2>

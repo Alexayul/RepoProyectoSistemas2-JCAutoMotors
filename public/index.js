@@ -80,11 +80,4 @@ document.addEventListener('DOMContentLoaded', function() {
             heroSection.style.backgroundPositionY = `${scrollPosition * 0.5}px`;
         }
     });
-    
-    // Navbar cambio de color al hacer scroll
-    window.addEventListener('scroll', function() {
-        const navbar = document.querySelector('.site-header');
-            navbar.style.backgroundColor = 'rgba(112, 17, 6, 0.8)';
-            navbar.style.padding = '0';
-    });
 });

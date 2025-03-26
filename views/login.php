@@ -1,4 +1,3 @@
-<php?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto JC Motors - Inicio de Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/login.css">
-    <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/transiciones.css">
-    <script src="/RepoProyectoSistemas2-JCAutoMotors/public/transiciones.js"></script>
+    <link rel="stylesheet" href="../public/login.css">
+    <link rel="stylesheet" href="../public/transiciones.css">
+    <script src="/transiciones.js"></script>
 </head>
 <body>
     <div class="login-container">
         <div class="left-panel">
             <div class="left-content">
-                <img src="/RepoProyectoSistemas2-JCAutoMotors/public/logo.png" alt="JCAutomotors Logo" class="logo-img">
+                <img src="../public/logo.png" alt="Auto JC Motors Logo">
                 <div class="welcome-text">Bienvenido</div>
-                <div class="no-account"><a href="./registro.php">¿Aún no tienes cuenta?</a></div>
-                <button class="register-btn" id="to-register-btn">Registrarse</button>
+                <div class="no-account"><a href="#">¿Aún no tienes cuenta?</a></div>
+                <button class="register-btn" id="to-register-btn"  onclick="window.location.href='registro.php'">Registrarse</button>
             </div>
         </div>
         <div class="right-panel">
             <div class="right-content">
                 <div class="session-title">Inicio de Sesión</div>
-                <form action="login.php" method="POST">
+                <form action="/login" method="POST">
                     <div class="input-container">
                         <span class="input-icon"><i class="bi bi-person"></i></span>
                         <input type="text" class="input-field" placeholder="Usuario" name="usuario" required>
@@ -35,7 +34,7 @@
                     </div>
                     
                     <div class="forgot-password"><a href="#">¿Olvidaste tu contraseña?</a></div>
-                    <div class="forgot-password"><a href="/JCAutomotors/index.php">Entrar como invitado</a></div>
+                    <div class="forgot-password"><a href="/">Entrar como invitado</a></div>
                     <button type="submit" class="login-btn">Iniciar sesión</button>
                 </form>
             </div>
@@ -44,7 +43,7 @@
 
 </body>
 <script>
-        document.getElementById('eye-icon').addEventListener('click', function() {
+    document.getElementById('eye-icon').addEventListener('click', function() {
     var passwordField = document.getElementById('password');
     var eyeIcon = document.getElementById('eye-icon');
 
@@ -56,7 +55,6 @@
         eyeIcon.innerHTML = '<i class="bi bi-eye"></i>'; // Vuelve al icono de ojo abierto
     }
 });
+
 </script>
 </html>
-
-</php>

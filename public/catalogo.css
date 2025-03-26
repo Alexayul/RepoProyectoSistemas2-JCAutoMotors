@@ -21,13 +21,17 @@ body {
 
 /* Header y Navegación */
 .site-header {
-    background-color: var(--dark);
-    padding: 0;
-    position: sticky;
+    background-color: rgba(5, 5, 6, 0.95); /* Más transparencia para mejor visibilidad */
+    position: fixed;
+    width: 100%;
     top: 0;
-    z-index: 100;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    min-height: 70px; /* Ajusta según tu preferencia */
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2); /* Sombra más suave */
+    transition: background-color 0.3s ease;
+}
+
+.navbar {
+    padding: 0.5rem 0;
 }
 
 .logo-container {
@@ -36,20 +40,48 @@ body {
 }
 
 .logo-img {
-    width: 150px;  /* Ajusta el tamaño según necesidad */
-    height: auto;  /* Mantiene la proporción */
-    max-height: 120px;
+    width: 160px;
+    height: 140px;
+    max-height: 200px;
+}
+
+.navbar-toggler {
+    border: none;
+    color: var(--light);
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.navbar-nav .nav-item {
+    margin: 0 0.5rem;
 }
 
 .navbar-nav .nav-link {
     color: var(--light);
     font-weight: 600;
-    padding: 1rem 1.25rem;
+    padding: 0.5rem 1rem;
     position: relative;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-nav .nav-link i {
+    transition: color 0.3s ease;
 }
 
 .navbar-nav .nav-link:hover {
+    color: var(--primary);
+}
+
+.navbar-nav .nav-link:hover i {
     color: var(--primary);
 }
 
@@ -59,7 +91,7 @@ body {
     width: 0;
     height: 3px;
     background-color: var(--primary);
-    bottom: 0;
+    bottom: -5px;
     left: 50%;
     transform: translateX(-50%);
     transition: width 0.3s ease;
@@ -69,13 +101,71 @@ body {
     width: 80%;
 }
 
+.navbar-nav .nav-link.active {
+    color: var(--primary);
+}
 
+.navbar-nav .nav-link.active::after {
+    width: 80%;
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 992px) {
+    .site-header {
+        background-color: var(--dark);
+    }
+
+    .navbar-collapse {
+        background-color: var(--dark);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .navbar-collapse.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 1rem 0;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1.5rem;
+    }
+}
+
+/* Scroll behavior */
+@media (min-width: 992px) {
+    .site-header.scrolled {
+        background-color: rgba(5, 5, 6, 0.95);
+        box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+    }
+}
+
+/* Hero Section */
 .hero {
-    background-image: url('https://st4.depositphotos.com/9999814/29627/i/450/depositphotos_296271286-stock-photo-motorcycles-group-parking-on-city.jpg');
+    background-image: url('https://http2.mlstatic.com/storage/splinter-admin/o:f_webp,q_auto:low/1600460516665-tipos-de-motos-m-final.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    min-height: 80vh;
+    min-height: 85vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -99,220 +189,235 @@ body {
 .hero .container {
     position: relative;
     z-index: 2;
-    max-width: 800px;
+    max-width: 1000px;
 }
 
 .hero h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
+    font-size: 4.0rem;
+    font-weight: 800;
     margin-bottom: 1rem;
     animation: fadeInUp 1s ease-out;
 }
 
 .hero p {
-    font-size: 1.25rem;
+    font-size: 1.75rem;
     margin-bottom: 1.5rem;
     animation: fadeInUp 1.2s ease-out;
 }
 
-.card { 
-    background-color: var(--dark-gray); 
-    color: white; 
-    border: none; 
-    border-radius: 10px; 
-    overflow: hidden; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s, box-shadow 0.3s;
-    margin-bottom: 30px;
+.brand-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(165, 19, 20, 0.2);
+.brand-buttons button {
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    transition: background-color 0.1s, transform 0.3s;
 }
 
-.card img { 
-    height: 250px; 
-    object-fit: cover; 
-    transition: transform 0.5s;
-}
-
-.card:hover img {
+.brand-buttons button:hover {
+    background-color:var(--primary-dark);
     transform: scale(1.05);
 }
 
-.card-body {
+.brand-buttons button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-dark);
+}
+
+.custom-container {
+    width: 85%;
+    padding-left: 25px;
+    padding-right: 25px;
+    margin-left: auto;   
+    margin-right: auto; 
+}
+
+
+.motorcycle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+    justify-content: center;
+}
+
+.motorcycle-card {
+    background: #f9f9f9;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 10px;
+    min-width: 400px;
+}
+.motorcycle-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(165, 19, 20, 0.4);
+}
+
+.motorcycle-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.motorcycle-card:hover img {
+    transform: scale(1.05);
+}
+
+.motorcycle-details {
     padding: 20px;
+    position: relative;
 }
 
-.card-title {
-    font-weight: 700;
-    margin-bottom: 15px;
+.motorcycle-details h2 {
+    color: var(--dark);
     font-size: 1.4rem;
-}
-
-.btn-primary { 
-    background-color: var(--primary); 
-    border-color: var(--primary); 
-    padding: 10px 20px;
+    margin-bottom: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s;
+    letter-spacing: 0.5px;
 }
 
-.btn-primary:hover { 
-    background-color: var(--primary-light); 
-    border-color: var(--primary-light);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(200, 35, 51, 0.3);
-}
-
-footer { 
-    background-color: var(--dark); 
-    padding: 40px 0; 
-    text-align: center; 
-}
-
-.filter-bar { 
-    text-align: center; 
-    margin-bottom: 40px;
-    padding: 15px;
-    background-color: var(--dark);
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-.filter-bar .btn { 
-    margin: 5px; 
-    background: var(--primary-dark); 
-    border: none; 
-    padding: 8px 20px;
-    font-weight: 600;
-    transition: all 0.3s;
-}
-
-.filter-bar .btn:hover { 
-    background: var(--primary-light); 
-    transform: translateY(-2px);
-}
-
-.filter-bar .btn.active {
+.motorcycle-details h2::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 3px;
     background: var(--primary);
-    box-shadow: 0 0 10px rgba(200, 35, 51, 0.5);
-}
-
-.price-tag {
-    display: inline-block;
-    background-color: var(--primary-dark);
-    color: white;
-    padding: 10px 20px;
-    font-weight: bold;
-    font-size: 1.2rem;
-    border-radius: 5px;
     margin: 10px 0;
 }
 
-.section-title {
-    margin-bottom: 20px;
-    position: relative;
-    display: inline-block;
-    padding-bottom: 10px;
+.price {
+    color: var(--primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 15px 0;
+    display: block;
 }
 
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 25%;
-    width: 50%;
-    height: 3px;
-    background-color: var(--primary);
-}
-
-.modal-content {
-    background-color: var(--dark-gray);
+.btn-details {
+    background: var(--primary);
     color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: block;
+    text-align: center;
+}
+
+.btn-details:hover {
+    background: var(--primary-light);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(165, 19, 20, 0.4);
+}
+
+/* Estado de disponibilidad */
+.availability {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.available {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid #28a745;
+}
+
+.sold-out {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+/* Modal Styles */
+.modal-content {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid rgba(165, 19, 20, 0.3);
 }
 
 .modal-header {
-    border-bottom: 1px solid var(--medium-gray);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.modal-body {
-    background-color: var(--dark-gray) !important;
-    color: white !important;
-}
-
-.modal table {
-    background-color: transparent;
-}
-
-.modal table th, .modal table td {
-    border-color: var(--medium-gray);
-}
-
-.modal .table-striped>tbody>tr:nth-of-type(odd) {
-    background-color: var(--light-gray);
-}
-
-.btn-close {
+.modal-header .btn-close {
     filter: invert(1);
+    opacity: 0.8;
 }
 
-.moto-card .card {
-    transition: transform 0.3s ease;
+.motorcycle-specs {
+    padding: 20px 0;
 }
 
-.moto-card:hover .card {
-    transform: scale(1.05);
+.spec-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.price-tag {
-    font-weight: bold;
-    font-size: 1.25rem;
-    margin-top: 15px;
-}
-
-.badge {
-    padding: 5px 10px;
-    margin-right: 5px;
-    background-color: var(--primary-dark);
+.spec-label {
+    color: rgba(255, 255, 255, 0.7);
     font-weight: 500;
 }
 
-
-.feature-icon {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: var(--primary);
+.spec-value {
+    color: white;
+    font-weight: 600;
 }
 
-.top-models {
-    background-color: var(--dark-gray);
-    padding: 40px 0;
-    margin-top: -50px;
-    margin-bottom: 40px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    animation: fadeInUp 1.5s ease-out;
 }
 
-.page-section {
-    padding: 60px 0;
+.btn-primary:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-light);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 footer {
-    background-color: var(--dark);
+    background-color: var(--secondary);
     color: white;
     padding: 3rem 0 1rem;
 }
 
 .footer-brand {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Racing Sans One', cursive;
     color: var(--primary);
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    font-weight: 700;
 }
 
 .footer-links h5 {
@@ -371,7 +476,8 @@ footer {
     text-align: center;
 }
 
-/* Animaciones */
+
+/* Animations */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -380,5 +486,112 @@ footer {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+    }
+}
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .motorcycle-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    .motorcycle-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .motorcycle-card img {
+        height: 220px;
+    }
+
+    .motorcycle-details h2 {
+        font-size: 1.2rem;
+    }
+
+    .price {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .custom-container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .motorcycle-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+    }
+
+    .motorcycle-card {
+        margin: 5px;
+    }
+
+    .motorcycle-card img {
+        height: 180px;
+    }
+
+    .motorcycle-details {
+        padding: 15px;
+    }
+
+    .motorcycle-details h2 {
+        font-size: 1.1rem;
+    }
+
+    .price {
+        font-size: 1.3rem;
+    }
+
+    .btn-details {
+        padding: 10px 20px;
+        font-size: 0.8rem;
+        width: calc(100% - 30px);
+    }
+}
+
+@media (max-width: 480px) {
+    .motorcycle-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .motorcycle-card {
+        min-width: 100%;
+    }
+
+    .motorcycle-card img {
+        height: 250px;
+    }
+
+    .modal-dialog {
+        margin: 1.75rem 10px;
+        max-width: calc(100% - 20px);
+    }
+}
+
+/* Smooth Transitions */
+@media (prefers-reduced-motion: no-preference) {
+    .motorcycle-card,
+    .motorcycle-card img,
+    .btn-details {
+        transition: all 0.3s ease;
     }
 }
