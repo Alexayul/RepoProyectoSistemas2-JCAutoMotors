@@ -53,9 +53,9 @@ body {
 .navbar-toggler:focus {
     box-shadow: none;
 }
-
 .navbar-nav {
     align-items: center;
+    margin-right: -9rem;
 }
 
 .navbar-nav .nav-item {
@@ -64,7 +64,7 @@ body {
 
 .navbar-nav .nav-link {
     color: var(--light);
-    font-weight: 600;
+    font-weight: 800;
     padding: 0.5rem 1rem;
     position: relative;
     transition: all 0.3s ease;
@@ -72,7 +72,6 @@ body {
     align-items: center;
     gap: 0.5rem;
 }
-
 .navbar-nav .nav-link i {
     transition: color 0.3s ease;
 }
@@ -109,6 +108,7 @@ body {
     width: 80%;
 }
 
+/* Mejoras para dispositivos móviles */
 @media (max-width: 992px) {
     .site-header {
         background-color: var(--dark);

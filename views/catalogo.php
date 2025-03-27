@@ -52,30 +52,71 @@ try {
     <link rel="stylesheet" href="../public/catalogo.css">
 </head>
 <body>
-    <header class="site-header">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <div class="logo-container">
-                    <img src="../public/logo.png" alt="JCAutomotors Logo" class="logo-img">
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon">
-                        <i class="bi bi-list text-light fs-2"></i>
-                    </span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="../index.php"><i class="bi bi-house-door me-1"></i>Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="./login.php"><i class="bi bi-speedometer2 me-1"></i>Administración</a></li>
-                        <li class="nav-item"><a class="nav-link" href="./login.php"><i class="bi bi-people me-1"></i>Empleado</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="catalogo.php"><i class="bi bi-bicycle me-1"></i>Catálogo</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/direccion"><i class="bi bi-geo-alt me-1"></i>Ubicación</a></li>
-                    </ul>
-                </div>
+  
+<header class="site-header">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <!-- Logo -->
+            <div class="logo-container">
+                <img src="../public/logo.png" alt="JCAutomotors Logo" class="logo-img">
             </div>
-        </nav>
-    </header>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon">
+                    <i class="bi bi-list text-light fs-2"></i>
+                </span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <?php
+                    session_start();
+                    $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+                    ?>
 
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.php">
+                            <i class="bi bi-house-door me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">
+                            <i class="bi bi-speedometer2 me-1"></i>Administración
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">
+                            <i class="bi bi-people me-1"></i>Empleado
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="catalogo.php">
+                            <i class="bi bi-bicycle me-1"></i>Catálogo
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="direccion.php">
+                            <i class="bi bi-geo-alt me-1"></i>Ubicación
+                        </a>
+                    </li>
+                    <?php if ($usuario_logueado): ?>
+                <li class="nav-item me-3">
+                    <span class="navbar-text text-light">
+                        <i class="bi bi-person-circle me-1"></i>
+                        Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
+                    </span>
+                </li>
+            <?php endif; ?>
+            <?php if ($usuario_logueado): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link btn" href="../pulic/logout.php">
+                                            <i class="bi bi-box-arrow-right me-1"></i>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
