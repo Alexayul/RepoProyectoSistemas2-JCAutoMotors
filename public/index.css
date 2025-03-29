@@ -21,13 +21,14 @@ body {
 
 /* Header y Navegación */
 .site-header {
-    background-color: rgba(5, 5, 6, 0.95); /* Más transparencia para mejor visibilidad */
+    background-color: #000000b0; /* Más transparencia para mejor visibilidad */
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2); /* Sombra más suave */
     transition: background-color 0.3s ease;
+    font-size: 17px;
 }
 
 .navbar {
@@ -53,9 +54,9 @@ body {
 .navbar-toggler:focus {
     box-shadow: none;
 }
+
 .navbar-nav {
     align-items: center;
-    margin-right: -9rem;
 }
 
 .navbar-nav .nav-item {
@@ -64,7 +65,7 @@ body {
 
 .navbar-nav .nav-link {
     color: var(--light);
-    font-weight: 800;
+    font-weight: 600;
     padding: 0.5rem 1rem;
     position: relative;
     transition: all 0.3s ease;
@@ -72,6 +73,7 @@ body {
     align-items: center;
     gap: 0.5rem;
 }
+
 .navbar-nav .nav-link i {
     transition: color 0.3s ease;
 }
@@ -108,7 +110,6 @@ body {
     width: 80%;
 }
 
-/* Mejoras para dispositivos móviles */
 @media (max-width: 992px) {
     .site-header {
         background-color: var(--dark);

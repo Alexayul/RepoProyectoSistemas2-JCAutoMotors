@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]); 
             
             // Insertar en USUARIO
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT); 
+            $hashed_password = hash('sha256',$password); 
             $stmt_usuario = $conn->prepare("INSERT INTO USUARIO (id_persona, usuario, password, id_rol) VALUES (:persona_id, :usuario, :password, :rol_id)"); 
             $stmt_usuario->execute([ 
                 ':persona_id' => $persona_id, 
@@ -207,6 +207,7 @@ unset($_SESSION['form_data']);
             <div class="left-content">
                 <img src="/RepoProyectoSistemas2-JCAutoMotors/public/logo.png" alt="Auto JC Motors Logo">
                 <div class="welcome-text">Bienvenido</div>
+                <div class="forgot-password"><a href="../index.php">Entrar como invitado</a></div>
                 <div class="no-account"><a href="./login.php" id="to-login-link">¿Ya tienes cuenta?</a></div>
                 <button class="register-btn" id="to-login-btn" onclick="window.location.href='login.php'">Iniciar Sesión</button>
             </div>

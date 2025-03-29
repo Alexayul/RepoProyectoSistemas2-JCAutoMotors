@@ -5,20 +5,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administrador</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Animate.css para algunas animaciones predefinidas -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Racing+Sans+One&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/admin.css">
 </head>
 <body>
+<header class="site-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon">
+                        <i class="bi bi-list text-light fs-2"></i>
+                    </span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.php">
+                                <i class="bi bi-house-door me-1"></i>Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="bi bi-speedometer2 me-1"></i>Administración
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="gestionEmpleados.php">
+                                <i class="bi bi-people me-1"></i>Gestionar Empleados
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="catalogo.php">
+                                <i class="bi bi-bicycle me-1"></i>Catálogo
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.php">
+                            <i class="bi bi-box-arrow-in-left"></i>Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
     <header>
         <h1>Panel de Administrador</h1>
     </header>
     <main>
-        <ul>
-            <li><a href="#">Gestionar Empleados</a></li>
-            <li><a href="#">Ver Reportes</a></li>
-            <li><a href="/RepoProyectoSistemas2-JCAutoMotors/index.php">Cerrar Sesión</a></li>
-        </ul>
         <div class="chart-container">
             <canvas id="salesChart"></canvas>
         </div>
@@ -33,14 +77,6 @@
         </div>
         <button onclick="generatePDF()">Generar Reporte PDF</button>
     </main>
-    <footer>
-        <p>Síguenos en nuestras redes sociales:</p>
-        <ul>
-            <li><a href="#">Facebook</a></li>
-            <li><a href="#">Twitter</a></li>
-            <li><a href="#">Instagram</a></li>
-        </ul>
-    </footer>
     <script>
         // Datos de ejemplo para los gráficos
         const salesData = {
@@ -48,8 +84,8 @@
             datasets: [{
                 label: 'Ventas de Motos',
                 data: [15, 20, 10, 30, 25, 40],
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgb(146, 13, 13)',
+                borderColor: 'rgb(0, 0, 0)',
                 borderWidth: 1
             }]
         };
@@ -59,8 +95,8 @@
             datasets: [{
                 label: 'Ingresos',
                 data: [5000, 7000, 8000, 6000, 9000, 10000],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgb(80, 80, 80)',
+                borderColor: 'rgb(0, 0, 0)',
                 borderWidth: 1
             }]
         };
@@ -70,8 +106,8 @@
             datasets: [{
                 label: 'Egresos',
                 data: [2000, 3000, 2500, 4000, 3500, 4500],
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgb(219, 32, 11)',
+                borderColor: 'rgb(219, 32, 11)',
                 borderWidth: 1
             }]
         };
@@ -81,14 +117,14 @@
             datasets: [{
                 data: [40, 35, 25],
                 backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(255, 99, 132, 0.2)'
+                    'rgb(146, 13, 13)',
+                    'rgb(80, 80, 80)',
+                    'rgb(219, 32, 11)'
                 ],
                 borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 99, 132, 1)'
+                    'rgb(0, 0, 0)',
+                    'rgb(0, 0, 0)',
+                    'rgb(0, 0, 0)'
                 ],
                 borderWidth: 1
             }]
@@ -167,6 +203,59 @@
             doc.save('reporte_gestion_ventas.pdf');
         }
     </script>
+    <!-- Footer -->
+    <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <div class="footer-brand">JCAutomotors</div>
+                        <p>Tu concesionario de confianza con más de 15 años de experiencia en el mundo de las motocicletas.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="bi bi-facebook"></i></a>
+                            <a href="#"><i class="bi bi-twitter"></i></a>
+                            <a href="#"><i class="bi bi-instagram"></i></a>
+                            <a href="#"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 mb-4 footer-links">
+                        <h5>Enlaces rápidos</h5>
+                        <ul>
+                            <li><a href="/">Inicio</a></li>
+                            <li><a href="/catalogo">Catálogo</a></li>
+                            <li><a href="/nosotros">Sobre nosotros</a></li>
+                            <li><a href="/contacto">Contacto</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-4 mb-4 footer-links">
+                        <h5>Servicios</h5>
+                        <ul>
+                            <li><a href="/servicios/financiamiento">Financiamiento</a></li>
+                            <li><a href="/servicios/mantenimiento">Mantenimiento</a></li>
+                            <li><a href="/servicios/seguro">Seguros</a></li>
+                            <li><a href="/servicios/accesorios">Accesorios</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-4 mb-4 footer-links">
+                        <h5>Contacto</h5>
+                        <ul>
+                            <li><i class="bi bi-geo-alt me-2"></i> Av. Tejada Sorzano entre Calles Puerto Rico y Costa Rica #855. Edif. Dica, La Paz, Bolivia</li>
+                            <li><i class="bi bi-telephone me-2"></i> (591) 77530498</li>
+                            <li><i class="bi bi-envelope me-2"></i> jcautomotors2@gmail.com</li>
+                            <li><i class="bi bi-clock me-2"></i> Lun-Sáb: 8:00 - 18:00</li>
+                            <li><i class="bi bi-clock me-2"></i> Sáb: 8:00 - 12:00</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2025 JCAutomotors. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </footer>
+    
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script src="public/index.js"></script>
+        
 </body>
 </html>
 </php>
