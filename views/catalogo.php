@@ -92,11 +92,11 @@ try {
                             <i class="bi bi-bicycle me-1"></i>Catálogo
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="direccion.php">
                             <i class="bi bi-geo-alt me-1"></i>Ubicación
                         </a>
-                    </li>
+                    </li> -->
                     <?php if ($usuario_logueado): ?>
                 <li class="nav-item me-3">
                     <span class="navbar-text text-light">
@@ -107,7 +107,7 @@ try {
             <?php endif; ?>
             <?php if ($usuario_logueado): ?>
                                     <li class="nav-item">
-                                        <a class="nav-link btn" href="../pulic/logout.php">
+                                        <a class="nav-link btn" href="../public/logout.php">
                                             <i class="bi bi-box-arrow-right me-1"></i>
                                         </a>
                                     </li>

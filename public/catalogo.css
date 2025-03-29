@@ -21,7 +21,7 @@ body {
 
 /* Header y Navegación */
 .site-header {
-    background-color: rgba(5, 5, 6, 0.95); /* Más transparencia para mejor visibilidad */
+    background-color: rgba(0, 0, 0, 0.664); /* Más transparencia para mejor visibilidad */
     position: fixed;
     width: 100%;
     top: 0;

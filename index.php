@@ -59,7 +59,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="views/direccion.php">
+                        <a class="nav-link" href="#ubicacion"
                             <i class="bi bi-geo-alt me-1"></i>Ubicación
                         </a>
                     </li>
@@ -73,7 +73,7 @@
 <?php endif; ?>
                     <?php if ($usuario_logueado): ?>
                         <li class="nav-item">
-                            <a class="nav-link btn" href="/logout.php">
+                            <a class="nav-link btn" href="public/logout.php">
                                 <i class="bi bi-box-arrow-right me-1"></i>
                             </a>
                         </li>
@@ -252,6 +252,7 @@
                                     </div>
                                 </div>
                                 <a href="/catalogo/z400" class="btn btn-primary w-100 mt-3">Ver detalles</a>
+                                <a name="ubicacion"></a>
                             </div>
                         </div>
                     </div>
@@ -264,7 +265,8 @@
         <section class="map-section py-5" style="background-color: #f7f7f7;">
             <div class="container">
                 <div class="text-center mb-5">
-                    <h2 class="section-title fw-bold" style="color: var(--primary);">Encuéntranos Fácilmente</h2>
+                    
+                    <h2 class="section-title fw-bold" style="color: var(--primary); ">Encuéntranos Fácilmente</h2>
                     <div class="divider mx-auto my-3" style="width: 80px; height: 3px; background-color: var(--primary);"></div>
                     <p class="lead">Visítanos en nuestra concesionaria de motos y descubre los mejores modelos con atención personalizada.</p>
                 </div>
@@ -330,7 +332,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- Mapa con marcador -->
                     <div class="col-lg-8">
                         <div class="map-container rounded shadow position-relative">

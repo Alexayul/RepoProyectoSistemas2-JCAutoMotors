@@ -182,6 +182,7 @@ function iniciarSesion($user) {
                         <span class="eye-icon" id="eye-icon"><i class="bi bi-eye"></i></span>
                     </div>
                     
+                    <div class="forgot-password"><a href="../index.php">Entrar como invitado</a></div>
                     <div class="forgot-password"><a href="recuperar.php">¿Olvidaste tu contraseña?</a></div>
                     <button type="submit" class="login-btn">Iniciar sesión</button>
                 </form>
