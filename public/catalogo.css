@@ -56,6 +56,7 @@ body {
 
 .navbar-nav {
     align-items: center;
+    margin-right: -9rem;
 }
 
 .navbar-nav .nav-item {
@@ -64,7 +65,7 @@ body {
 
 .navbar-nav .nav-link {
     color: var(--light);
-    font-weight: 600;
+    font-weight: 800;
     padding: 0.5rem 1rem;
     position: relative;
     transition: all 0.3s ease;
