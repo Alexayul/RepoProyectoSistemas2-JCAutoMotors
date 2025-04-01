@@ -10,7 +10,7 @@ try {
 
     // Consulta para obtener las motocicletas con su respectivo modelo y marca
     $query = "
-    SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, 
+    SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
            M.color, M.precio, M.estado, M.fecha_ingreso, M.cantidad 
     FROM MOTOCICLETA M
     INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
@@ -147,41 +147,43 @@ try {
 </main>
 
 
-    <main class="custom-container mt-5 pt-5">    
-        <?php if ($motocicletas): ?>
-            <div class="row motorcycle-grid">
-                <?php foreach ($motocicletas as $moto): ?>
-                    <div class="col-md-6 mb-4">
-                        <div class="motorcycle-card">
-                            <img src="../public/imagenes/<?php echo htmlspecialchars($moto['moto_id']); ?>.jpg" 
-                                 alt="<?php echo htmlspecialchars($moto['modelo']); ?>"
-                                 onerror="this.src='https://via.placeholder.com/400x250?text=Moto+<?php echo urlencode($moto['modelo']); ?>'">
-                            <div class="motorcycle-details">
-                                <h2><?php echo htmlspecialchars($moto['modelo']); ?></h2>
-                                <h6><?php echo htmlspecialchars($moto['marca']); ?></h6>
-                                <div class="price">Bs. <?php echo number_format($moto['precio']); ?></div>
-                                <button class="btn btn-details" data-bs-toggle="modal" data-bs-target="#motorcycleModal"
-                                        data-marca="<?php echo htmlspecialchars($moto['marca']); ?>"
-                                        data-modelo="<?php echo htmlspecialchars($moto['modelo']); ?>"
-                                        data-cilindrada="<?php echo htmlspecialchars($moto['cilindrada']); ?>"
-                                        data-color="<?php echo htmlspecialchars($moto['color']); ?>"
-                                        data-precio="<?php echo number_format($moto['precio']); ?>"
-                                        data-estado="<?php echo htmlspecialchars($moto['estado']); ?>"
-                                        data-fecha="<?php echo htmlspecialchars($moto['fecha_ingreso']); ?>"
-                                        data-cantidad="<?php echo htmlspecialchars($moto['cantidad']); ?>">
-                                    Ver Detalles
-                                </button>
-                            </div>
+<main class="custom-container mt-5 pt-5">    
+    <?php if ($motocicletas): ?>
+        <div class="row motorcycle-grid">
+            <?php foreach ($motocicletas as $moto): ?>
+                <div class="col-md-6 mb-4">
+                    <div class="motorcycle-card">
+                        <?php 
+                        $imagePath = '../' . htmlspecialchars($moto['imagen']);
+                        $defaultImage = 'https://via.placeholder.com/400x250?text=Moto+' . urlencode($moto['modelo']);
+                        ?>
+                        <img src="<?php echo file_exists($imagePath) ? $imagePath : $defaultImage; ?>" 
+                             alt="<?php echo htmlspecialchars($moto['modelo']); ?>"
+                             onerror="this.src='<?php echo $defaultImage; ?>'">
+                        <div class="motorcycle-details">
+                            <h2><?php echo htmlspecialchars($moto['modelo']); ?></h2>
+                            <h6><?php echo htmlspecialchars($moto['marca']); ?></h6>
+                            <div class="price">Bs. <?php echo number_format($moto['precio']); ?></div>
+                            <button class="btn btn-details" data-bs-toggle="modal" data-bs-target="#motorcycleModal"
+                                    data-marca="<?php echo htmlspecialchars($moto['marca']); ?>"
+                                    data-modelo="<?php echo htmlspecialchars($moto['modelo']); ?>"
+                                    data-cilindrada="<?php echo htmlspecialchars($moto['cilindrada']); ?>"
+                                    data-color="<?php echo htmlspecialchars($moto['color']); ?>"
+                                    data-precio="<?php echo number_format($moto['precio']); ?>"
+                                    data-estado="<?php echo htmlspecialchars($moto['estado']); ?>">
+                                Ver Detalles
+                            </button>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <div class="alert alert-info text-center">
-                No hay motocicletas disponibles en este momento.
-            </div>
-        <?php endif; ?>
-    </main>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-info text-center">
+            No hay motocicletas disponibles en este momento.
+        </div>
+    <?php endif; ?>
+</main>
 
     <!-- Motorcycle Details Modal -->
     <div class="modal fade" id="motorcycleModal" tabindex="-1">
@@ -193,7 +195,7 @@ try {
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <img id="modalImage" src="" alt="Motorcycle Image" class="img-fluid rounded">
+                        <img id="modalImage" src="" alt="Imagen de la motocicleta" class="img-fluid rounded">
                         </div>
                         <div class="col-md-6">
                             <div class="motorcycle-specs">
@@ -252,12 +254,24 @@ try {
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 mb-4 footer-links">
-                    <h5>Contacto</h5>
-                    <ul>
-                        <li><i class="bi bi-geo-alt me-2"></i> Av. Tejada Sorzano, La Paz, Bolivia</li>
-                        <li><i class="bi bi-telephone me-2"></i> (591) 77530498</li>
-                        <li><i class="bi bi-envelope me-2"></i> jcautomotors2@gmail.com</li>
-                    </ul>
+                        <h5>Servicios</h5>
+                        <ul>
+                            <li><a href="/servicios/financiamiento">Financiamiento</a></li>
+                            <li><a href="/servicios/mantenimiento">Mantenimiento</a></li>
+                            <li><a href="/servicios/seguro">Seguros</a></li>
+                            <li><a href="/servicios/accesorios">Accesorios</a></li>
+                        </ul>
+                    </div>
+                <div class="col-lg-3 col-md-4 mb-4 footer-links">
+                        <h5>Contacto</h5>
+                        <ul>
+                            <li><i class="bi bi-geo-alt me-2"></i> Av. Tejada Sorzano entre Calles Puerto Rico y Costa Rica #855. Edif. Dica, La Paz, Bolivia</li>
+                            <li><i class="bi bi-telephone me-2"></i> (591) 77530498</li>
+                            <li><i class="bi bi-envelope me-2"></i> jcautomotors2@gmail.com</li>
+                            <li><i class="bi bi-clock me-2"></i> Lun-Sáb: 8:00 - 18:00</li>
+                            <li><i class="bi bi-clock me-2"></i> Sáb: 8:00 - 12:00</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="copyright">
@@ -268,27 +282,57 @@ try {
 
     <script src="../public/catalogo.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('motorcycleModal');
-            modal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const modalImage = modal.querySelector('#modalImage');
-                const modalBrand = modal.querySelector('#modalBrand');
-                const modalModel = modal.querySelector('#modalModel');
-                const modalCilindrada = modal.querySelector('#modalCilindrada');
-                const modalColor = modal.querySelector('#modalColor');
-                const modalPrice = modal.querySelector('#modalPrice');
-                const modalState = modal.querySelector('#modalState');
+    document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('motorcycleModal');
+    modal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const modalImage = document.getElementById('modalImage');
 
-                modalImage.src = `../public/imagenes/${button.dataset.marca}-${button.dataset.modelo}.jpg`;
-                modalBrand.textContent = button.dataset.marca;
-                modalModel.textContent = button.dataset.modelo;
-                modalCilindrada.textContent = button.dataset.cilindrada;
-                modalColor.textContent = button.dataset.color;
-                modalPrice.textContent = `$${button.dataset.precio}`;
-                modalState.textContent = button.dataset.estado;
-            });
-        });
+        const imagePathFromDB = button.dataset.imagen; 
+
+        if(imagePathFromDB) {
+            modalImage.src = '../' + imagePathFromDB;
+
+            modalImage.onerror = function() {
+                this.src = `https://via.placeholder.com/600x400?text=${encodeURIComponent(button.dataset.marca)}+${encodeURIComponent(button.dataset.modelo)}`;
+            };
+        } else {
+            const modelo = button.dataset.modelo.toLowerCase().replace(/\s+/g, '');
+            const extensions = ['jpg', 'jpeg', 'png', 'webp', 'jfif'];
+            
+            function tryImageExtension(index) {
+                if (index >= extensions.length) {
+                    modalImage.src = `https://via.placeholder.com/600x400?text=${encodeURIComponent(button.dataset.marca)}+${encodeURIComponent(button.dataset.modelo)}`;
+                    return;
+                }
+                
+                const ext = extensions[index];
+                const testImage = new Image();
+                testImage.src = `../imagenes/motos/${modelo}.${ext}`;
+                
+                testImage.onload = function() {
+                    if (this.width > 0) {
+                        modalImage.src = this.src;
+                    } else {
+                        tryImageExtension(index + 1);
+                    }
+                };
+                
+                testImage.onerror = function() {
+                    tryImageExtension(index + 1);
+                };
+            }
+            
+            tryImageExtension(0);
+        }
+        document.getElementById('modalBrand').textContent = button.dataset.marca;
+        document.getElementById('modalModel').textContent = button.dataset.modelo;
+        document.getElementById('modalCilindrada').textContent = button.dataset.cilindrada + ' cc';
+        document.getElementById('modalColor').textContent = button.dataset.color;
+        document.getElementById('modalPrice').textContent = 'Bs. ' + button.dataset.precio;
+        document.getElementById('modalState').textContent = button.dataset.estado;
+    });
+});
     </script>
 </body>
 </html>
