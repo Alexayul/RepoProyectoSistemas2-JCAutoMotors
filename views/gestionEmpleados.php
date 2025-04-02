@@ -1,62 +1,51 @@
 <?php
-// Simulated database connection and data retrieval
-$employees = [
-    [
-        'id' => 3,
-        'nombre' => 'Mateo',
-        'apellido' => 'Torrez',
-        'cargo' => 'Vendedor',
-        'salario' => 3000.00,
-        'fecha_contratacion' => '2024-05-19',
-        'telefono' => '76543210',
-        'email' => 'mateo@gmail.com',
-        'imagen' => 'https://i.pinimg.com/736x/75/56/16/755616a4aa93f0f993ebd7e1e6c68234.jpg'
-    ],
-    [
-        'id' => 4,
-        'nombre' => 'Henry',
-        'apellido' => 'Rojas',
-        'cargo' => 'Administrador',
-        'salario' => 1800.00,
-        'fecha_contratacion' => '2023-07-10',
-        'telefono' => '74569832',
-        'email' => 'henry@gmail.com',
-        'imagen' => 'https://i.pinimg.com/736x/75/56/16/755616a4aa93f0f993ebd7e1e6c68234.jpg'
-    ],
-    [
-        'id' => 7,
-        'nombre' => 'Mauricio',
-        'apellido' => 'Marces',
-        'cargo' => 'Administrador',
-        'salario' => 2800.00,
-        'fecha_contratacion' => '2023-04-15',
-        'telefono' => '70123456',
-        'email' => 'mauricio@gmail.com',
-        'imagen' => 'https://i.pinimg.com/736x/75/56/16/755616a4aa93f0f993ebd7e1e6c68234.jpg'
-    ],
-    [
-        'id' => 8,
-        'nombre' => 'Alexandra',
-        'apellido' => 'Mamani',
-        'cargo' => 'Vendedor',
-        'salario' => 1800.00,
-        'fecha_contratacion' => '2025-03-21',
-        'telefono' => '71234567',
-        'email' => 'alexayul@gmail.com',
-        'imagen' => 'https://i.pinimg.com/736x/75/56/16/755616a4aa93f0f993ebd7e1e6c68234.jpg'
-    ],
-    [
-        'id' => 11,
-        'nombre' => 'Empleado',
-        'apellido' => '5',
-        'cargo' => 'Vendedor',
-        'salario' => 1800.00,
-        'fecha_contratacion' => '2025-03-21',
-        'telefono' => '71234567',
-        'email' => 'null@gmail.com',
-        'imagen' => 'https://i.pinimg.com/736x/75/56/16/755616a4aa93f0f993ebd7e1e6c68234.jpg'
-    ]
-];
+require '../config/conexion.php';
+session_start();
+require '../config/conexion.php';
+
+$usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$user_id = $usuario_logueado ? $usuario_logueado['id'] : null;
+
+// You can run this SQL: ALTER TABLE EMPLEADO ADD COLUMN estado VARCHAR(20) DEFAULT 'Activo';
+
+// Query to get employee data with JOIN to get all needed information
+$query = "SELECT e._id as id, p.nombre, p.apellido, e.cargo, e.salario, 
+         e.fecha_contratacion, p.telefono, p.email, e.estado, 
+         COALESCE(p.foto_url, 'https://i.pinimg.com/736x/e9/5a/aa/e95aaa1289fb8108ec2d974c9e12e183.jpg') as imagen
+         FROM EMPLEADO e
+         JOIN PERSONA p ON e._id = p._id
+         ORDER BY p.nombre ASC";
+
+
+try {
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+    $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error en la consulta: " . $e->getMessage());
+}
+
+
+// Process form submissions for firing or rehiring
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['action']) && isset($_POST['employee_id'])) {
+        $employeeId = $_POST['employee_id'];
+        $newStatus = ($_POST['action'] == 'fire') ? 'Despedido' : 'Activo';
+        
+        try {
+            $updateQuery = "UPDATE EMPLEADO SET estado = :estado WHERE _id = :id";
+            $stmt = $conn->prepare($updateQuery);
+            $stmt->execute(['estado' => $newStatus, 'id' => $employeeId]);
+        
+            // Redirigir para evitar reenvío del formulario
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        } catch (PDOException $e) {
+            echo "Error al actualizar: " . $e->getMessage();
+        }
+        
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -71,10 +60,11 @@ $employees = [
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Animate.css -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/RepoProyectoSistemas2-JCAutoMotors/public/gestionEmpleados.css">
+    <link rel="stylesheet" href="../public/gestionEmpleados.css">
 </head>
 
-<header class="site-header">
+<body>
+    <header class="site-header">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +73,15 @@ $employees = [
                     </span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                    <?php if ($usuario_logueado): ?>
+                            <li class="nav-item me-3">
+                                <span class="navbar-text text-light">
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
+                                </span>
+                            </li>
+                            
                         <li class="nav-item">
                             <a class="nav-link" href="../index.php">
                                 <i class="bi bi-house-door me-1"></i>Inicio
@@ -105,52 +103,76 @@ $employees = [
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../index.php">
-                            <i class="bi bi-box-arrow-in-left"></i>Cerrar Sesión
+                            <a class="nav-link" href="#ubicacion">
+                                <i class="bi bi-geo-alt me-1"></i>Ubicación
                             </a>
                         </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../logout.php">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                </a>
+                            </li>
+                        <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../views/login.php">
+                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-<body>
+    <?php $employees = array_filter($employees, function($employee) use ($user_id) {
+        return $employee['id'] != $user_id; // Filtra la lista y elimina el usuario autenticado
+    }); ?>
 
     <div class="container-fluid">
         <div class="employee-grid">
             <?php foreach ($employees as $employee): ?>
-            <div class="employee-card animate__animated animate__fadeIn">
-                <div class="employee-card-header">
-                    <img src="<?php echo htmlspecialchars($employee['imagen']); ?>" alt="Foto de <?php echo htmlspecialchars($employee['nombre']); ?>">
-                </div>
-                <div class="employee-card-body">
-                    <h3><?php echo htmlspecialchars($employee['nombre'] . ' ' . $employee['apellido']); ?></h3>
-                    <p><strong>Cargo:</strong> <?php echo htmlspecialchars($employee['cargo']); ?></p>
-                    <p><strong>Salario:</strong> $<?php echo number_format($employee['salario'], 2); ?></p>
-                    <p><strong>Fecha de Contratación:</strong> <?php echo date('d/m/Y', strtotime($employee['fecha_contratacion'])); ?></p>
-                    <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($employee['telefono']); ?></p>
-                    <p><strong>Email:</strong> <?php echo htmlspecialchars($employee['email']); ?></p>
-                    
-                    <div class="employee-actions">
-                        <button class="btn btn-fire" disabled>
-                            <i class="bi bi-person-dash"></i> Despedir
-                        </button>
-                        <button class="btn btn-rehire" disabled>
-                            <i class="bi bi-person-plus"></i> Recontratar
-                        </button>
+                <div class="employee-card animate__animated animate__fadeIn">
+                    <div class="employee-card-header">
+                        <span class="badge-status <?php echo ($employee['estado'] == 'Activo' || !isset($employee['estado'])) ? 'status-active' : 'status-fired'; ?>">
+                            <?php echo isset($employee['estado']) ? htmlspecialchars($employee['estado']) : 'Activo'; ?>
+                        </span>
+                        <img src="<?php echo htmlspecialchars($employee['imagen']); ?>" alt="Foto de <?php echo htmlspecialchars($employee['nombre']); ?>">
+                    </div>
+                    <div class="employee-card-body">
+                        <h3><?php echo htmlspecialchars($employee['nombre'] . ' ' . $employee['apellido']); ?></h3>
+                        <p><strong>Cargo:</strong> <?php echo htmlspecialchars($employee['cargo']); ?></p>
+                        <p><strong>Salario:</strong> $<?php echo number_format($employee['salario'], 2); ?></p>
+                        <p><strong>Fecha de Contratación:</strong> <?php echo date('d/m/Y', strtotime($employee['fecha_contratacion'])); ?></p>
+                        <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($employee['telefono']); ?></p>
+                        <p><strong>Email:</strong> <?php echo htmlspecialchars($employee['email']); ?></p>
+                        
+                        <div class="employee-actions">
+                            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                                <input type="hidden" name="employee_id" value="<?php echo $employee['id']; ?>">
+                                
+                                <?php if (!isset($employee['estado']) || $employee['estado'] == 'Activo'): ?>
+                                    <input type="hidden" name="action" value="fire">
+                                    <button type="submit" class="btn btn-fire">
+                                        <i class="bi bi-person-dash"></i> Despedir
+                                    </button>
+                                <?php else: ?>
+                                    <input type="hidden" name="action" value="rehire">
+                                    <button type="submit" class="btn btn-rehire">
+                                        <i class="bi bi-person-plus"></i> Recontratar
+                                    </button>
+                                <?php endif; ?>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>
-    
-    
-        <!-- Bootstrap Bundle with Popper -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-        <script src="public/index.js"></script>
-        
+
+
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-</php>
