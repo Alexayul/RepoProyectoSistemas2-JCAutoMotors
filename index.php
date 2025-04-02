@@ -59,7 +59,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#ubicacion"
+                        <a class="nav-link" href="#ubicacion">
                             <i class="bi bi-geo-alt me-1"></i>Ubicación
                         </a>
                     </li>
