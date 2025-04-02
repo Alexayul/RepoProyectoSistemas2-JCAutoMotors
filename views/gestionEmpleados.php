@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="../logout.php">
+                                <a class="nav-link" href="../public/logout.php">
                                     <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                                 </a>
                             </li>
