@@ -85,9 +85,12 @@ try {
 </head>
 <body>
     <!-- Navegación -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <header class="site-header">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Concesionaria</a>
+        <div class="logo-container">
+                <img src="../public/logo.png" alt="JCAutomotors Logo" class="logo-img">
+            </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -132,29 +135,36 @@ try {
             </div>
         </div>
     </nav>
+                    </header>
 
     <main class="container mt-5">
         <h3>Lista de Motos Disponibles</h3>
         
-        <form method="POST" class="mb-4">
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="brand" class="form-label">Marca</label>
-                    <input type="text" id="brand" name="brand" class="form-control" value="<?php echo htmlspecialchars($brandFilter); ?>">
-                </div>
-                <div class="col-md-4">
-                    <label for="model" class="form-label">Modelo</label>
-                    <input type="text" id="model" name="model" class="form-control" value="<?php echo htmlspecialchars($modelFilter); ?>">
-                </div>
-                <div class="col-md-4">
-                    <label for="cc" class="form-label">Cilindrada</label>
-                    <input type="number" id="cc" name="cc" class="form-control" min="50" max="5000" oninput="filtrarMotos()">
-                    <small id="ccError" class="text-danger d-none">Ingrese un valor entre 50 y 5000</small>
-                </div>
+        <form method="POST" class="mb-4" id="filterForm">
+    <div class="row">
+        <div class="col-md-4">
+            <label for="brand" class="form-label">Marca</label>
+            <input type="text" id="brand" name="brand" class="form-control" value="<?php echo htmlspecialchars($brandFilter); ?>" oninput="filtrarMotos()">
+        </div>
+        <div class="col-md-4">
+            <label for="model" class="form-label">Modelo</label>
+            <input type="text" id="model" name="model" class="form-control" value="<?php echo htmlspecialchars($modelFilter); ?>" oninput="filtrarMotos()">
+        </div>
+        <div class="col-md-4">
+            <label for="cc" class="form-label" placeholder="Ingrese un valor entre 50 y 5000">Cilindrada</label>
+            <input type="number" id="cc" name="cc" class="form-control" min="50" max="5000" oninput="filtrarMotos()">
+            <small id="ccError" class="text-danger d-none">Ingrese un valor entre 50 y 5000</small>
+        </div>
+        <div class="row mt-3">
+    <div class="col-12 text-end">
+        <button type="button" class="btn btn-secondary" onclick="limpiarFiltros()">
+            <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+        </button>
+    </div>
+</div>
+    </div>
+</form>
 
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
-        </form>
 
         <div class="row">
             <?php if ($motocicletas): ?>
@@ -279,6 +289,139 @@ try {
                 </div>
             </div>
         </footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Referencias a los elementos del formulario
+    const brandInput = document.getElementById('brand');
+    const modelInput = document.getElementById('model');
+    const ccInput = document.getElementById('cc');
+    const ccError = document.getElementById('ccError');
+    
+    // Agregar manejadores de eventos a los campos de filtro
+    if (brandInput && modelInput && ccInput) {
+        brandInput.addEventListener('input', filtrarMotosTiempoReal);
+        modelInput.addEventListener('input', filtrarMotosTiempoReal);
+        ccInput.addEventListener('input', filtrarMotosTiempoReal);
+    }
+    
+    // Función para validar y filtrar en tiempo real
+    function filtrarMotosTiempoReal() {
+        // Validar el campo de cilindrada
+        if (ccInput.value !== '') {
+            const ccValue = parseInt(ccInput.value);
+            if (ccValue < 50 || ccValue > 5000) {
+                ccError.classList.remove('d-none');
+                return; // No continuar con el filtrado si el valor no es válido
+            } else {
+                ccError.classList.add('d-none');
+            }
+        } else {
+            ccError.classList.add('d-none');
+        }
+        
+        // Obtener los valores de filtro (convertidos a minúsculas para comparación insensible a mayúsculas)
+        const brandFilter = brandInput.value.toLowerCase().trim();
+        const modelFilter = modelInput.value.toLowerCase().trim();
+        const ccFilter = ccInput.value.trim();
+        
+        // Obtener todas las tarjetas de motos
+        const motoCards = document.querySelectorAll('.card');
+        
+        // Recorrer cada tarjeta y aplicar filtros
+        motoCards.forEach(card => {
+            const parentCol = card.closest('.col-md-4');
+            
+            // Extraer información de la tarjeta
+            const marca = card.querySelector('.card-text:nth-of-type(1)').textContent.toLowerCase();
+            const modelo = card.querySelector('.card-title').textContent.toLowerCase();
+            
+            // Obtener cilindrada desde el modal
+            const motoId = card.querySelector('.btn-primary').getAttribute('data-bs-target').replace('#modalDetalles', '');
+            const modalCilindrada = document.querySelector(`#modalDetalles${motoId} .modal-body p:nth-of-type(2)`);
+            let cilindrada = '';
+            
+            if (modalCilindrada) {
+                // Extraer solo el número de cilindrada
+                cilindrada = modalCilindrada.textContent.match(/\d+/g)[0];
+            }
+            
+            // Aplicar filtros
+            const coincideMarca = brandFilter === '' || marca.includes(brandFilter);
+            const coincideModelo = modelFilter === '' || modelo.includes(modelFilter);
+            const coincideCilindrada = ccFilter === '' || (cilindrada && parseInt(cilindrada) === parseInt(ccFilter));
+            
+            // Mostrar u ocultar la tarjeta según los filtros
+            if (coincideMarca && coincideModelo && (ccFilter === '' || coincideCilindrada)) {
+parentCol.style.display = 'block';
+                // Agregar una animación suave
+                card.classList.add('animate__animated', 'animate__fadeIn');
+                setTimeout(() => {
+                    card.classList.remove('animate__animated', 'animate__fadeIn');
+                }, 500);
+            } else {
+parentCol.style.display = 'none';
+            }
+        });
+        
+        // Verificar si hay resultados visibles
+        const visibleCards = document.querySelectorAll('.col-md-4[style="display: block;"]');
+        const resultsContainer = document.querySelector('.row');
+        
+        // Si no hay resultados, mostrar mensaje
+        let noResultsMsg = document.getElementById('noResultsMessage');
+        
+        if (visibleCards.length === 0) {
+            if (!noResultsMsg) {
+                noResultsMsg = document.createElement('div');
+noResultsMsg.id = 'noResultsMessage';
+                noResultsMsg.className = 'alert alert-info w-100';
+                noResultsMsg.textContent = 'No se encontraron motocicletas con los filtros seleccionados.';
+                resultsContainer.appendChild(noResultsMsg);
+            }
+        } else if (noResultsMsg) {
+            noResultsMsg.remove();
+        }
+    }
+    
+    // Función para limpiar los filtros
+    window.limpiarFiltros = function() {
+        brandInput.value = '';
+        modelInput.value = '';
+        ccInput.value = '';
+        ccError.classList.add('d-none');
+        
+        // Restaurar todas las tarjetas
+        const motoCards = document.querySelectorAll('.col-md-4');
+        motoCards.forEach(card => {
+card.style.display = 'block';
+        });
+        
+        // Eliminar mensaje de no resultados si existe
+        const noResultsMsg = document.getElementById('noResultsMessage');
+        if (noResultsMsg) {
+            noResultsMsg.remove();
+        }
+    }
+});
+ 
+// Función para el envío del formulario tradicional (por si se utiliza)
+function filtrarMotos() {
+    const ccInput = document.getElementById('cc');
+    const ccError = document.getElementById('ccError');
+    
+    // Validar el campo de cilindrada
+    if (ccInput.value !== '') {
+        const ccValue = parseInt(ccInput.value);
+        if (ccValue < 50 || ccValue > 5000) {
+            ccError.classList.remove('d-none');
+            return false; // Prevenir el envío del formulario
+        } else {
+            ccError.classList.add('d-none');
+        }
+    }
 
+    return true;
+}
+</script>
 </body>
 </html>
