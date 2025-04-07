@@ -49,7 +49,7 @@ try {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Racing+Sans+One&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="../public/catalogos.css">
+    <link rel="stylesheet" href="../public/catalogo.css">
 </head>
 <body>
   
