@@ -135,7 +135,7 @@ try {
                             <i class="bi bi-printer me-1"></i> Imprimir
                         </button>
                         <button type="button" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-download me-1"></i> Exportar
+                            <i class="bi bi-upload me-1"></i> Exportar
                         </button>
                     </div>
                 </div>
