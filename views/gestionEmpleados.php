@@ -178,7 +178,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <i class="bi bi-plus-circle me-1"></i>Nuevo Empleado
                 </a>
                 <a href="#" class="btn btn-dark">
-                    <i class="bi bi-file-earmark-excel me-1"></i>Exportar
+                    <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>
         </div>
