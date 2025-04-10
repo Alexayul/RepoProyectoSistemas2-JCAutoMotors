@@ -9,7 +9,6 @@ function sanitizeInput($input) {
     return $input; 
 } 
 
-// Función para validar contraseña segura
 function isSecurePassword($password) {
     // Mínimo 8 caracteres
     if (strlen($password) < 8) {
@@ -75,34 +74,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($form_data['password'] !== $form_data['confirm_password']) {
             $errors[] = "Las contraseñas no coinciden";
         }
-        
-        // Aquí puedes agregar validaciones adicionales como verificar si el usuario o email ya existen
-        // Por ejemplo:
-        /*
-        $sql = "SELECT COUNT(*) FROM usuarios WHERE email = ?";
+
+        // Verificar si el correo ya existe
+                // Para verificar si el correo ya existe
+        $sql = "SELECT COUNT(*) FROM PERSONA WHERE email = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $form_data['email']);
+        $stmt->bindParam(1, $form_data['email']);
         $stmt->execute();
-        $stmt->bind_result($count);
-        $stmt->fetch();
-        $stmt->close();
-        
+        $count = $stmt->fetchColumn();
+
         if ($count > 0) {
             $errors[] = "El correo electrónico ya está registrado";
         }
-        
-        $sql = "SELECT COUNT(*) FROM usuarios WHERE usuario = ?";
+
+        $sql = "SELECT COUNT(*) FROM USUARIO WHERE usuario = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $form_data['usuario']);
+        $stmt->bindParam(1, $form_data['usuario']);
         $stmt->execute();
-        $stmt->bind_result($count);
-        $stmt->fetch();
-        $stmt->close();
-        
+        $count = $stmt->fetchColumn();
+
         if ($count > 0) {
             $errors[] = "El nombre de usuario ya está en uso";
         }
-        */
     }
     
     // Si hay errores, guardarlos en la sesión y redirigir
@@ -113,12 +106,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     } else {
         // Procesar el registro si no hay errores
-        // Aquí iría tu código para insertar el usuario en la base de datos
+        try {
+            // Start transaction manually
+            $conn->exec('BEGIN');
+            
+            // Extract nombre and apellido from nombre field
+            $nombre_completo = explode(' ', trim($form_data['nombre']), 2);
+            $nombre = $nombre_completo[0];
+            $apellido = isset($nombre_completo[1]) ? $nombre_completo[1] : '';
+            
+            // Hash the password
+            $hashed_password = hash('sha256', $form_data['password']);
+            
+            // Insert into PERSONA table
+            $sql_persona = "INSERT INTO PERSONA (_id, nombre, apellido, telefono, direccion, email, documento_identidad) 
+            VALUES (NULL, ?, ?, NULL, '', ?, NULL)";
         
-        // Después del registro exitoso, redirigir a la página de inicio de sesión
-        $_SESSION['registro_exitoso'] = "¡Registro exitoso! Ya puedes iniciar sesión.";
-        header("Location: login.php");
-        exit;
+            $stmt_persona = $conn->prepare($sql_persona);
+            $stmt_persona->bindParam(1, $nombre);
+            $stmt_persona->bindParam(2, $apellido);
+            $stmt_persona->bindParam(3, $form_data['email']);
+            $stmt_persona->execute();
+        
+            // Get the ID of the newly inserted person
+            $id_persona = $conn->lastInsertId();
+        
+            // Insert into USUARIO table
+            $sql_usuario = "INSERT INTO USUARIO (_id, id_persona, usuario, password, id_rol) 
+            VALUES (NULL, ?, ?, ?, 3)";
+        
+            $stmt_usuario = $conn->prepare($sql_usuario);
+            $stmt_usuario->bindParam(1, $id_persona);
+            $stmt_usuario->bindParam(2, $form_data['usuario']);
+            $stmt_usuario->bindParam(3, $hashed_password);
+            $stmt_usuario->execute();
+            
+            // Commit the transaction
+            $conn->exec('COMMIT');
+            
+            // After successful registration, redirect to login page
+            $_SESSION['registro_exitoso'] = "¡Registro exitoso! Ya puedes iniciar sesión.";
+            header("Location: login.php");
+            exit;
+            
+        } catch (Exception $e) {
+            // Rollback the transaction in case of error
+            $conn->exec('ROLLBACK');
+            
+            // Save the error and redirect
+            $_SESSION['registro_errors'] = ["Error al registrar el usuario: " . $e->getMessage()];
+            $_SESSION['form_data'] = $form_data;
+            header("Location: registro.php");
+            exit;
+        }
     }
 } 
 ?>
