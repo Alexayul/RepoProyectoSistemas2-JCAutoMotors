@@ -33,7 +33,7 @@ try {
 // Query to get employee data with JOIN to get all needed information
 $query = "SELECT e._id as id, p.nombre, p.apellido, e.cargo, e.salario, 
          e.fecha_contratacion, p.telefono, p.email, e.estado, 
-         COALESCE(p.foto_url, 'https://cdn-icons-png.flaticon.com/512/17320/17320345.png') as imagen
+         COALESCE(e.foto, 'https://cdn-icons-png.flaticon.com/512/17320/17320345.png') as imagen
          FROM EMPLEADO e
          JOIN PERSONA p ON e._id = p._id
          ORDER BY p.nombre ASC";
@@ -47,7 +47,7 @@ try {
 }
 
 // Get user profile data
-$userQuery = "SELECT p.nombre, p.apellido, p.foto_url, e.cargo
+$userQuery = "SELECT p.nombre, p.apellido, e.foto, e.cargo
               FROM PERSONA p
               LEFT JOIN EMPLEADO e ON p._id = e._id
               WHERE p._id = :user_id";
@@ -60,7 +60,7 @@ try {
     $userData = [
         'nombre' => 'Usuario',
         'apellido' => '',
-        'foto_url' => 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png',
+        'foto' => 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png',
         'cargo' => 'No especificado'
     ];
 }
@@ -114,11 +114,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <!-- User Profile Section -->
         <div class="user-profile">
             <div class="user-avatar">
-                <img src="<?php echo htmlspecialchars($userData['foto_url'] ?? 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png'); ?>" alt="User">
+                <img src="<?php echo htmlspecialchars($userData['foto'] ?? 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png'); ?>" alt="User">
             </div>
             <div class="user-info">
                 <h5 class="user-name"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
-                <p class="user-role"><?php echo htmlspecialchars($userData['cargo'] ?? 'Usuario'); ?></p>
+                <p class="user-role">Administrador</p>
             </div>
         </div>
         

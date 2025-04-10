@@ -104,13 +104,13 @@ try {
     foreach ($ventas_mensuales as $venta) {
         $mantenimientos_mensuales[] = [
             'mes' => $venta['mes'],
-            'total' => $venta['total'] * 0.3 // 30% de las ventas como mantenimientos
+            'total' => $venta['total'] * 0.3
         ];
     }
 }
 
 // Datos del usuario
-$userQuery = "SELECT p.nombre, p.apellido, p.foto_url, e.cargo
+$userQuery = "SELECT p.nombre, p.apellido, e.foto, e.cargo
               FROM PERSONA p
               LEFT JOIN EMPLEADO e ON p._id = e._id
               WHERE p._id = :user_id";
@@ -123,7 +123,7 @@ try {
     $userData = [
         'nombre' => 'Usuario',
         'apellido' => '',
-        'foto_url' => 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png',
+        'foto' => 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png',
         'cargo' => 'No especificado'
     ];
 }
@@ -156,10 +156,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <!-- User Profile Section -->
         <div class="user-profile">
             <div class="user-avatar">
-                <img src="<?php echo htmlspecialchars($userData['foto_url'] ?? 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png'); ?>" alt="User">
+                <img src="<?php echo htmlspecialchars($userData['foto'] ?? 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png'); ?>" alt="User">
             </div>
             <div class="user-info">
-                <h5 class="user-name"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
+            <h5 class="user-name"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
                 <p class="user-role">Administrador</p>
             </div>
         </div>
