@@ -413,23 +413,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Mensajes de error/éxito */
-.error-message {
-    color: red;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.success-message {
-    color: green;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.error-container {
-    margin-bottom: 20px;
-}
-
 /* Responsive */
 @media (max-width: 992px) {
     .right-content {
