@@ -231,14 +231,12 @@ body {
 }
 
 .custom-container {
-    width: 85%;
+    width: 78%;
     padding-left: 25px;
     padding-right: 25px;
     margin-left: auto;   
     margin-right: auto; 
 }
-
-
 .motorcycle-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -283,7 +281,7 @@ body {
 
 .motorcycle-details h2 {
     color: var(--dark);
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     margin-bottom: 10px;
     font-weight: 600;
     text-transform: uppercase;
@@ -309,7 +307,7 @@ body {
 
 .btn-details {
     background: var(--primary);
-    color: white;
+    color: rgb(227, 227, 227);
     border: none;
     padding: 12px 25px;
     border-radius: 30px;
@@ -325,8 +323,9 @@ body {
 }
 
 .btn-details:hover {
-    background: var(--primary-light);
+    background: var(--primary-dark);
     transform: translateY(-3px);
+    color: white;
     box-shadow: 0 5px 15px rgba(165, 19, 20, 0.4);
 }
 
@@ -356,20 +355,28 @@ body {
 
 /* Modal Styles */
 .modal-content {
-    background: #1a1a1a;
-    color: white;
+    background: #ffffff;
+    color: rgb(22, 21, 21);
     border: 1px solid rgba(165, 19, 20, 0.3);
 }
 
 .modal-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(104, 21, 21, 0.901);
 }
-
 .modal-header .btn-close {
-    filter: invert(1);
-    opacity: 0.8;
+    filter: none;
+    background: rgba(104, 21, 21, 0.9) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    width: 1.8em;
+    height: 1.8em;
+    padding: 0.25em;
+    border-radius: 50%;
+    opacity: 1;
+    transition: all 0.3s;
 }
 
+.modal-header .btn-close:hover {
+    background-color: rgba(104, 21, 21, 1);
+}
 .motorcycle-specs {
     padding: 20px 0;
 }
@@ -382,12 +389,12 @@ body {
 }
 
 .spec-label {
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
+    color: rgba(0, 0, 0, 0.805);
+    font-weight: 550;
 }
 
 .spec-value {
-    color: white;
+    color: rgb(111, 16, 16);
     font-weight: 600;
 }
 
@@ -405,6 +412,7 @@ body {
 .btn-primary:hover {
     background-color: var(--primary-light);
     border-color: var(--primary-light);
+    color: white;
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
@@ -595,5 +603,96 @@ footer {
     .motorcycle-card img,
     .btn-details {
         transition: all 0.3s ease;
+    }
+}
+/* Features Section Styles */
+.features-section {
+    padding: 20px 0;
+    margin-top: -10px;
+    position: relative;
+    z-index: 10;
+}
+
+.included-features {
+    border-radius: 12px;
+    padding: 0px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.included-features h3 {
+    color: var(--light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
+.feature-item {
+    text-align: center;
+    background-color: rgba(26, 26, 26, 0.8);
+    border-radius: 8px;
+    padding: 20px 15px;
+    height: 100%;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--medium-gray);
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    border-color: var(--primary);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--primary);
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover .feature-icon {
+    transform: scale(1.2);
+    color: var(--primary-light);
+}
+
+.feature-item h5 {
+    color: var(--light);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.feature-item p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.special-feature {
+    background-color: rgba(165, 19, 20, 0.15);
+    border: 2px solid rgba(165, 19, 20, 0.5);
+}
+
+.special-feature .feature-icon {
+    color: var(--primary-light);
+}
+
+@media (max-width: 767px) {
+    .features-section {
+        margin-top: -20px;
+        padding: 30px 0;
+    }
+    
+    .included-features {
+        padding: 20px;
+    }
+    
+    .feature-item {
+        padding: 15px 10px;
+        margin-bottom: 15px;
+    }
+    
+    .feature-icon {
+        font-size: 2rem;
     }
 }

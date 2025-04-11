@@ -126,8 +126,61 @@ try {
 </p>
         </div>
     </section>
-
-    <main class="custom-container mt-5 pt-5">
+    <br>
+    <section class="features-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="included-features">
+                    <h3 class="text-center mb-4">Todas nuestras motocicletas incluyen</h3>
+                    <div class="row g-4">
+                        <div class="col-md-3 col-6">
+                            <div class="feature-item">
+                                <i class="bi bi-file-earmark-check feature-icon"></i>
+                                <h5>RUAT</h5>
+                                <p>Documentos oficiales al día</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="feature-item">
+                                <i class="bi bi-shield-check feature-icon"></i>
+                                <h5>1 año</h5>
+                                <p>De garatía del motorizado</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="feature-item">
+                                <i class="bi bi-box-seam feature-icon"></i>
+                                <h5>Importación</h5>
+                                <p>Pólizas de importación completa</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="feature-item">
+                                <i class="bi bi-123 feature-icon"></i>
+                                <h5>Placa</h5>
+                                <p>Placa oficial incluida</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-item special-feature">
+                                <i class="bi bi-gift feature-icon"></i>
+                                <h5>Casco original certificado</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-item special-feature">
+                                <i class="bi bi-gift feature-icon"></i>
+                                <h5>Primer mantenimiento gratis</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <main class="custom-container mt-3 pt-3">
     <form method="GET" class="mb-4">
         <div class="d-flex justify-content-start align-items-center flex-wrap">
             <label for="brandFilter" class="me-2" style="color:white">Filtrar por marca:</label>
@@ -147,7 +200,7 @@ try {
 </main>
 
 
-<main class="custom-container mt-5 pt-5">    
+<main class="custom-container mt-2 pt-2">    
     <?php if ($motocicletas): ?>
         <div class="row motorcycle-grid">
             <?php foreach ($motocicletas as $moto): ?>
@@ -161,9 +214,7 @@ try {
                              alt="<?php echo htmlspecialchars($moto['modelo']); ?>"
                              onerror="this.src='<?php echo $defaultImage; ?>'">
                         <div class="motorcycle-details">
-                            <h2><?php echo htmlspecialchars($moto['modelo']); ?></h2>
-                            <h6><?php echo htmlspecialchars($moto['marca']); ?></h6>
-                            <div class="price">Bs. <?php echo number_format($moto['precio']); ?></div>
+                        <h2><?php echo htmlspecialchars($moto['marca'] . ' ' . $moto['modelo']); ?></h2>                            <div class="price">$ <?php echo number_format($moto['precio']); ?></div>
                             <button class="btn btn-details" data-bs-toggle="modal" data-bs-target="#motorcycleModal"
                                     data-marca="<?php echo htmlspecialchars($moto['marca']); ?>"
                                     data-modelo="<?php echo htmlspecialchars($moto['modelo']); ?>"
@@ -185,51 +236,59 @@ try {
     <?php endif; ?>
 </main>
 
-    <!-- Motorcycle Details Modal -->
-    <div class="modal fade" id="motorcycleModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
+<div class="modal fade" id="motorcycleModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle" style="font-weight: 600;"></h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="color:#701106"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
                         <img id="modalImage" src="" alt="Imagen de la motocicleta" class="img-fluid rounded">
-                        </div>
-                        <div class="col-md-6">
-                            <div class="motorcycle-specs">
-                                <div class="spec-item">
-                                    <span class="spec-label">Marca:</span>
-                                    <span class="spec-value" id="modalBrand"></span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Modelo:</span>
-                                    <span class="spec-value" id="modalModel"></span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Cilindrada:</span>
-                                    <span class="spec-value" id="modalCilindrada"></span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Color:</span>
-                                    <span class="spec-value" id="modalColor"></span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Precio:</span>
-                                    <span class="spec-value" id="modalPrice"></span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Estado:</span>
-                                    <span class="spec-value" id="modalState"></span>
-                                </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="motorcycle-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Marca:</span>
+                                <span class="spec-value" id="modalBrand"></span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Modelo:</span>
+                                <span class="spec-value" id="modalModel"></span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Cilindrada:</span>
+                                <span class="spec-value" id="modalCilindrada"></span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Color:</span>
+                                <span class="spec-value" id="modalColor"></span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Precio($):</span>
+                                <span class="spec-value" id="modalPrice"></span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Precio(Bs.):</span>
+                                <span class="spec-value" id="modalPrice2"></span>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="row mt-2">
+                    <div class="col-12 text-center">
+                        <a id="whatsappButton" class="btn btn-success btn-lg" target="_blank" style="background-color: #a51314; border-color: #a51314;">
+                            <i class="bi bi-whatsapp me-2"></i> Consultar por WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <br>
             </div>
         </div>
     </div>
+</div>
 
     <footer>
         <div class="container">
@@ -281,58 +340,56 @@ try {
     </footer>
 
     <script src="../public/catalogo.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const whatsappButton = document.getElementById('whatsappButton');
+
+    // Función para configurar el mensaje de WhatsApp
+    const setupWhatsAppButton = (marca = 'su motocicleta', modelo = '', precio = '') => {
+        //numero tienda a cambiar: 62466711
+        const whatsappNumber = "59171241656";
+        let mensaje = `Hola, estoy interesado en ${marca}`;
+        
+        if (modelo) mensaje += ` ${modelo}`;
+        if (precio) mensaje += ` (Precio: $${precio})`;
+
+        mensaje += `. ¿Podrían darme más información?`;
+
+        const encodedMessage = encodeURIComponent(mensaje);
+        const url = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+        whatsappButton.setAttribute('href', url);
+    };
+
+    // Detectar si hay modal y guardar los datos
     const modal = document.getElementById('motorcycleModal');
-    modal.addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const modalImage = document.getElementById('modalImage');
+    if (modal) {
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            if (button) {
+                const marca = button.getAttribute('data-marca') || '';
+                const modelo = button.getAttribute('data-modelo') || '';
+                const precio = button.getAttribute('data-precio') || '';
 
-        const imagePathFromDB = button.dataset.imagen; 
-
-        if(imagePathFromDB) {
-            modalImage.src = '../' + imagePathFromDB;
-
-            modalImage.onerror = function() {
-                this.src = `https://via.placeholder.com/600x400?text=${encodeURIComponent(button.dataset.marca)}+${encodeURIComponent(button.dataset.modelo)}`;
-            };
-        } else {
-            const modelo = button.dataset.modelo.toLowerCase().replace(/\s+/g, '');
-            const extensions = ['jpg', 'jpeg', 'png', 'webp', 'jfif'];
-            
-            function tryImageExtension(index) {
-                if (index >= extensions.length) {
-                    modalImage.src = `https://via.placeholder.com/600x400?text=${encodeURIComponent(button.dataset.marca)}+${encodeURIComponent(button.dataset.modelo)}`;
-                    return;
-                }
-                
-                const ext = extensions[index];
-                const testImage = new Image();
-                testImage.src = `../imagenes/motos/${modelo}.${ext}`;
-                
-                testImage.onload = function() {
-                    if (this.width > 0) {
-                        modalImage.src = this.src;
-                    } else {
-                        tryImageExtension(index + 1);
-                    }
-                };
-                
-                testImage.onerror = function() {
-                    tryImageExtension(index + 1);
-                };
+                // Guardar en el botón
+                whatsappButton.setAttribute('data-marca', marca);
+                whatsappButton.setAttribute('data-modelo', modelo);
+                whatsappButton.setAttribute('data-precio', precio);
             }
-            
-            tryImageExtension(0);
-        }
-        document.getElementById('modalBrand').textContent = button.dataset.marca;
-        document.getElementById('modalModel').textContent = button.dataset.modelo;
-        document.getElementById('modalCilindrada').textContent = button.dataset.cilindrada + ' cc';
-        document.getElementById('modalColor').textContent = button.dataset.color;
-        document.getElementById('modalPrice').textContent = 'Bs. ' + button.dataset.precio;
-        document.getElementById('modalState').textContent = button.dataset.estado;
+        });
+    }
+
+    // Al hacer clic, configurar y abrir WhatsApp
+    whatsappButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const marca = this.getAttribute('data-marca') || 'su motocicleta';
+        const modelo = this.getAttribute('data-modelo') || '';
+        const precio = this.getAttribute('data-precio') || '';
+
+        setupWhatsAppButton(marca, modelo, precio);
+        window.open(this.href, '_blank');
     });
 });
-    </script>
+</script>
 </body>
 </html>
