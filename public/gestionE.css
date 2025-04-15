@@ -429,3 +429,104 @@ body {
   visibility: visible;
   opacity: 1;
 }
+.modal-header {
+  background-color: var(--primary);
+  color: var(--light);
+  border-radius: 0;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.modal-content {
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  margin: 1rem;
+  max-width: 100%;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--light-gray);
+  background-color: var(--light);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  color: var(--gray);
+  font-size: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.25rem rgba(165, 19, 20, 0.25);
+}
+
+.form-text {
+  font-size: 0.8rem;
+  color: var(--gray);
+}
+
+.alert-success {
+  background-color: var(--success-light);
+  border-color: var(--success-light);
+  color: var(--success);
+  padding: 1rem;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.upload-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 10px auto;
+  display: block;
+  border: 2px solid var(--light-gray);
+}
+
+/* Para pantallas grandes, reducimos el tamaño */
+@media (min-width: 768px) {
+  .modal-header {
+      font-size: 1rem;
+  }
+
+  .form-label,
+  .form-control {
+      font-size: 0.9rem;
+  }
+
+  .upload-preview {
+      width: 80px;
+      height: 80px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .modal-header {
+      font-size: 0.9rem;
+  }
+
+  .form-label,
+  .form-control {
+      font-size: 0.8rem;
+  }
+
+  .upload-preview {
+      width: 60px;
+      height: 60px;
+  }
+}
