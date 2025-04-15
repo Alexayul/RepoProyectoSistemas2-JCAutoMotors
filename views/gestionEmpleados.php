@@ -302,7 +302,6 @@ try {
 } catch (PDOException $e) {
     die("Error en la consulta: " . $e->getMessage());
 }
-
 // Obtener datos del perfil del usuario
 $userQuery = "SELECT p.nombre, p.apellido, e.foto, e.cargo
               FROM PERSONA p
@@ -355,7 +354,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
             <div class="user-info">
                 <h5 class="user-name"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
-                <p class="user-role"><?php echo htmlspecialchars($userData['cargo'] ?? 'Usuario'); ?></p>
+                <p class="user-role">Administrador</p>
             </div>
         </div>
         

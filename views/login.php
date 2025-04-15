@@ -1,5 +1,13 @@
 <?php
 session_start();
+
+// Obtener mensaje de error si existe
+$login_error = isset($_SESSION['login_error']) ? $_SESSION['login_error'] : '';
+// Limpiar mensaje de error para que no persista en futuras cargas
+if (isset($_SESSION['login_error'])) {
+    unset($_SESSION['login_error']);
+}
+
 require_once '../config/conexion.php';
 
 function loginError($mensaje = "Usuario o contraseña incorrectos") {
@@ -66,84 +74,114 @@ function iniciarSesion($user) {
     <link rel="stylesheet" href="../public/transiciones.css"> 
     <script src="../public/transiciones.js"></script> 
     <style>
-        /* Alertas */
+        /* Estilo Tailwind para alertas */
         .alert-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            max-width: 350px;
-            width: 100%;
+            top: 1rem;
+            right: 1rem;
+            z-index: 50;
+            max-width: 24rem;
         }
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
+
+        .alert-tailwind {
             display: flex;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            margin-bottom: 15px;
-            position: relative;
             overflow: hidden;
             animation: slideIn 0.5s forwards;
         }
-        
-        .alert-error {
-            background-color: #FFEBEE;
-            border-left: 4px solid #F44336;
-            color: #D32F2F;
+
+        .alert-tailwind-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            background-color: #FEE2E2;
+            border-radius: 0.375rem;
+            margin-right: 0.75rem;
         }
-        
-        .alert-icon {
-            margin-right: 15px;
-            font-size: 24px;
+
+        .alert-tailwind-icon i {
+            font-size: 1.25rem;
+            color: #DC2626;
         }
-        
-        .alert-message {
+
+        .alert-tailwind-content {
             flex-grow: 1;
         }
-        
-        .alert-close {
-            margin-left: 15px;
+
+        .alert-tailwind-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #1F2937;
+            margin: 0;
+        }
+
+        .alert-tailwind-message {
+            font-size: 0.875rem;
+            color: #6B7280;
+            margin: 0.25rem 0 0 0;
+        }
+
+        .alert-tailwind-close {
+            flex-shrink: 0;
+            margin-left: 0.75rem;
+            background: none;
+            border: none;
             cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s;
+            color: #9CA3AF;
+            font-size: 1.25rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        
-        .alert-close:hover {
-            opacity: 1;
+
+        .alert-tailwind-close:hover {
+            color: #4B5563;
         }
-        
+
+        /* Variante de error */
+        .alert-tailwind-error .alert-tailwind-icon {
+            background-color: #FEE2E2;
+        }
+
+        .alert-tailwind-error .alert-tailwind-icon i {
+            color: #DC2626;
+        }
+
+        /* Variante de éxito */
+        .alert-tailwind-success .alert-tailwind-icon {
+            background-color: #D1FAE5;
+        }
+
+        .alert-tailwind-success .alert-tailwind-icon i {
+            color: #059669;
+        }
+
+        /* Animaciones */
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        
+
         @keyframes slideOut {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
-            .login-container {
-                flex-direction: column;
-                height: auto;
-                width: 100%;
-                max-width: 100%;
-            }
-            
-            .left-panel {
-                display: none;
-            }
-            
-            .right-panel {
-                padding: 30px;
-            }
-            
             .alert-container {
-                max-width: calc(100% - 40px);
-                left: 20px;
-                right: auto;
+                left: 1rem;
+                right: 1rem;
+                max-width: none;
             }
         }
     </style>
@@ -151,10 +189,17 @@ function iniciarSesion($user) {
 <body>
 <?php if (!empty($login_error)): ?>
     <div class="alert-container">
-        <div class="alert alert-error" id="errorAlert">
-            <i class="bi bi-exclamation-triangle-fill alert-icon"></i>
-            <div class="alert-message"><?php echo htmlspecialchars($login_error); ?></div>
-            <i class="bi bi-x alert-close" onclick="closeAlert()"></i>
+        <div class="alert-tailwind" id="errorAlert">
+            <div class="alert-tailwind-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div class="alert-tailwind-content">
+                <p class="alert-tailwind-title">Error</p>
+                <p class="alert-tailwind-message"><?php echo htmlspecialchars($login_error); ?></p>
+            </div>
+            <button type="button" class="alert-tailwind-close" onclick="closeAlert()">
+                <i class="bi bi-x"></i>
+            </button>
         </div>
     </div>
 <?php endif; ?>
@@ -227,6 +272,14 @@ function iniciarSesion($user) {
         document.getElementById('to-register-btn').addEventListener('click', function() {
             window.location.href = 'registro.php';
         });
+        function closeAlert() {
+    
+            const alert = document.getElementById('errorAlert');
+    if (alert) {
+        alert.style.animation = 'slideOut 0.5s forwards';
+        setTimeout(() => alert.remove(), 500);
+    }
+}
     </script>
 </body>
 </html>
