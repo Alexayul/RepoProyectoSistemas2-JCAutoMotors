@@ -87,7 +87,7 @@ try {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="ventas.php">
+                        <a class="nav-link text-white" href="ventasE.php">
                             <i class="bi bi-credit-card me-2"></i>Ventas
                         </a>
                     </li>
