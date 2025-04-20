@@ -100,7 +100,7 @@ try {
         <nav id="sidebar" class="sidebar">
             <div class="d-flex flex-column h-100">
                 <div class="text-center mb-4">
-                    <img src="../public/logo.png" alt="JC Automotors" class="img-fluid" style="max-height: 150px;">
+                    <img src="../public/logo.png" alt="JC Automotors" class="img-fluid" style="max-height: 180px;">
                 </div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -114,7 +114,7 @@ try {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="ventas.php">
+                        <a class="nav-link text-white" href="ventasE.php">
                             <i class="bi bi-credit-card me-2"></i>Ventas
                         </a>
                     </li>
