@@ -64,38 +64,73 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Función para obtener datos del empleado mediante AJAX
     function fetchEmployeeData(employeeId) {
-        fetch(`?get_employee_data=1&id=${employeeId}`, {
+        fetch(`gestionEmpleados.php?get_employee_data=1&id=${employeeId}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Llenar el formulario con los datos recibidos
-                document.getElementById('edit_employee_id').value = data.employee._id || data.employee.id;
-                document.getElementById('edit_nombre').value = data.employee.nombre || '';
-                document.getElementById('edit_apellido').value = data.employee.apellido || '';
-                document.getElementById('edit_documento_identidad').value = data.employee.documento_identidad || '';
-                document.getElementById('edit_telefono').value = data.employee.telefono || '';
-                document.getElementById('edit_email').value = data.employee.email || '';
-                document.getElementById('edit_cargo').value = data.employee.cargo || '';
-                document.getElementById('edit_salario').value = data.employee.salario || '';
-                document.getElementById('edit_id_rol').value = data.employee.id_rol || '2';
-                document.getElementById('edit_usuario').value = data.employee.usuario || '';
-                document.getElementById('foto_actual').value = data.employee.imagen || data.employee.foto || 'https://cdn-icons-png.flaticon.com/512/17320/17320345.png';
-                document.getElementById('edit-foto-preview').src = data.employee.imagen || data.employee.foto || 'https://cdn-icons-png.flaticon.com/512/17320/17320345.png';
-            } else {
-                alert('Error al cargar los datos del empleado');
+        .then(response => {
+            // Primero verifica si la respuesta es OK
+            if (!response.ok) {
+                throw new Error(`Error HTTP! estado: ${response.status}`);
             }
+            
+            // Verifica el contenido de la respuesta
+            return response.text().then(text => {
+                if (!text.trim()) {
+                    throw new Error("La respuesta está vacía");
+                }
+                
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error("Texto de respuesta no válido:", text);
+                    throw new Error("La respuesta no es JSON válido");
+                }
+            });
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al comunicarse con el servidor');
-        });
-    }
+    .then(data => {
+        if (data.success) {
+            console.log("Datos recibidos:", data); // Para depuración
+            
+            // Llenar el formulario con los datos recibidos
+            const emp = data.employee;
+            document.getElementById('edit_employee_id').value = emp._id || emp.id;
+            document.getElementById('edit_nombre').value = emp.nombre || '';
+            document.getElementById('edit_apellido').value = emp.apellido || '';
+            document.getElementById('edit_documento_identidad').value = emp.documento_identidad || '';
+            document.getElementById('edit_telefono').value = emp.telefono || '';
+            document.getElementById('edit_email').value = emp.email || '';
+            document.getElementById('edit_cargo').value = emp.cargo || '';
+            document.getElementById('edit_salario').value = emp.salario || '';
+            document.getElementById('edit_id_rol').value = emp.id_rol || '2';
+            document.getElementById('edit_usuario').value = emp.usuario || '';
+            
+            // Manejo de la imagen
+            const previewImg = document.getElementById('edit-foto-preview');
+            if (previewImg) {
+                if (emp.imagen && (emp.imagen.startsWith('data:image') || emp.imagen === DEFAULT_AVATAR)) {
+                    previewImg.src = emp.imagen;
+                    document.getElementById('foto_actual').value = emp.imagen;
+                } else {
+                    // Si hay problema con la imagen, usar la predeterminada
+                    previewImg.src = DEFAULT_AVATAR;
+                    document.getElementById('foto_actual').value = DEFAULT_AVATAR;
+                }
+            }
+        } else {
+            const errorMsg = data.error || 'Error desconocido del servidor';
+            console.error('Error del servidor:', errorMsg);
+            alert(`Error al cargar datos: ${errorMsg}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error en fetch:', error);
+        alert(`Error de conexión: ${error.message}`);
+    });
+}
     
     // Si hay una notificación, ocultarla después de 5 segundos
     const alerts = document.querySelectorAll('.alert');

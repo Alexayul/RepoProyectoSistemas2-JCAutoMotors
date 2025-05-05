@@ -1,5 +1,4 @@
 <?php
-// Incluir la conexión a la base de datos
 include '../config/conexion.php';
 
 // Iniciar sesión
@@ -7,7 +6,6 @@ session_start();
 
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['user'])) {
-    // Si no está logueado, redirigir a la página de login
     header('Location: login.php');
     exit;
 }
@@ -60,7 +58,7 @@ try {
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="../public/CatalogoAccesoriosE.css">
+    <link rel="stylesheet" href="../public/css/CatalogoAccesoriosE.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -68,8 +66,6 @@ try {
 </head>
 <body>
     <div class="container-fluid p-0">
-        <!-- Sidebar -->
-         <!-- Sidebar -->
          <nav id="sidebar" class="sidebar">
             <div class="d-flex flex-column h-100">
                 <div class="text-center mb-4">
@@ -87,7 +83,7 @@ try {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="ventas.php">
+                        <a class="nav-link text-white" href="ventasE.php">
                             <i class="bi bi-credit-card me-2"></i>Ventas
                         </a>
                     </li>

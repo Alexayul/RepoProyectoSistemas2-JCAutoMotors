@@ -1,28 +1,96 @@
-<php?>
+<?php
+include 'config/conexion.php';
+function getColorCode($colorName) {
+    $colorMap = [
+        'Rojo' => '#dc3545',
+        'Azul' => '#0d6efd',
+        'Negro' => '#000000',
+        'Blanco' => '#ffffff',
+        'Verde' => '#28a745',
+        'Amarillo' => '#ffc107',
+        'Gris' => '#6c757d',
+        'Naranja' => '#fd7e14',
+        'Morado' => '#6f42c1',
+        'Rosado' => '#e83e8c',
+        'Negro Mate' => '#0a0a0a',
+        'Turquesa' => '#40e0d0', 
+        'Blanco combinado' => '#f8f9fa',
+      // Añade más colores según necesites
+    ];
+    
+    return $colorMap[$colorName] ?? '#6c757d'; // Color por defecto (gris)
+}
+
+try {
+    // Consulta principal para obtener las 3 motos más vendidas
+    $sql = "SELECT 
+        dv.id_producto,
+        m._id,
+        mm.marca,
+        mm.modelo,
+        mm.imagen,
+        m.color,
+        m.precio,
+        COUNT(dv.id_producto) AS total_ventas
+    FROM 
+        DETALLE_VENTA dv
+    JOIN 
+        MOTOCICLETA m ON dv.id_producto = m._id
+    JOIN 
+        MODELO_MOTO mm ON m.id_modelo = mm._id
+    WHERE 
+        dv.tipo_producto = 'motocicleta'
+    GROUP BY 
+        dv.id_producto, m._id, mm.marca, mm.modelo, m.color, m.precio, mm.imagen
+    ORDER BY 
+        total_ventas DESC
+    LIMIT 3";
+
+    $stmt = $conn->query($sql);
+    $motosMasVendidas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($motosMasVendidas)) {
+        $backupSql = "SELECT 
+            m._id,
+            mm.marca,
+            mm.modelo,
+            mm.imagen,
+            m.color,
+            m.precio,
+            'N/A' AS total_ventas  
+        FROM 
+            MOTOCICLETA m
+        JOIN 
+            MODELO_MOTO mm ON m.id_modelo = mm._id
+        ORDER BY RAND()  -- Orden aleatorio para variedad
+        LIMIT 3";
+        
+        $backupStmt = $conn->query($backupSql);
+        $motosMasVendidas = $backupStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (PDOException $e) {
+    error_log("Error en la consulta: " . $e->getMessage());
+    $motosMasVendidas = []; 
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JCAutomotors - Inicio</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Animate.css para algunas animaciones predefinidas -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Racing+Sans+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="public/index.css">
-    <link rel="stylesheet" href="public/transiciones.css">
-    
+    <link rel="stylesheet" href="public/css/index.css">
+    <link rel="stylesheet" href="public/css/transiciones.css">  
 </head>
 <body>
    
 <header class="site-header">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <!-- Logo -->
             <div class="logo-container">
                 <img src="public/logo.png" alt="JCAutomotors Logo" class="logo-img">
             </div>
@@ -64,13 +132,13 @@
                         </a>
                     </li>
                     <?php if ($usuario_logueado): ?>
-    <li class="nav-item me-3">
-        <span class="navbar-text text-light">
-            <i class="bi bi-person-circle me-1"></i>
-            Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
-        </span>
-    </li>
-<?php endif; ?>
+                        <li class="nav-item me-3">
+                            <span class="navbar-text text-light">
+                                <i class="bi bi-person-circle me-1"></i>
+                                Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
+                            </span>
+                        </li>
+                    <?php endif; ?>
                     <?php if ($usuario_logueado): ?>
                         <li class="nav-item">
                             <a class="nav-link btn" href="public/logout.php">
@@ -129,10 +197,9 @@
             </div>
         </section>
 
-        <!-- Sección de Misión, Visión y Valores -->
         <section class="mission-vision-values py-5 bg-light">
             <div class="container text-center">
-                <h2 class="section-title mb-4">Nuestra Empresa</h2>
+            <h2 class="section-title mb-4">Nuestra Empresa</h2>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card mission-card">
@@ -169,99 +236,78 @@
                 </div>
             </div>
         </section>
-    
-
-        <section class="featured-bikes">
+        <section class="best-sellers py-5">
             <div class="container">
-                <h2 class="text-center section-title">Motos Destacadas</h2>
-                <div class="row">
-                    <div class="col-md-4 bike-item">
-                        <div class="card bike-card">
-                            <!-- Imagen de la moto -->
-                            <img src="https://global-fs.webike-cdn.net/@japan/magazine/wp-content/uploads/2023/08/YAMAHA_MT-07_01_M.jpg" class="card-img-top" alt="Yamaha MT-07">
-                            <span class="bike-price">Bob. 99,999</span>
-                            <div class="card-body">
-                                <h5 class="card-title">Yamaha MT-07</h5>
-                                <p class="card-text">Una naked deportiva con un rendimiento excepcional y estilo agresivo.</p>
-                                <div class="bike-details">
-                                    <div class="bike-spec">
-                                        <i class="bi bi-speedometer"></i>
-                                        <p>689 cc</p>
+                <h2 class="section-title mb-4">Motos más vendidas</h2>
+                <div class="row g-4">
+                    <?php if (!empty($motosMasVendidas)): ?>
+                        <?php foreach ($motosMasVendidas as $moto): ?>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <?php
+                                    $defaultImage = 'https://via.placeholder.com/500x300?text='.urlencode($moto['marca'].'+'.$moto['modelo']);
+                                    $imagenSrc = !empty($moto['imagen']) ? 
+                                        'data:image/jpeg;base64,'.base64_encode($moto['imagen']) : 
+                                        $defaultImage;
+                                    ?>
+                                    
+                                    <div class="motorcycle-image-container">
+                                        <img src="<?= htmlspecialchars($imagenSrc) ?>" 
+                                            class="card-img-top img-fluid" 
+                                            alt="<?= htmlspecialchars($moto['marca'].' '.$moto['modelo']) ?>"
+                                            style="height: 220px; object-fit: cover;"
+                                            onerror="this.src='<?= htmlspecialchars($defaultImage) ?>'">
                                     </div>
-                                    <div class="bike-spec">
-                                        <i class="bi bi-lightning"></i>
-                                        <p>74 HP</p>
+                                    
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title mb-0 fw-bold"><?= htmlspecialchars($moto['marca'].' '.$moto['modelo']) ?></h5>
+                                        </div>
+                                        
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="color-swatch me-2" 
+                                                style="background-color: <?= htmlspecialchars(getColorCode($moto['color'])) ?>; 
+                                                        border: 1px solid #ddd;"
+                                                title="<?= htmlspecialchars($moto['color']) ?>">
+                                            </div>
+                                            <small class="text-muted">Color: <?= htmlspecialchars($moto['color']) ?></small>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <div>
+                                                <small class="text-muted">Precio USD</small>
+                                                <p class="mb-0 fw-bold" style="color: #a51314">$<?= number_format($moto['precio']) ?></p>
+                                            </div>
+                                            <div class="text-end">
+                                                <small class="text-muted">Precio Bs</small>
+                                                <h5 class="mb-0 fw-bold" style="color: #a51314">Bs. <?= number_format($moto['precio'] * 7) ?></h5>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="bike-spec">
-                                        <i class="bi bi-fuel-pump"></i>
-                                        <p>4.2 L/100km</p>
-                                    </div>
-                                </div>
-                                <a href="/catalogo/mt-07" class="btn btn-primary w-100 mt-3">Ver detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 bike-item">
-                        <div class="card bike-card">
-                            <!-- Imagen de la moto -->
-                            <img src="https://cdn.bikedekho.com/processedimages/honda/2025-cbr650r/source/2025-cbr650r6787a8c8c0f76.jpg" class="card-img-top" alt="Honda CBR650R">
-                            
-                            <span class="bike-price">Bob. 99,999</span>
-                            <div class="card-body">
-                                <h5 class="card-title">Honda CBR650R</h5>
-                                <p class="card-text">Deportiva de gama media con un equilibrio perfecto entre potencia y manejo.</p>
-                                <div class="bike-details">
-                                    <div class="bike-spec">
-                                        <i class="bi bi-speedometer"></i>
-                                        <p>649 cc</p>
-                                    </div>
-                                    <div class="bike-spec">
-                                        <i class="bi bi-lightning"></i>
-                                        <p>94 HP</p>
-                                    </div>
-                                    <div class="bike-spec">
-                                        <i class="bi bi-fuel-pump"></i>
-                                        <p>4.9 L/100km</p>
-                                    </div>
-                                </div>
-                                <a href="/catalogo/cbr650r" class="btn btn-primary w-100 mt-3">Ver detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 bike-item">
-                        <div class="card bike-card">
-                            <!-- Imagen de la moto -->
-                            <img src="https://cdn.motor1.com/images/mgl/VR137/s3/desde-usd-9-990-la-kawasaki-z400-2019-ya-esta-a-la-venta.jpg" class="card-img-top" alt="Kawasaki Z400">
-                            
-                            <span class="bike-price">Bob. 99,999</span>
-                            <div class="card-body">
-                                <h5 class="card-title">Kawasaki Z400</h5>
-                                <p class="card-text">Una naked ligera con gran agilidad y economía de combustible.</p>
-                                <div class="bike-details">
-                                    <div class="bike-spec">
-                                        <i class="bi bi-speedometer"></i>
-                                        <p>399 cc</p>
-                                    </div>
-                                    <div class="bike-spec">
-                                        <i class="bi bi-lightning"></i>
-                                        <p>45 HP</p>
-                                    </div>
-                                    <div class="bike-spec">
-                                        <i class="bi bi-fuel-pump"></i>
-                                        <p>3.8 L/100km</p>
+                                    
+                                    <div class="card-footer bg-white border-0 pt-0">
+                                        <a href="views/catalogo.php" class="btn w-100 rounded-pill" style="background-color: #a51314; color: white;">
+                                            <i class="bi bi-eye-fill me-2"></i> Ver Catálogo Completo
+                                        </a>
                                     </div>
                                 </div>
-                                <a href="/catalogo/z400" class="btn btn-primary w-100 mt-3">Ver detalles</a>
-                                <a name="ubicacion"></a>
                             </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="col-12 text-center py-5">
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                No se encontraron motos disponibles en este momento.
+                            </div>
+                            <a href="views/catalogo.php" class="btn btn-primary mt-3">
+                                Ver Catálogo Completo
+                            </a>
                         </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>
 
-
-        <!-- Sección del Mapa -->
         <section class="map-section py-5" style="background-color: #f7f7f7;">
             <div class="container">
                 <div class="text-center mb-5">
@@ -272,7 +318,6 @@
                 </div>
                 
                 <div class="row align-items-center gy-4">
-                    <!-- Información de contacto y ubicación -->
                     <div class="col-lg-4">
                         <div class="contact-info p-4 bg-white rounded shadow-sm">
                             <h4 class="fw-bold mb-4 border-bottom pb-2" style="color: var(--primary);">
@@ -296,7 +341,7 @@
                                     </div>
                                     <div>
                                         <strong>Teléfono:</strong><br>
-                                        <a href="tel:+591 77530498" class="text-decoration-none" style="color: var(--secondary);">(591) 77530498</a>
+                                        <a href="tel:+591 77530498" class="text-decoration-none" style="color: var(--secondary);">(591) 62466711</a>
                                     </div>
                                 </div>
                                 
@@ -316,8 +361,8 @@
                                     </div>
                                     <div>
                                         <strong>Horario:</strong><br>
-                                        Lun-Vie: 8:00 - 18:00<br>
-                                        Sábado: 8:00 - 12:00
+                                        Lun-Vie: 9:30 - 19:00<br>
+                                        Sábado: 10:00 - 14:00
                                     </div>
                                 </div>
                             </div>
@@ -392,10 +437,9 @@
                         <div class="footer-brand">JCAutomotors</div>
                         <p>Tu concesionario de confianza con más de 15 años de experiencia en el mundo de las motocicletas.</p>
                         <div class="social-links">
-                            <a href="#"><i class="bi bi-facebook"></i></a>
-                            <a href="#"><i class="bi bi-twitter"></i></a>
-                            <a href="#"><i class="bi bi-instagram"></i></a>
-                            <a href="#"><i class="bi bi-youtube"></i></a>
+                            <a href="https://www.facebook.com/JcAutomotorsLaPazBo" target="_blank"><i class="bi bi-facebook"></i></a>
+                            <a href="https://www.tiktok.com/@jc_automotors" target="_blank" ><i class="bi bi-tiktok"></i></a>
+                            <a href="https://www.instagram.com/jc_automotors.lp/" target="_blank"><i class="bi bi-instagram"></i></a>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-4 mb-4 footer-links">
@@ -420,10 +464,10 @@
                         <h5>Contacto</h5>
                         <ul>
                             <li><i class="bi bi-geo-alt me-2"></i> Av. Tejada Sorzano entre Calles Puerto Rico y Costa Rica #855. Edif. Dica, La Paz, Bolivia</li>
-                            <li><i class="bi bi-telephone me-2"></i> (591) 77530498</li>
+                            <li><i class="bi bi-telephone me-2"></i> (591) 62466711</li>
                             <li><i class="bi bi-envelope me-2"></i> jcautomotors2@gmail.com</li>
-                            <li><i class="bi bi-clock me-2"></i> Lun-Sáb: 8:00 - 18:00</li>
-                            <li><i class="bi bi-clock me-2"></i> Sáb: 8:00 - 12:00</li>
+                            <li><i class="bi bi-clock me-2"></i> Lun-Vie: 9:30 - 19:00</li>
+                            <li><i class="bi bi-clock me-2"></i> Sábado: 10:00 - 14:00</li>
                         </ul>
                     </div>
                 </div>
@@ -433,9 +477,8 @@
             </div>
         </footer>
     
-        <!-- Bootstrap Bundle with Popper -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-        <script src="public/index.js"></script>
+        <script src="public/js/index.js"></script>
         
     </body>
     </html>

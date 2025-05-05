@@ -109,21 +109,22 @@ try {
     }
 }
 
-// Datos del usuario
-$userQuery = "SELECT p.nombre, p.apellido, e.foto, e.cargo
-              FROM PERSONA p
-              LEFT JOIN EMPLEADO e ON p._id = e._id
-              WHERE p._id = :user_id";
-              
 try {
-    $userStmt = $conn->prepare($userQuery);
-    $userStmt->execute(['user_id' => $user_id]);
-    $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT p.nombre, p.apellido, e.foto, e.cargo
+                           FROM PERSONA p LEFT JOIN EMPLEADO e ON p._id = e._id
+                           WHERE p._id = :user_id");
+    $stmt->execute([':user_id' => $user_id]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $userData['foto'] = !empty($userData['foto']) ? 
+        'data:image/jpeg;base64,'.base64_encode($userData['foto']) : 
+        DEFAULT_AVATAR;
+        
 } catch (PDOException $e) {
     $userData = [
         'nombre' => 'Usuario',
         'apellido' => '',
-        'foto' => 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png',
+        'foto' => DEFAULT_AVATAR,
         'cargo' => 'No especificado'
     ];
 }
@@ -143,7 +144,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="../public/administrador.css">
+    <link rel="stylesheet" href="../public/css/administrador.css">
 </head>
 <body>
 <div class="sidebar">
@@ -191,7 +192,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'ventas.php') ? 'active' : ''; ?>" href="ventas.php">
+                    <a class="nav-link <?php echo ($current_page == 'ventasA.php') ? 'active' : ''; ?>" href="ventasA.php">
                         <i class="bi bi-cash-coin"></i>
                         <span>Ventas</span>
                     </a>

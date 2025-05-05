@@ -2,6 +2,9 @@
 session_start();
 require '../config/conexion.php';
 
+// Definir avatar por defecto en base64 (SVG)
+define('DEFAULT_AVATAR', 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40NzcgMiAyIDYuNDc3IDIgMTJzNC40NzcgMTAgMTAgMTAgMTAtNC40NzcgMTAtMTBTMTcuNTIzIDIgMTIgMnptMCAyYzQuNDE4IDAgOCAzLjU4MiA4IDhzLTMuNTgyIDgtOCA4LTgtMy41ODItOC04IDMuNTgyLTggOC04eiIvPjxwYXRoIGQ9Ik0xMiAzYy0yLjIxIDAtNCAxLjc5LTQgNHMxLjc5IDQgNCA0IDQtMS43OSA0LTRzLTEuNzktNC00LTR6bTAgN2MtMy4zMTMgMC02IDIuNjg3LTYgNnYxaDEydi0xYzAtMy4zMTMtMi42ODctNi02LTZ6Ii8+PC9zdmc+');
+
 $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $user_id = $usuario_logueado ? $usuario_logueado['id'] : null;
 
@@ -10,76 +13,110 @@ if (!$usuario_logueado) {
     exit();
 }
 
-// Manejar solicitudes AJAX para obtener datos del empleado
+// 1. Obtener conteo de empleados activos/inactivos
+try {
+    $countStmt = $conn->prepare("SELECT 
+        SUM(CASE WHEN estado = 'Activo' OR estado IS NULL THEN 1 ELSE 0 END) as active_count,
+        SUM(CASE WHEN estado = 'Despedido' THEN 1 ELSE 0 END) as inactive_count
+        FROM EMPLEADO");
+    $countStmt->execute();
+    $counts = $countStmt->fetch(PDO::FETCH_ASSOC);
+    
+    $activeCount = $counts['active_count'] ?? 0;
+    $inactiveCount = $counts['inactive_count'] ?? 0;
+    
+} catch (PDOException $e) {
+    $activeCount = 0;
+    $inactiveCount = 0;
+    error_log("Error al contar empleados: " . $e->getMessage());
+}
+
+// 2. Manejar solicitudes AJAX para obtener datos del empleado
+// En la sección de manejo AJAX para obtener datos del empleado
 if (isset($_GET['get_employee_data']) && isset($_GET['id'])) {
     $employeeId = $_GET['id'];
     $response = ['success' => false];
     
     try {
+        // Limpia cualquier salida previa
+        ob_clean();
+        
         $employeeQuery = "SELECT e.*, p.nombre, p.apellido, p.telefono, p.email, p.documento_identidad, 
-                          (SELECT usuario FROM USUARIO WHERE id_persona = e._id) as usuario,
-                          COALESCE(e.foto, 'imagenes/empleados/default.png') as imagen
-                          FROM EMPLEADO e
-                          JOIN PERSONA p ON e._id = p._id
-                          WHERE e._id = :id";
+                         (SELECT usuario FROM USUARIO WHERE id_persona = e._id) as usuario
+                         FROM EMPLEADO e
+                         JOIN PERSONA p ON e._id = p._id
+                         WHERE e._id = :id";
         $stmtEdit = $conn->prepare($employeeQuery);
         $stmtEdit->execute([':id' => $employeeId]);
         $employeeData = $stmtEdit->fetch(PDO::FETCH_ASSOC);
         
         if ($employeeData) {
-            $response = [
-                'success' => true,
-                'employee' => $employeeData
-            ];
+            // Procesamiento de imagen mejorado
+            if (!empty($employeeData['foto'])) {
+                if (is_resource($employeeData['foto'])) {
+                    $employeeData['foto'] = stream_get_contents($employeeData['foto']);
+                }
+                
+                // Elimina el BLOB original para evitar problemas con json_encode
+                unset($employeeData['foto']);
+                
+                // Usa la imagen codificada
+                $employeeData['imagen'] = 'data:image/jpeg;base64,'.base64_encode($employeeData['foto']);
+            } else {
+                $employeeData['imagen'] = DEFAULT_AVATAR;
+            }
+            
+            $response = ['success' => true, 'employee' => $employeeData];
         }
     } catch (PDOException $e) {
         $response['error'] = $e->getMessage();
+        error_log("Error en get_employee_data: " . $e->getMessage());
     }
     
+    // Asegúrate de que no haya nada antes del JSON
+    ob_clean();
+    
+    // Establece cabeceras y envía respuesta
     header('Content-Type: application/json');
     echo json_encode($response);
     exit;
 }
 
-// Procesar formulario para agregar nuevo empleado
+// 3. Procesar formularios (agregar/editar/despedir/recontratar)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
-    if ($_POST['action'] == 'add_employee') {
-        try {
-            // Procesar y guardar la foto
-            $fotoUrl = 'imagenes/empleados/default.png';
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $uploadDir = '../imagenes/empleados/';
-                if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
-                }
-                
-                // Validar tipo de archivo
-                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-                $fileExtension = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-                
-                if (!in_array($fileExtension, $allowedExtensions)) {
-                    throw new Exception("Solo se permiten imágenes JPG, JPEG, PNG o GIF");
-                }
-                
-                // Validar tamaño (máximo 2MB)
-                $maxFileSize = 2 * 1024 * 1024;
-                if ($_FILES['foto']['size'] > $maxFileSize) {
-                    throw new Exception("El archivo es demasiado grande. Tamaño máximo: 2MB");
-                }
-                
-                // Generar nombre único
-                $fileName = 'empleado_' . time() . '_' . uniqid() . '.' . $fileExtension;
-                $uploadFile = $uploadDir . $fileName;
-                
-                if (move_uploaded_file($_FILES['foto']['tmp_name'], $uploadFile)) {
-                    $fotoUrl = 'imagenes/empleados/' . $fileName;
-                }
+    try {
+        $employeeId = $_POST['employee_id'] ?? null;
+        
+        // Manejar acciones de despedir/recontratar
+        if ($_POST['action'] == 'fire' || $_POST['action'] == 'rehire') {
+            $newStatus = ($_POST['action'] == 'fire') ? 'Despedido' : 'Activo';
+            $stmt = $conn->prepare("UPDATE EMPLEADO SET estado = :estado WHERE _id = :id");
+            $stmt->execute([':estado' => $newStatus, ':id' => $employeeId]);
+            header("Location: gestionEmpleados.php");
+            exit;
+        }
+        
+        // Procesar imagen si se subió
+        $fotoBlob = null;
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            $detectedType = mime_content_type($_FILES['foto']['tmp_name']);
+            
+            if (!in_array($detectedType, $allowedTypes)) {
+                throw new Exception("Solo se permiten imágenes JPG, PNG o GIF");
             }
-
+            
+            if ($_FILES['foto']['size'] > 2 * 1024 * 1024) {
+                throw new Exception("La imagen no debe exceder 2MB");
+            }
+            
+            $fotoBlob = file_get_contents($_FILES['foto']['tmp_name']);
+        }
+        
+        if ($_POST['action'] == 'add_employee') {
             // Insertar en PERSONA
-            $insertPersonaQuery = "INSERT INTO PERSONA (nombre, apellido, telefono, email, documento_identidad) 
-                                  VALUES (:nombre, :apellido, :telefono, :email, :documento)";
-            $stmtPersona = $conn->prepare($insertPersonaQuery);
+            $stmtPersona = $conn->prepare("INSERT INTO PERSONA (nombre, apellido, telefono, email, documento_identidad) 
+                                         VALUES (:nombre, :apellido, :telefono, :email, :documento)");
             $stmtPersona->execute([
                 ':nombre' => $_POST['nombre'],
                 ':apellido' => $_POST['apellido'],
@@ -88,28 +125,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                 ':documento' => $_POST['documento_identidad']
             ]);
             
-            // Obtener el ID recién insertado
             $nuevoId = $conn->lastInsertId();
             
             // Insertar en EMPLEADO
-            $insertEmpleadoQuery = "INSERT INTO EMPLEADO (_id, cargo, salario, fecha_contratacion, id_rol, estado, foto) 
-                                   VALUES (:id, :cargo, :salario, :fecha, :id_rol, 'Activo', :foto)";
-            $stmtEmpleado = $conn->prepare($insertEmpleadoQuery);
-            $stmtEmpleado->execute([
-                ':id' => $nuevoId,
-                ':cargo' => $_POST['cargo'],
-                ':salario' => $_POST['salario'],
-                ':fecha' => $_POST['fecha_contratacion'] ?? date('Y-m-d'),
-                ':id_rol' => $_POST['id_rol'] ?? 2,
-                ':foto' => $fotoUrl
-            ]);
+            $stmtEmpleado = $conn->prepare("INSERT INTO EMPLEADO (_id, cargo, salario, fecha_contratacion, id_rol, estado, foto) 
+                                           VALUES (:id, :cargo, :salario, :fecha, :id_rol, 'Activo', :foto)");
+            $stmtEmpleado->bindValue(':id', $nuevoId);
+            $stmtEmpleado->bindValue(':cargo', $_POST['cargo']);
+            $stmtEmpleado->bindValue(':salario', $_POST['salario']);
+            $stmtEmpleado->bindValue(':fecha', $_POST['fecha_contratacion'] ?? date('Y-m-d'));
+            $stmtEmpleado->bindValue(':id_rol', $_POST['id_rol'] ?? 2);
+            $stmtEmpleado->bindValue(':foto', $fotoBlob, $fotoBlob ? PDO::PARAM_LOB : PDO::PARAM_NULL);
+            $stmtEmpleado->execute();
             
-            // Insertar en USUARIO si se proporcionó
+            // Crear usuario si se proporcionó
             if (!empty($_POST['usuario']) && !empty($_POST['password'])) {
                 $hashedPassword = hash('sha256', $_POST['password']);
-                $insertUsuarioQuery = "INSERT INTO USUARIO (id_persona, usuario, password, id_rol) 
-                                     VALUES (:id_persona, :usuario, :password, :id_rol)";
-                $stmtUsuario = $conn->prepare($insertUsuarioQuery);
+                $stmtUsuario = $conn->prepare("INSERT INTO USUARIO (id_persona, usuario, password, id_rol) 
+                                              VALUES (:id_persona, :usuario, :password, :id_rol)");
                 $stmtUsuario->execute([
                     ':id_persona' => $nuevoId,
                     ':usuario' => $_POST['usuario'],
@@ -118,63 +151,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                 ]);
             }
             
-            header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
-            exit();
-        } catch (PDOException $e) {
-            $error_message = "Error al agregar empleado: " . $e->getMessage();
-            error_log($error_message);
-        } catch (Exception $e) {
-            $error_message = $e->getMessage();
-        }
-    } elseif ($_POST['action'] == 'edit_employee' && isset($_POST['employee_id'])) {
-        try {
-            $employeeId = $_POST['employee_id'];
+            header("Location: gestionEmpleados.php?success=1");
             
-            // Procesar y actualizar la foto si existe
-            $fotoUrl = $_POST['foto_actual'];
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $uploadDir = '../imagenes/empleados/';
-                if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
-                }
-                
-                // Validar tipo de archivo
-                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-                $fileExtension = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-                
-                if (!in_array($fileExtension, $allowedExtensions)) {
-                    throw new Exception("Solo se permiten imágenes JPG, JPEG, PNG o GIF");
-                }
-                
-                // Validar tamaño (máximo 2MB)
-                $maxFileSize = 2 * 1024 * 1024;
-                if ($_FILES['foto']['size'] > $maxFileSize) {
-                    throw new Exception("El archivo es demasiado grande. Tamaño máximo: 2MB");
-                }
-                
-                // Eliminar la foto anterior si no es la default
-                if ($fotoUrl != 'imagenes/empleados/default.png' && file_exists('../' . $fotoUrl)) {
-                    unlink('../' . $fotoUrl);
-                }
-                
-                // Generar nombre único
-                $fileName = 'empleado_' . time() . '_' . uniqid() . '.' . $fileExtension;
-                $uploadFile = $uploadDir . $fileName;
-                
-                if (move_uploaded_file($_FILES['foto']['tmp_name'], $uploadFile)) {
-                    $fotoUrl = 'imagenes/empleados/' . $fileName;
-                }
-            }
-            
+        } elseif ($_POST['action'] == 'edit_employee' && $employeeId) {
             // Actualizar PERSONA
-            $updatePersonaQuery = "UPDATE PERSONA SET 
-                nombre = :nombre, 
-                apellido = :apellido, 
-                telefono = :telefono, 
-                email = :email, 
-                documento_identidad = :documento 
-                WHERE _id = :id";
-            $stmtPersona = $conn->prepare($updatePersonaQuery);
+            $stmtPersona = $conn->prepare("UPDATE PERSONA SET 
+                                         nombre = :nombre, apellido = :apellido, 
+                                         telefono = :telefono, email = :email, 
+                                         documento_identidad = :documento 
+                                         WHERE _id = :id");
             $stmtPersona->execute([
                 ':nombre' => $_POST['nombre'],
                 ':apellido' => $_POST['apellido'],
@@ -185,143 +170,119 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             ]);
             
             // Actualizar EMPLEADO
-            $updateEmpleadoQuery = "UPDATE EMPLEADO SET 
-                cargo = :cargo, 
-                salario = :salario, 
-                id_rol = :id_rol, 
-                foto = :foto 
-                WHERE _id = :id";
-            $stmtEmpleado = $conn->prepare($updateEmpleadoQuery);
-            $stmtEmpleado->execute([
-                ':cargo' => $_POST['cargo'],
-                ':salario' => $_POST['salario'],
-                ':id_rol' => $_POST['id_rol'] ?? 2,
-                ':foto' => $fotoUrl,
-                ':id' => $employeeId
-            ]);
+            $sql = "UPDATE EMPLEADO SET 
+                   cargo = :cargo, salario = :salario, id_rol = :id_rol" . 
+                   ($fotoBlob ? ", foto = :foto" : "") . " 
+                   WHERE _id = :id";
             
-            // Actualizar contraseña si se proporcionó una nueva
-            if (!empty($_POST['password'])) {
-                $hashedPassword = hash('sha256', $_POST['password']);
-                $checkUserQuery = "SELECT COUNT(*) FROM USUARIO WHERE id_persona = :id_persona";
-                $stmtCheckUser = $conn->prepare($checkUserQuery);
-                $stmtCheckUser->execute(['id_persona' => $employeeId]);
-                $userExists = $stmtCheckUser->fetchColumn() > 0;
-                
-                if ($userExists) {
-                    $updatePasswordQuery = "UPDATE USUARIO SET password = :password WHERE id_persona = :id_persona";
-                    $stmtPassword = $conn->prepare($updatePasswordQuery);
-                    $stmtPassword->execute([
-                        ':password' => $hashedPassword,
-                        ':id_persona' => $employeeId
-                    ]);
-                } else if (!empty($_POST['usuario'])) {
-                    $insertUsuarioQuery = "INSERT INTO USUARIO (id_persona, usuario, password, id_rol) 
-                                         VALUES (:id_persona, :usuario, :password, :id_rol)";
-                    $stmtUsuario = $conn->prepare($insertUsuarioQuery);
-                    $stmtUsuario->execute([
-                        ':id_persona' => $employeeId,
-                        ':usuario' => $_POST['usuario'],
-                        ':password' => $hashedPassword,
-                        ':id_rol' => $_POST['id_rol'] ?? 2
-                    ]);
-                }
+            $stmtEmpleado = $conn->prepare($sql);
+            $stmtEmpleado->bindValue(':cargo', $_POST['cargo']);
+            $stmtEmpleado->bindValue(':salario', $_POST['salario']);
+            $stmtEmpleado->bindValue(':id_rol', $_POST['id_rol'] ?? 2);
+            $stmtEmpleado->bindValue(':id', $employeeId);
+            
+            if ($fotoBlob) {
+                $stmtEmpleado->bindValue(':foto', $fotoBlob, PDO::PARAM_LOB);
             }
             
-            header("Location: " . $_SERVER['PHP_SELF'] . "?updated=1");
-            exit();
-        } catch (PDOException $e) {
-            $error_message = "Error al actualizar empleado: " . $e->getMessage();
-        } catch (Exception $e) {
-            $error_message = $e->getMessage();
+            $stmtEmpleado->execute();
+            
+            // Actualizar contraseña si se proporcionó
+            if (!empty($_POST['password'])) {
+                $hashedPassword = hash('sha256', $_POST['password']);
+                $stmtUsuario = $conn->prepare("UPDATE USUARIO SET 
+                                             password = :password 
+                                             WHERE id_persona = :id_persona");
+                $stmtUsuario->execute([
+                    ':password' => $hashedPassword,
+                    ':id_persona' => $employeeId
+                ]);
+            }
+            
+            header("Location: gestionEmpleados.php?updated=1");
         }
-    } elseif ($_POST['action'] == 'fire' || $_POST['action'] == 'rehire') {
-        $employeeId = $_POST['employee_id'];
-        $newStatus = ($_POST['action'] == 'fire') ? 'Despedido' : 'Activo';
+        exit;
         
-        try {
-            $updateQuery = "UPDATE EMPLEADO SET estado = :estado WHERE _id = :id";
-            $stmt = $conn->prepare($updateQuery);
-            $stmt->execute(['estado' => $newStatus, 'id' => $employeeId]);
-        
-            header("Location: " . $_SERVER['PHP_SELF']);
-            exit();
-        } catch (PDOException $e) {
-            $error_message = "Error al actualizar estado: " . $e->getMessage();
-        }
+    } catch (PDOException $e) {
+        $error_message = "Error en la base de datos: " . $e->getMessage();
+    } catch (Exception $e) {
+        $error_message = $e->getMessage();
     }
 }
-
-// Obtener datos para editar empleado (para cuando se carga la página con ?edit=id)
+// 4. Obtener datos para editar empleado (cuando se carga la página con ?edit=id)
 if (isset($_GET['edit']) && !empty($_GET['edit'])) {
     $employeeId = $_GET['edit'];
     try {
         $employeeQuery = "SELECT e.*, p.nombre, p.apellido, p.telefono, p.email, p.documento_identidad, 
-                          (SELECT usuario FROM USUARIO WHERE id_persona = e._id) as usuario,
-                          COALESCE(e.foto, 'imagenes/empleados/default.png') as imagen
-                          FROM EMPLEADO e
-                          JOIN PERSONA p ON e._id = p._id
-                          WHERE e._id = :id";
+                         (SELECT usuario FROM USUARIO WHERE id_persona = e._id) as usuario
+                         FROM EMPLEADO e
+                         JOIN PERSONA p ON e._id = p._id
+                         WHERE e._id = :id";
         $stmtEdit = $conn->prepare($employeeQuery);
         $stmtEdit->execute([':id' => $employeeId]);
         $employeeData = $stmtEdit->fetch(PDO::FETCH_ASSOC);
+        
+        if ($employeeData) {
+            $employeeData['imagen'] = !empty($employeeData['foto']) ? 
+                'data:image/jpeg;base64,'.base64_encode($employeeData['foto']) : 
+                DEFAULT_AVATAR;
+        }
     } catch (PDOException $e) {
         $error_message = "Error al obtener datos del empleado: " . $e->getMessage();
     }
 }
 
-// Obtener conteo de empleados activos e inactivos
-$countQuery = "SELECT 
-                SUM(CASE WHEN estado = 'Activo' OR estado IS NULL THEN 1 ELSE 0 END) as active_count,
-                SUM(CASE WHEN estado = 'Despedido' THEN 1 ELSE 0 END) as inactive_count
-               FROM EMPLEADO";
-               
+// 5. Obtener lista de empleados para mostrar
 try {
-    $countStmt = $conn->prepare($countQuery);
-    $countStmt->execute();
-    $counts = $countStmt->fetch(PDO::FETCH_ASSOC);
-    $activeCount = $counts['active_count'] ?? 0;
-    $inactiveCount = $counts['inactive_count'] ?? 0;
-} catch (PDOException $e) {
-    $activeCount = 0;
-    $inactiveCount = 0;
-}
-
-// Query para obtener todos los empleados
-$query = "SELECT e._id as id, p.nombre, p.apellido, e.cargo, e.salario, 
-         e.fecha_contratacion, p.telefono, p.email, e.estado, p.documento_identidad,
-         COALESCE(e.foto, 'imagenes/empleados/default.png') as imagen
-         FROM EMPLEADO e
-         JOIN PERSONA p ON e._id = p._id
-         ORDER BY p.nombre ASC";
-
-try {
-    $stmt = $conn->prepare($query);
+    $stmt = $conn->prepare("SELECT e._id as id, p.nombre, p.apellido, e.cargo, e.salario, 
+                           e.fecha_contratacion, p.telefono, p.email, e.estado, p.documento_identidad, e.foto
+                           FROM EMPLEADO e JOIN PERSONA p ON e._id = p._id
+                           ORDER BY p.nombre ASC");
     $stmt->execute();
     $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    foreach ($employees as &$employee) {
+        if (!empty($employee['foto'])) {
+            if (is_resource($employee['foto'])) {
+                $employee['foto'] = stream_get_contents($employee['foto']);
+            }
+            
+            // Determina el tipo MIME real de la imagen
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->buffer($employee['foto']);
+            
+            $employee['imagen'] = 'data:' . $mime . ';base64,' . base64_encode($employee['foto']);
+        } else {
+            $employee['imagen'] = DEFAULT_AVATAR;
+        }
+    }
+    unset($employee);
+    
 } catch (PDOException $e) {
-    die("Error en la consulta: " . $e->getMessage());
+    die("Error al obtener empleados: " . $e->getMessage());
 }
-// Obtener datos del perfil del usuario
-$userQuery = "SELECT p.nombre, p.apellido, e.foto, e.cargo
-              FROM PERSONA p
-              LEFT JOIN EMPLEADO e ON p._id = e._id
-              WHERE p._id = :user_id";
-              
+
+// Obtener datos del usuario logueado
 try {
-    $userStmt = $conn->prepare($userQuery);
-    $userStmt->execute(['user_id' => $user_id]);
-    $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT p.nombre, p.apellido, e.foto, e.cargo
+                           FROM PERSONA p LEFT JOIN EMPLEADO e ON p._id = e._id
+                           WHERE p._id = :user_id");
+    $stmt->execute([':user_id' => $user_id]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $userData['foto'] = !empty($userData['foto']) ? 
+        'data:image/jpeg;base64,'.base64_encode($userData['foto']) : 
+        DEFAULT_AVATAR;
+        
 } catch (PDOException $e) {
     $userData = [
         'nombre' => 'Usuario',
         'apellido' => '',
-        'foto' => 'imagenes/empleados/default.png',
+        'foto' => DEFAULT_AVATAR,
         'cargo' => 'No especificado'
     ];
 }
 
-// Obtener el nombre de la página actual para resaltar el menú activo
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
@@ -336,7 +297,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../public/gestionE.css">
+    <link rel="stylesheet" href="../public/css/gestionE.css">
 </head>
 <body>
     <!-- Sidebar Vertical -->
@@ -385,7 +346,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'ventas.php') ? 'active' : ''; ?>" href="ventas.php">
+                    <a class="nav-link <?php echo ($current_page == 'ventasA.php') ? 'active' : ''; ?>" href="ventasA.php">
                         <i class="bi bi-cash-coin"></i>
                         <span>Ventas</span>
                     </a>
@@ -483,7 +444,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <?php foreach ($employees as $employee): ?>
                 <div class="col-md-6 col-lg-4">
                     <div class="employee-card">
-                    <div class="employee-img" style="background-image: url('../<?php echo htmlspecialchars($employee['imagen']); ?>');">
+                    <div class="employee-img" style="background-image: url('<?php echo htmlspecialchars($employee['imagen']); ?>');">
                             <span class="employee-status <?php echo ($employee['estado'] == 'Activo' || !isset($employee['estado'])) ? 'status-active' : 'status-inactive'; ?>">
                                 <?php echo isset($employee['estado']) ? htmlspecialchars($employee['estado']) : 'Activo'; ?>
                             </span>
@@ -622,7 +583,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </div>
                         
                         <div class="mb-3 text-center">
-                            <img id="foto-preview" class="upload-preview" src="https://cdn-icons-png.flaticon.com/512/17320/17320345.png" alt="Vista previa">
+                        <img id="foto-preview" class="upload-preview" src="data:image/png;base64,..." alt="Vista previa">
                         </div>
                         
                         <hr>
@@ -718,9 +679,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </div>
                         
                         <div class="mb-3 text-center">
-                            <img id="edit-foto-preview" class="upload-preview" src="" alt="Vista previa">
+                            <img id="edit-foto-preview" class="upload-preview" src="data:image/png;base64,..." alt="Vista previa">
                         </div>
-                        
+                                                
                         <hr>
                         
                         <div class="row">
@@ -749,6 +710,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JavaScript -->
-    <script src="../public/gestionE.js"></script>
+    <script src="../public/js/gestionE.js"></script>
 </body>
 </html>
