@@ -297,7 +297,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../public/gestionE.css">
+    <link rel="stylesheet" href="../public/css/gestionE.css">
 </head>
 <body>
     <!-- Sidebar Vertical -->
@@ -710,6 +710,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JavaScript -->
-    <script src="../public/gestionE.js"></script>
+    <script src="../public/js/gestionE.js"></script>
 </body>
 </html>

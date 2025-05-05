@@ -1,0 +1,757 @@
+/* ===== Variables ===== */
+:root {
+    --primary: #a51314;         /* Rojo principal */
+    --primary-dark: #701106;    /* Rojo oscuro para hover y elementos secundarios */
+    --primary-light: #c82333;   /* Rojo claro para hover */
+    --dark: #050506;            /* Negro para fondos oscuros */
+    --dark-gray: #1a1a1a;       /* Gris oscuro para tarjetas */
+    --medium-gray: #333333;     /* Gris medio para bordes */
+    --light-gray: rgba(255,255,255,0.05); /* Gris claro para filas alternativas */
+    --light: #f7f7f7;           /* Casi blanco para texto claro */
+    --success: #28a745;
+    --danger: #dc3545;
+    --white: #ffffff;
+    --black: #000000;
+    --standard-transition: all 0.3s ease;
+}
+
+/* ===== Base Styles ===== */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--black);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    margin: 0;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Header y Navegación ===== */
+.site-header {
+    background-color: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    font-size: 17px;
+}
+
+.site-header.scrolled {
+    background-color: rgba(5, 5, 6, 0.95);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+}
+
+.navbar {
+    padding: 0.5rem 0;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    width: 160px;
+    height: 140px;
+    max-height: 200px;
+}
+
+.navbar-toggler {
+    border: none;
+    color: var(--light);
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.navbar-nav .nav-item {
+    margin: 0 0.5rem;
+}
+
+.navbar-nav .nav-link {
+    color: var(--light);
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    position: relative;
+    transition: var(--standard-transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-nav .nav-link i {
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:hover i,
+.navbar-nav .nav-link.active {
+    color: var(--primary);
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    background-color: var(--primary);
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover::after,
+.navbar-nav .nav-link.active::after {
+    width: 80%;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+    background-image: url('https://http2.mlstatic.com/storage/splinter-admin/o:f_webp,q_auto:low/1600460516665-tipos-de-motos-m-final.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    padding: 3rem 1rem;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+}
+
+.hero .container {
+    position: relative;
+    z-index: 2;
+    max-width: 1000px;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero p {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 1.2s ease-out;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 30px;
+    transition: var(--standard-transition);
+    animation: fadeInUp 1.5s ease-out;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-light);
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Brand Buttons ===== */
+.brand-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
+    margin-left: 10px;
+}
+
+.brand-buttons button {
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.1s, transform 0.3s;
+}
+
+.brand-buttons button:hover {
+    background-color: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+.brand-buttons button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-dark);
+}
+
+/* ===== Container ===== */
+.custom-container {
+    width: 90%;
+    max-width: 1400px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 140px; 
+}
+
+/* ===== Motorcycle Grid ===== */
+.motorcycle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+    justify-content: center;
+}
+
+/* ===== Motorcycle Card ===== */
+.motorcycle-card {
+    background: #f9f9f9;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 10px;
+    min-width: 420px;
+    max-width: 100%;
+}
+
+.motorcycle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.motorcycle-image-container {
+    position: relative;
+    height: 220px; /* Altura fija para todas las imágenes */
+    width: 100%;
+    overflow: hidden;
+}
+
+.motorcycle-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.5s ease;
+}
+
+/* Eliminamos posicionamiento absoluto del overlay para que no afecte el layout */
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Asegurarnos que el card-body no tenga padding-top excesivo */
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    /* Eliminamos el pt-6 que podría estar causando problemas */
+}
+@media (max-width: 768px) {
+    .motorcycle-card {
+        min-width: auto;
+    }
+}
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.motorcycle-card:hover .motorcycle-image-container img {
+    transform: scale(1.05);
+}
+
+.motorcycle-card:hover .image-overlay {
+    opacity: 1;
+}
+
+.card-body {
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.25rem;
+}
+
+.color-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid #dee2e6;
+}
+
+.price-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px !important;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.motorcycle-card:hover .price-container {
+    background-color: #f0f0f0 !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+.btn-sm.compact {
+    padding: 0.15rem 0.5rem;
+    line-height: 1.2;
+}
+
+/* Ajustar tamaño de iconos */
+.compact .bi {
+    font-size: 0.8rem;
+}
+
+/* Texto más pequeño */
+.compact .small {
+    font-size: 0.75rem;
+}
+
+/* Alinear verticalmente los contenidos */
+.btn-sm {
+    display: inline-flex;
+    align-items: center;
+}
+/* ===== Price Container ===== */
+.price-container .h5 {
+    color: var(--primary);
+    font-weight: 700;
+    margin: 0;
+}
+
+.price-container small {
+    font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.vr {
+    height: auto;
+    opacity: 0.3;
+}
+
+/* ===== Buttons ===== */
+.btn-danger {
+    background: var(--primary);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--standard-transition);
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.btn-danger:hover {
+    background: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(165, 19, 20, 0.4);
+}
+
+.btn-outline-danger {
+    color: var(--primary);
+    border-color: var(--primary);
+    background-color: transparent;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    transition: var(--standard-transition);
+    width: 100%;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--primary);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(165, 19, 20, 0.4);
+}
+
+/* ===== Motorcycle Specs ===== */
+.motorcycle-specs {
+    padding: 10px 0;
+}
+
+.spec-item {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.spec-item:last-child {
+    border-bottom: none;
+}
+
+.spec-label {
+    font-weight: 600;
+    color: #444;
+}
+
+.spec-value {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+/* ===== Modal Styles ===== */
+.modal-content {
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background-color: var(--primary);
+    color: white;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.motorcycle-specs {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.spec-item {
+    transition: all 0.3s ease;
+}
+
+.spec-item:hover {
+    background-color: rgba(165, 19, 20, 0.05);
+}
+
+/* ===== Features Section ===== */
+.features-section {
+    padding: 40px 0;
+    background-color: #111;
+    margin-top: -10px;
+    position: relative;
+    z-index: 10;
+}
+
+.included-features {
+    border-radius: 12px;
+    padding: 30px;
+    background-color: rgba(26, 26, 26, 0.5);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.included-features h3 {
+    color: var(--light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
+.feature-item {
+    text-align: center;
+    background-color: rgba(26, 26, 26, 0.8);
+    border-radius: 8px;
+    padding: 20px;
+    height: 100%;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--medium-gray);
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    border-color: var(--primary);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--primary);
+    display: block;
+    transition: var(--standard-transition);
+}
+
+.feature-item:hover .feature-icon {
+    transform: scale(1.2);
+    color: var(--primary-light);
+}
+
+.feature-item h5 {
+    color: var(--light);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.feature-item p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.special-feature {
+    background-color: rgba(165, 19, 20, 0.15);
+    border: 2px solid rgba(165, 19, 20, 0.5);
+}
+
+.special-feature .feature-icon {
+    color: var(--primary-light);
+}
+
+/* ===== Footer ===== */
+footer {
+    background-color: var(--dark);
+    color: white;
+    padding: 3rem 0 1rem;
+    margin-top: auto;
+}
+
+.footer-brand {
+    font-family: 'Racing Sans One', cursive;
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.footer-links h5 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: var(--standard-transition);
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+    padding-left: 5px;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    transition: var(--standard-transition);
+}
+
+.social-links a:hover {
+    background-color: var(--primary);
+    transform: translateY(-5px);
+}
+
+.copyright {
+    padding-top: 2rem;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+/* ===== Responsive Styles ===== */
+@media (max-width: 1200px) {
+    .motorcycle-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    
+    .custom-container {
+        width: 95%;
+    }
+}
+
+@media (max-width: 992px) {
+    .site-header {
+        background-color: var(--dark);
+    }
+
+    .navbar-collapse {
+        background-color: var(--dark);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .navbar-collapse.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 1rem 0;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1.5rem;
+    }
+
+    .motorcycle-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    
+    .custom-container {
+        margin-top: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .custom-container {
+        width: 100%;
+        padding: 0 15px;
+        margin-top: 100px;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+    }
+
+    .motorcycle-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .included-features {
+        padding: 20px;
+    }
+    
+    .feature-item {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .feature-icon {
+        font-size: 2rem;
+    }
+    
+    .brand-buttons {
+        justify-content: center;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .motorcycle-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .motorcycle-image-container {
+        height: 200px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+}

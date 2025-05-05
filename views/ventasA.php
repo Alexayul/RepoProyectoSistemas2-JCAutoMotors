@@ -254,7 +254,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../public/ventasA.css">
+    <link rel="stylesheet" href="../public/css/ventasA.css">
 </head>
 <body>
     <!-- Sidebar Vertical -->
@@ -676,7 +676,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </div>
                 <div class="modal-body">
                     <div id="detalleContenido">
-                        <!-- Contenido cargado por AJAX -->
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -692,6 +691,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../public/ventasA.js"></script>
+    <script src="../public/js/ventasA.js"></script>
 </body>
 </html>

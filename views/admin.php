@@ -144,7 +144,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="../public/administrador.css">
+    <link rel="stylesheet" href="../public/css/administrador.css">
 </head>
 <body>
 <div class="sidebar">

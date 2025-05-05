@@ -1,9 +1,7 @@
 <?php
 session_start();
 
-// Obtener mensaje de error si existe
 $login_error = isset($_SESSION['login_error']) ? $_SESSION['login_error'] : '';
-// Limpiar mensaje de error para que no persista en futuras cargas
 if (isset($_SESSION['login_error'])) {
     unset($_SESSION['login_error']);
 }
@@ -70,120 +68,11 @@ function iniciarSesion($user) {
     <title>Auto JC Motors - Inicio de Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> 
-    <link rel="stylesheet" href="../public/login.css"> 
-    <link rel="stylesheet" href="../public/transiciones.css"> 
-    <script src="../public/transiciones.js"></script> 
+    <link rel="stylesheet" href="../public/css/login.css"> 
+    <link rel="stylesheet" href="../public/css/transiciones.css"> 
+    <script src="../public/js/transiciones.js"></script> 
     <style>
-        /* Estilo Tailwind para alertas */
-        .alert-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 50;
-            max-width: 24rem;
-        }
-
-        .alert-tailwind {
-            display: flex;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            align-items: center;
-            overflow: hidden;
-            animation: slideIn 0.5s forwards;
-        }
-
-        .alert-tailwind-icon {
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 3rem;
-            height: 3rem;
-            background-color: #FEE2E2;
-            border-radius: 0.375rem;
-            margin-right: 0.75rem;
-        }
-
-        .alert-tailwind-icon i {
-            font-size: 1.25rem;
-            color: #DC2626;
-        }
-
-        .alert-tailwind-content {
-            flex-grow: 1;
-        }
-
-        .alert-tailwind-title {
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: #1F2937;
-            margin: 0;
-        }
-
-        .alert-tailwind-message {
-            font-size: 0.875rem;
-            color: #6B7280;
-            margin: 0.25rem 0 0 0;
-        }
-
-        .alert-tailwind-close {
-            flex-shrink: 0;
-            margin-left: 0.75rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #9CA3AF;
-            font-size: 1.25rem;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .alert-tailwind-close:hover {
-            color: #4B5563;
-        }
-
-        /* Variante de error */
-        .alert-tailwind-error .alert-tailwind-icon {
-            background-color: #FEE2E2;
-        }
-
-        .alert-tailwind-error .alert-tailwind-icon i {
-            color: #DC2626;
-        }
-
-        /* Variante de éxito */
-        .alert-tailwind-success .alert-tailwind-icon {
-            background-color: #D1FAE5;
-        }
-
-        .alert-tailwind-success .alert-tailwind-icon i {
-            color: #059669;
-        }
-
-        /* Animaciones */
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .alert-container {
-                left: 1rem;
-                right: 1rem;
-                max-width: none;
-            }
-        }
+        
     </style>
 </head>
 <body>
@@ -234,52 +123,6 @@ function iniciarSesion($user) {
             </div>
         </div>
     </div>
-
-    <script>
-        // Toggle para mostrar/ocultar contraseña
-        document.getElementById('eye-icon').addEventListener('click', function() {
-            const passwordField = document.getElementById('password');
-            const eyeIcon = document.getElementById('eye-icon');
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                eyeIcon.innerHTML = '<i class="bi bi-eye-slash"></i>';
-            } else {
-                passwordField.type = "password";
-                eyeIcon.innerHTML = '<i class="bi bi-eye"></i>';
-            }
-        });
-
-        // Cerrar alerta automáticamente después de 5 segundos
-        setTimeout(() => {
-            const alert = document.getElementById('errorAlert');
-            if (alert) {
-                alert.style.animation = 'slideOut 0.5s forwards';
-                setTimeout(() => alert.remove(), 500);
-            }
-        }, 5000);
-        
-        // Función para cerrar manualmente
-        function closeAlert() {
-            const alert = document.getElementById('errorAlert');
-            if (alert) {
-                alert.style.animation = 'slideOut 0.5s forwards';
-                setTimeout(() => alert.remove(), 500);
-            }
-        }
-        
-        // Redirección al registro
-        document.getElementById('to-register-btn').addEventListener('click', function() {
-            window.location.href = 'registro.php';
-        });
-        function closeAlert() {
-    
-            const alert = document.getElementById('errorAlert');
-    if (alert) {
-        alert.style.animation = 'slideOut 0.5s forwards';
-        setTimeout(() => alert.remove(), 500);
-    }
-}
-    </script>
+    <script src="../public/js/login.js"></script> 
 </body>
 </html>
