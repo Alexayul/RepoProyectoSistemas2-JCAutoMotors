@@ -112,17 +112,17 @@ try {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="views/login.php">
+                        <a class="nav-link" href="pages/login.php">
                             <i class="bi bi-speedometer2 me-1"></i>Administración
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="views/login.php">
+                        <a class="nav-link" href="pages/login.php">
                             <i class="bi bi-people me-1"></i>Empleado
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="views/catalogo.php">
+                        <a class="nav-link" href="pages/catalogo.php">
                             <i class="bi bi-bicycle me-1"></i>Catálogo
                         </a>
                     </li>
@@ -156,7 +156,7 @@ try {
         <div class="container">
             <h1 class="hero-title">Pasión por las Dos Ruedas</h1>
             <p class="hero-text">Descubre nuestra amplia colección de motocicletas de alta calidad. Desde motos deportivas hasta cruisers clásicas, tenemos lo que buscas con las mejores condiciones del mercado.</p>
-            <a href="views/catalogo.php" class="btn btn-primary">Ver catálogo <i class="bi bi-arrow-right ms-2"></i></a>
+            <a href="pages/catalogo.php" class="btn btn-primary">Ver catálogo <i class="bi bi-arrow-right ms-2"></i></a>
         </div>
     </section>
 
@@ -286,7 +286,7 @@ try {
                                     </div>
                                     
                                     <div class="card-footer bg-white border-0 pt-0">
-                                        <a href="views/catalogo.php" class="btn w-100 rounded-pill" style="background-color: #a51314; color: white;">
+                                        <a href="pages/catalogo.php" class="btn w-100 rounded-pill" style="background-color: #a51314; color: white;">
                                             <i class="bi bi-eye-fill me-2"></i> Ver Catálogo Completo
                                         </a>
                                     </div>
@@ -299,7 +299,7 @@ try {
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                 No se encontraron motos disponibles en este momento.
                             </div>
-                            <a href="views/catalogo.php" class="btn btn-primary mt-3">
+                            <a href="pages/catalogo.php" class="btn btn-primary mt-3">
                                 Ver Catálogo Completo
                             </a>
                         </div>
