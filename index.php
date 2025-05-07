@@ -1,13 +1,61 @@
 <?php
+include 'config/conexion.php';
 
-require_once __DIR__ . '/controllers/CarController.php';
+function getColorCode($colorName) {
+    $colorMap = [
+        'Rojo' => '#dc3545',
+        'Azul' => '#0d6efd',
+        'Negro' => '#000000',
+        'Blanco' => '#ffffff',
+        'Verde' => '#28a745',
+        'Amarillo' => '#ffc107',
+        'Gris' => '#6c757d',
+        'Naranja' => '#fd7e14',
+        'Morado' => '#6f42c1',
+        'Rosado' => '#e83e8c',
+        'Negro Mate' => '#0a0a0a',
+        'Turquesa' => '#40e0d0', 
+        'Blanco combinado' => '#f8f9fa',
+    ];
+    
+    return $colorMap[$colorName] ?? '#6c757d';
+}
 
-$controller = new CarController();
+try {
+    // Consulta principal para obtener las 3 motos más vendidas
+    $sql = "SELECT 
+        m._id,
+        mm.marca,
+        mm.modelo,
+        mm.imagen,
+        m.color,
+        m.precio,
+        COALESCE(ventas.total_ventas, 0) AS total_ventas
+    FROM 
+        MOTOCICLETA m
+    JOIN 
+        MODELO_MOTO mm ON m.id_modelo = mm._id
+    LEFT JOIN (
+        SELECT 
+            id_producto, 
+            COUNT(*) AS total_ventas
+        FROM 
+            DETALLE_VENTA
+        WHERE 
+            tipo_producto = 'motocicleta'
+        GROUP BY 
+            id_producto
+    ) ventas ON m._id = ventas.id_producto
+    ORDER BY 
+        total_ventas DESC, RAND()
+    LIMIT 3";
 
-if (isset($_GET['action']) && $_GET['action'] === 'show' && isset($_GET['id'])) {
-    $controller->show($_GET['id']);
-} else {
-    $controller->index();
+    $stmt = $conn->query($sql);
+    $motosMasVendidas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    error_log("Error en la consulta: " . $e->getMessage());
+    $motosMasVendidas = []; 
 }
 ?>
 <!DOCTYPE html>
