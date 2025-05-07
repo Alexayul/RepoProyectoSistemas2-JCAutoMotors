@@ -1,76 +1,13 @@
 <?php
-include 'config/conexion.php';
-function getColorCode($colorName) {
-    $colorMap = [
-        'Rojo' => '#dc3545',
-        'Azul' => '#0d6efd',
-        'Negro' => '#000000',
-        'Blanco' => '#ffffff',
-        'Verde' => '#28a745',
-        'Amarillo' => '#ffc107',
-        'Gris' => '#6c757d',
-        'Naranja' => '#fd7e14',
-        'Morado' => '#6f42c1',
-        'Rosado' => '#e83e8c',
-        'Negro Mate' => '#0a0a0a',
-        'Turquesa' => '#40e0d0', 
-        'Blanco combinado' => '#f8f9fa',
-      // Añade más colores según necesites
-    ];
-    
-    return $colorMap[$colorName] ?? '#6c757d'; // Color por defecto (gris)
-}
 
-try {
-    // Consulta principal para obtener las 3 motos más vendidas
-    $sql = "SELECT 
-        dv.id_producto,
-        m._id,
-        mm.marca,
-        mm.modelo,
-        mm.imagen,
-        m.color,
-        m.precio,
-        COUNT(dv.id_producto) AS total_ventas
-    FROM 
-        DETALLE_VENTA dv
-    JOIN 
-        MOTOCICLETA m ON dv.id_producto = m._id
-    JOIN 
-        MODELO_MOTO mm ON m.id_modelo = mm._id
-    WHERE 
-        dv.tipo_producto = 'motocicleta'
-    GROUP BY 
-        dv.id_producto, m._id, mm.marca, mm.modelo, m.color, m.precio, mm.imagen
-    ORDER BY 
-        total_ventas DESC
-    LIMIT 3";
+require_once __DIR__ . '/controllers/CarController.php';
 
-    $stmt = $conn->query($sql);
-    $motosMasVendidas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$controller = new CarController();
 
-    if (empty($motosMasVendidas)) {
-        $backupSql = "SELECT 
-            m._id,
-            mm.marca,
-            mm.modelo,
-            mm.imagen,
-            m.color,
-            m.precio,
-            'N/A' AS total_ventas  
-        FROM 
-            MOTOCICLETA m
-        JOIN 
-            MODELO_MOTO mm ON m.id_modelo = mm._id
-        ORDER BY RAND()  -- Orden aleatorio para variedad
-        LIMIT 3";
-        
-        $backupStmt = $conn->query($backupSql);
-        $motosMasVendidas = $backupStmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-} catch (PDOException $e) {
-    error_log("Error en la consulta: " . $e->getMessage());
-    $motosMasVendidas = []; 
+if (isset($_GET['action']) && $_GET['action'] === 'show' && isset($_GET['id'])) {
+    $controller->show($_GET['id']);
+} else {
+    $controller->index();
 }
 ?>
 <!DOCTYPE html>
@@ -112,17 +49,17 @@ try {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="views/login.php">
+                        <a class="nav-link" href="pages/login.php">
                             <i class="bi bi-speedometer2 me-1"></i>Administración
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="views/login.php">
+                        <a class="nav-link" href="pages/login.php">
                             <i class="bi bi-people me-1"></i>Empleado
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="views/catalogo.php">
+                        <a class="nav-link" href="pages/catalogo.php">
                             <i class="bi bi-bicycle me-1"></i>Catálogo
                         </a>
                     </li>
@@ -156,7 +93,7 @@ try {
         <div class="container">
             <h1 class="hero-title">Pasión por las Dos Ruedas</h1>
             <p class="hero-text">Descubre nuestra amplia colección de motocicletas de alta calidad. Desde motos deportivas hasta cruisers clásicas, tenemos lo que buscas con las mejores condiciones del mercado.</p>
-            <a href="views/catalogo.php" class="btn btn-primary">Ver catálogo <i class="bi bi-arrow-right ms-2"></i></a>
+            <a href="pages/catalogo.php" class="btn btn-primary">Ver catálogo <i class="bi bi-arrow-right ms-2"></i></a>
         </div>
     </section>
 
@@ -286,7 +223,7 @@ try {
                                     </div>
                                     
                                     <div class="card-footer bg-white border-0 pt-0">
-                                        <a href="views/catalogo.php" class="btn w-100 rounded-pill" style="background-color: #a51314; color: white;">
+                                        <a href="pages/catalogo.php" class="btn w-100 rounded-pill" style="background-color: #a51314; color: white;">
                                             <i class="bi bi-eye-fill me-2"></i> Ver Catálogo Completo
                                         </a>
                                     </div>
@@ -299,7 +236,7 @@ try {
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                 No se encontraron motos disponibles en este momento.
                             </div>
-                            <a href="views/catalogo.php" class="btn btn-primary mt-3">
+                            <a href="pages/catalogo.php" class="btn btn-primary mt-3">
                                 Ver Catálogo Completo
                             </a>
                         </div>
