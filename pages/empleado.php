@@ -1,5 +1,6 @@
 <?php
 include '../config/conexion.php';
+include '../controllers/CatalogoController.php';
 
 session_start();
 
@@ -10,6 +11,7 @@ if (!isset($_SESSION['user'])) {
 
 $usuario_logueado = $_SESSION['user'];
 
+// Función de color de código
 function getColorCode($colorName) {
     $colorMap = [
         'Rojo' => '#dc3545',
@@ -25,60 +27,34 @@ function getColorCode($colorName) {
         'Negro Mate' => '#0a0a0a',
         'Turquesa' => '#40e0d0', 
         'Blanco combinado' => '#f8f9fa',
-      // Añade más colores según necesites
     ];
     
-    return $colorMap[$colorName] ?? '#6c757d'; // Color por defecto (gris)
+    return $colorMap[$colorName] ?? '#6c757d';
 }
+
 try {
-    if (!isset($conn)) {
-        throw new Exception("Error en la conexión con la base de datos.");
-    }
+    // Crear instancia del CatalogoController
+    $catalogoController = new CatalogoController($conn);
 
     // Filtros para motocicletas
     $brandFilter = isset($_POST['brand']) ? trim($_POST['brand']) : '';
     $modelFilter = isset($_POST['model']) ? trim($_POST['model']) : '';
     $ccFilter = isset($_POST['cc']) ? (int)$_POST['cc'] : '';
 
-    $queryMotos = "
-    SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
-           M.color, M.precio, M.estado, M.fecha_ingreso, M.cantidad 
-    FROM MOTOCICLETA M
-    INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
-    WHERE 1=1
-    ";
+    // Obtener motocicletas con filtros
+    $motocicletas = $catalogoController->obtenerMotocicletas($brandFilter, $modelFilter, $ccFilter);
 
-    if (!empty($brandFilter)) {
-        $queryMotos .= " AND MM.marca LIKE :marca";
-    }
-    if (!empty($modelFilter)) {
-        $queryMotos .= " AND MM.modelo LIKE :modelo";
-    }
-    if (!empty($ccFilter) && $ccFilter > 0) {
-        $queryMotos .= " AND MM.cilindrada = :cilindrada";
-    }
-
-    $stmtMotos = $conn->prepare($queryMotos);
-    
-    if (!empty($brandFilter)) {
-        $brandParam = "%$brandFilter%";
-        $stmtMotos->bindParam(':marca', $brandParam, PDO::PARAM_STR);
-    }
-    if (!empty($modelFilter)) {
-        $modelParam = "%$modelFilter%";
-        $stmtMotos->bindParam(':modelo', $modelParam, PDO::PARAM_STR);
-    }
-    if (!empty($ccFilter) && $ccFilter > 0) {
-        $stmtMotos->bindParam(':cilindrada', $ccFilter, PDO::PARAM_INT);
-    }
-
-    $stmtMotos->execute();
-    $motocicletas = $stmtMotos->fetchAll(PDO::FETCH_ASSOC);
+    // Calcular estadísticas
+    $totalMotos = array_sum(array_column($motocicletas, 'cantidad'));
+    $modelosUnicos = count(array_unique(array_column($motocicletas, 'modelo')));
+    $marcasUnicas = count(array_unique(array_column($motocicletas, 'marca')));
 
 } catch (Exception $e) {
     error_log("Error al cargar los datos: " . $e->getMessage());
     die("<div class='alert alert-danger'>Error al cargar los datos. Por favor, intente nuevamente.</div>");
 }
+
+// El resto del código HTML permanece igual al que proporcionaste anteriormente
 ?>
 <!DOCTYPE html>
 <html lang="es">

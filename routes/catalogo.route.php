@@ -22,13 +22,13 @@ try {
         }
     } else {
         // Si no hay acción específica, redirigir al catálogo
-        header("Location: ../views/catalogo.php");
+        header("Location: ../pages/catalogo.php");
         exit();
     }
 
 } catch (Exception $e) {
     // Manejo de errores
     $_SESSION['catalogo_error'] = $e->getMessage();
-    header("Location: ../views/catalogo.php");
+    header("Location: ../pages/catalogo.php");
     exit();
 }

@@ -1,8 +1,9 @@
 <?php
-include '../config/conexion.php';
-
-// Iniciar sesión
 session_start();
+require_once '../controllers/AccesoriosController.php';
+require_once '../config/conexion.php';
+require_once '../models/Accesorio.php';
+require_once '../models/Usuario.php';
 
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['user'])) {
@@ -10,44 +11,32 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
+// Obtener datos del usuario
 $usuario_logueado = $_SESSION['user'];
 
+// Inicializar modelo de Accesorio
+$accesorioModel = new Accesorio($conn);
+
+// Filtros
+$nombreFilter = $_POST['nombre_accesorio'] ?? '';
+$categoriaFilter = $_POST['categoria'] ?? '';
+
+// Obtener accesorios
 try {
-    if (!isset($conn)) {
-        throw new Exception("Error en la conexión con la base de datos.");
-    }
-    
-    // Inicializar filtros
-    $nombreFilter = isset($_POST['nombre_accesorio']) ? $_POST['nombre_accesorio'] : '';
-    $categoriaFilter = isset($_POST['categoria']) ? $_POST['categoria'] : '';
-
-    // Consulta base para accesorios
-    $queryAccesorios = "SELECT * FROM ACCESORIO WHERE 1=1";
-    
-    // Aplicar filtros
-    if ($nombreFilter) {
-        $queryAccesorios .= " AND nombre LIKE :nombre";
-    }
-
-    $stmtAccesorios = $conn->prepare($queryAccesorios);
-    
-    if ($nombreFilter) {
-        $nombreParam = "%$nombreFilter%";
-        $stmtAccesorios->bindParam(':nombre', $nombreParam, PDO::PARAM_STR);
-    }
-    if ($categoriaFilter) {
-        $stmtAccesorios->bindParam(':categoria', $categoriaFilter, PDO::PARAM_STR);
-    }
-    
-    $stmtAccesorios->execute();
-    $accesorios = $stmtAccesorios->fetchAll(PDO::FETCH_ASSOC);
+    $accesorios = $accesorioModel->obtenerAccesorios($nombreFilter, $categoriaFilter);
+    $totalAccesorios = $accesorioModel->calcularTotalAccesorios($accesorios);
 } catch (Exception $e) {
-    die("Error al cargar los datos: " . $e->getMessage());
+    $accesorios = [];
+    $totalAccesorios = 0;
+    // Manejar el error según sea necesario
+    error_log('Error al obtener accesorios: ' . $e->getMessage());
 }
-?><?php
 
+// Valores por defecto para evitar advertencias
+$nombreFilter = $nombreFilter ?? '';
+$categoriaFilter = $categoriaFilter ?? '';
+$totalAccesorios = $totalAccesorios ?? 0;
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -62,7 +51,6 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-   
 </head>
 <body>
     <div class="container-fluid p-0">
@@ -148,10 +136,7 @@ try {
                                         <i class="bi bi-box-seam me-1"></i> Accesorios en Stock
                                     </h6>
                                     <h3 class="mb-0 text-primary">
-                                        <?php 
-                                            $totalAccesorios = array_sum(array_column($accesorios, 'cantidad'));
-                                            echo $totalAccesorios;
-                                        ?>
+                                        <?php echo $totalAccesorios; ?>
                                     </h3>
                                 </div>
                                 <div class="bg-primary bg-opacity-10 p-3 rounded">
@@ -168,21 +153,21 @@ try {
                 <h5 class="mb-3">
                     <i class="bi bi-funnel-fill text-primary me-2"></i>Filtrar Accesorios
                 </h5>
-                <form method="POST" class="row g-3">
+                <form method="POST" class="row g-3" id="filtroAccesoriosForm">
                     <div class="col-md-6">
                         <label for="nombre_accesorio" class="form-label">
                             <i class="bi bi-search text-primary me-1"></i>Nombre
                         </label>
                         <input type="text" class="form-control" id="nombre_accesorio" name="nombre_accesorio" 
-                               value="<?php echo htmlspecialchars($nombreFilter); ?>" placeholder="Ej. Casco Integral">
+                            value="<?php echo htmlspecialchars($nombreFilter); ?>" placeholder="Ej. Casco Integral">
                     </div>
                     <div class="col-12 text-end">
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="bi bi-funnel-fill me-1"></i> Aplicar Filtros
                         </button>
-                        <a href="accesorios.php" class="btn btn-outline-secondary">
+                        <button type="button" class="btn btn-outline-secondary" id="limpiarFiltro">
                             <i class="bi bi-x-circle me-1"></i> Limpiar
-                        </a>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -201,7 +186,7 @@ try {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if ($accesorios): ?>
+                        <?php if (!empty($accesorios)): ?>
                             <?php foreach ($accesorios as $accesorio): ?>
                                 <tr data-bs-toggle="modal" data-bs-target="#modalAccesorio<?php echo $accesorio['_id']; ?>" style="cursor: pointer;">
                                     <td>
@@ -269,7 +254,6 @@ try {
                                                                 <span><i class="bi bi-box-seam text-primary me-2"></i> Stock</span>
                                                                 <strong><?php echo htmlspecialchars($accesorio['cantidad']); ?> unidades</strong>
                                                             </div>
-                                                            
                                                         </div>
                                                         
                                                         <div>
@@ -283,7 +267,6 @@ try {
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                     <i class="bi bi-x-circle me-1"></i> Cerrar
                                                 </button>
-                                                
                                             </div>
                                         </div>
                                     </div>
@@ -303,7 +286,7 @@ try {
             </div>
         </main>
     </div>
-
+    <script src="../public/js/accesorios.js"></script>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
