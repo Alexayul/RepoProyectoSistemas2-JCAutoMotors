@@ -1,5 +1,6 @@
 <?php
-include '../config/conexion.php';
+require_once '../config/conexion.php';
+require_once '../controllers/CatalogoController.php';
 
 function getColorCode($colorName) {
     $colorMap = [
@@ -16,41 +17,24 @@ function getColorCode($colorName) {
         'Negro Mate' => '#0a0a0a',
         'Turquesa' => '#40e0d0', 
         'Blanco combinado' => '#f8f9fa',
-      // Añade más colores según necesites
     ];
     
     return $colorMap[$colorName] ?? '#6c757d'; 
 }
 
 try {
-    if (!isset($conn)) {
-        throw new Exception("Error en la conexión con la base de datos.");
-    }
+    $catalogoController = new CatalogoController($conn);
     $brandFilter = isset($_GET['brand']) ? $_GET['brand'] : '';
 
-    $query = "
-    SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
-           M.color, M.precio, M.estado, M.fecha_ingreso, M.cantidad 
-    FROM MOTOCICLETA M
-    INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
-";
-    
-    if ($brandFilter) {
-        $query .= " WHERE MM.marca = :marca";
-    }
-
-    $stmt = $conn->prepare($query);
-
-    if ($brandFilter) {
-        $stmt->bindParam(':marca', $brandFilter, PDO::PARAM_STR);
-    }
-
-    $stmt->execute();
-    $motocicletas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $motocicletas = $catalogoController->obtenerMotocicletas($brandFilter);
+    $brands = $catalogoController->obtenerMarcas();
     
 } catch (Exception $e) {
     die("Error al cargar los datos: " . $e->getMessage());
 }
+
+session_start();
+$usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 ?>
 
 <!DOCTYPE html>
@@ -86,11 +70,6 @@ try {
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <?php
-                    session_start();
-                    $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
-                    ?>
-
                     <li class="nav-item">
                         <a class="nav-link" href="../index.php">
                             <i class="bi bi-house-door me-1"></i>Inicio
@@ -111,26 +90,21 @@ try {
                             <i class="bi bi-bicycle me-1"></i>Catálogo
                         </a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="direccion.php">
-                            <i class="bi bi-geo-alt me-1"></i>Ubicación
-                        </a>
-                    </li> -->
                     <?php if ($usuario_logueado): ?>
-                <li class="nav-item me-3">
-                    <span class="navbar-text text-light">
-                        <i class="bi bi-person-circle me-1"></i>
-                        Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
-                    </span>
-                </li>
-            <?php endif; ?>
-            <?php if ($usuario_logueado): ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link btn" href="../public/logout.php">
-                                            <i class="bi bi-box-arrow-right me-1"></i>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
+                        <li class="nav-item me-3">
+                            <span class="navbar-text text-light">
+                                <i class="bi bi-person-circle me-1"></i>
+                                Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
+                            </span>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($usuario_logueado): ?>
+                        <li class="nav-item">
+                            <a class="nav-link btn" href="../public/logout.php">
+                                <i class="bi bi-box-arrow-right me-1"></i>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -206,9 +180,6 @@ try {
             <div class="brand-buttons">
                 <button type="submit" name="brand" value="" class="btn btn-secondary ms-2">Todas</button>
                 <?php
-                    $brandStmt = $conn->prepare("SELECT DISTINCT marca FROM MODELO_MOTO");
-                    $brandStmt->execute();
-                    $brands = $brandStmt->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($brands as $brand) {
                         echo "<button type='submit' name='brand' value='" . htmlspecialchars($brand['marca']) . "' class='btn btn-primary ms-2'>" . htmlspecialchars($brand['marca']) . "</button>";
                     }
@@ -311,7 +282,7 @@ try {
                 </div>
             <?php endforeach; ?>
         </div>
-    <?php else: ?>
+        <?php else: ?>
         <div class="alert alert-info text-center py-4">
             <div class="py-3">
                 <i class="bi bi-exclamation-circle display-4 text-info mb-3"></i>
@@ -439,7 +410,7 @@ try {
                         <h5>Enlaces rápidos</h5>
                         <ul>
                             <li><a href="/">Inicio</a></li>
-                            <li><a href="/catalogo">Catálogo</a></li>
+                            <li><a href="../pages/catalogo.php">Catálogo</a></li>
                             <li><a href="/nosotros">Sobre nosotros</a></li>
                             <li><a href="/contacto">Contacto</a></li>
                         </ul>
