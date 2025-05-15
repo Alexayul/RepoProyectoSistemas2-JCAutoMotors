@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($resultado['success']) {
         $_SESSION['registro_exitoso'] = "¡Registro exitoso! Ya puedes iniciar sesión.";
-        header("Location: ../index.php");
+        header("Location: ../pages/login.php");
         exit;
     } else {
         $_SESSION['registro_errors'] = $resultado['errors'];

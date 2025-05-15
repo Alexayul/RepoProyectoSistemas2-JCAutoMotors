@@ -16,6 +16,37 @@ unset($_SESSION['form_data']);
     <link rel="stylesheet" href="../public/css/registro.css"> 
     <link rel="stylesheet" href="../public/css/transiciones.css"> 
     <script src="../public/js/transiciones.js"></script> 
+    <style>
+        @keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+}
+    </style>
 </head>
 <body>
 <?php if (!empty($errors)): ?>
@@ -68,13 +99,14 @@ unset($_SESSION['form_data']);
                         <span class="input-icon"><i class="bi bi-lock"></i></span>
                         <input type="password" class="input-field" placeholder="Contraseña" name="password" id="password" required>
                         <span class="eye-icon" id="eye-icon-password"><i class="bi bi-eye"></i></span>
-                        <div class="error-tooltip" id="password-error"></div>
+                        
                         <div class="password-strength">
                             <div class="password-strength-meter" id="password-strength-meter"></div>
                         </div>
                     </div>
                     <div class="password-strength-container">
                         <div class="password-requirements" style="margin-top: 8px; margin-left: 15px;">
+                            <div class="error-tooltip" id="password-error"></div>
                             <div class="requirement" id="req-length" style="margin-bottom: 3px;">
                                 <i class="bi bi-x-circle"></i> Mínimo 8 caracteres
                             </div>
