@@ -1,245 +1,38 @@
 <?php
-include '../config/conexion.php';
-session_start();
-$usuario_logueado = $_SESSION['user'];
-$user_id = $usuario_logueado ? $usuario_logueado['id'] : null;
+ob_start(); // Inicia el almacenamiento en búfer de salida
+require_once '../config/conexion.php';
+require_once '../controllers/VentasAdminController.php';
 
-// Check if user is logged in
+session_start();
 if (!isset($_SESSION['user'])) {
     header('Location: login.php');
     exit;
 }
 
-// Handle POST requests for completing a sale
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta'])) {
-    $id_venta = intval($_POST['id_venta']);
-    
-    try {        
-        // Update status using stored procedure
-        $stmtUpdate = $conn->prepare("CALL sp_completar_venta(:id_venta)");
-        $stmtUpdate->execute(['id_venta' => $id_venta]);
-        $stmtUpdate->closeCursor();
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Venta completada exitosamente'
-        ]);
-        
-    } catch (Exception $e) {
-        echo json_encode([
-            'success' => false,
-            'message' => $e->getMessage()
-        ]);
-    }
-    exit;
-}
+$controller = new VentasAdminController($conn);
 
-// Handle GET requests for sale details
-if (isset($_GET['id_venta']) && isset($_GET['action']) && $_GET['action'] == 'get_details') {
-    $id_venta = intval($_GET['id_venta']);
-    
-    try {
-        // Get sale information using stored procedure
-        $stmtVenta = $conn->prepare("CALL sp_obtener_info_venta(:id_venta)");
-        $stmtVenta->execute(['id_venta' => $id_venta]);
-        $venta = $stmtVenta->fetch(PDO::FETCH_ASSOC);
-        $stmtVenta->closeCursor();
-        
-        // Get product details using stored procedure
-        $stmtProductos = $conn->prepare("CALL sp_obtener_detalles_venta(:id_venta)");
-        $stmtProductos->execute(['id_venta' => $id_venta]);
-        $productos = $stmtProductos->fetchAll(PDO::FETCH_ASSOC);
-        $stmtProductos->closeCursor();
-        
-        // Return JSON response
-        header('Content-Type: application/json');
-        echo json_encode([
-            'venta' => $venta,
-            'productos' => $productos
-        ]);
-        exit;
-        
-    } catch (PDOException $e) {
-        http_response_code(500);
-        echo json_encode(['error' => $e->getMessage()]);
-        exit;
-    }
-}
+// Obtener datos del usuario logueado
+$user_id = $_SESSION['user']['id'] ?? null;
+$userData = $controller->obtenerDatosUsuario($user_id) ?? [
+    'nombre' => 'Usuario',
+    'apellido' => '',
+    'foto' => 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png',
+    'cargo' => 'Administrador'
+];
 
-// Get clients for select
-$stmtClientes = $conn->query("CALL sp_obtener_clientes()");
-$clientes = $stmtClientes->fetchAll(PDO::FETCH_ASSOC);
-$stmtClientes->closeCursor();
+// Obtener filtros de la solicitud
+$filtros = [
+    'fecha_desde' => $_GET['fecha_desde'] ?? null,
+    'fecha_hasta' => $_GET['fecha_hasta'] ?? null,
+    'estado' => $_GET['estado'] ?? null,
+    'tipo_pago' => $_GET['tipo_pago'] ?? null,
+    'empleado' => $_GET['empleado'] ?? null
+];
 
-// Get all sales (changed to show all sales instead of just employee's sales)
-$stmtVentas = $conn->query("CALL sp_obtener_ventas_todo()");
-$ventas = $stmtVentas->fetchAll(PDO::FETCH_ASSOC);
-$stmtVentas->closeCursor();
-
-// Get available products (motorcycles and accessories)
-$stmtProductos = $conn->query("CALL sp_obtener_productos_disponibles()");
-$productos = $stmtProductos->fetchAll(PDO::FETCH_ASSOC);
-$stmtProductos->closeCursor();
-
-// Apply filters if they exist
-if (isset($_GET['action']) && $_GET['action'] === 'filter') {
-    $filtros = [
-        'fecha_desde' => $_GET['fecha_desde'] ?? null,
-        'fecha_hasta' => $_GET['fecha_hasta'] ?? null,
-        'estado' => $_GET['estado'] ?? null,
-        'tipo_pago' => $_GET['tipo_pago'] ?? null,
-        'empleado' => $_GET['empleado'] ?? null // Nuevo filtro
-    ];
-
-    $ventas = array_filter($ventas, function($v) use ($filtros) {
-        // Date filter
-        if ($filtros['fecha_desde'] && strtotime($v['fecha_venta']) < strtotime($filtros['fecha_desde'])) {
-            return false;
-        }
-        if ($filtros['fecha_hasta'] && strtotime($v['fecha_venta']) > strtotime($filtros['fecha_hasta'])) {
-            return false;
-        }
-        
-        // Status filter
-        if ($filtros['estado'] && $v['estado'] !== $filtros['estado']) {
-            return false;
-        }
-        
-        // Payment type filter
-        if ($filtros['tipo_pago'] && $v['tipo_pago'] !== $filtros['tipo_pago']) {
-            return false;
-        }
-        if ($filtros['empleado'] && $v['id_empleado'] != $filtros['empleado']) {
-            return false;
-        }
-        
-        
-        return true;
-    });
-}
-
-// Process new sale form
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_venta'])) {
-    try {
-        $conn->beginTransaction();
-        
-        // Sale data
-        $id_cliente = $_POST['cliente'];
-        $tipo_pago = $_POST['tipo_pago'];
-        $adelanto = floatval($_POST['adelanto']);
-        
-        // Calculate total amount
-        $monto_total = 0;
-        $productos_venta = [];
-        
-        foreach ($_POST['productos'] as $producto_id) {
-            $tipo = $_POST['tipo_producto'][$producto_id];
-            $cantidad = intval($_POST['cantidad'][$producto_id]);
-            $precio = floatval($_POST['precio'][$producto_id]);
-            
-            $subtotal = $precio * $cantidad;
-            $monto_total += $subtotal;
-            
-            $productos_venta[] = [
-                'id' => $producto_id,
-                'tipo' => $tipo,
-                'cantidad' => $cantidad,
-                'precio' => $precio,
-                'subtotal' => $subtotal
-            ];
-        }
-        $estado = ($adelanto >= $monto_total) ? 'COMPLETADA' : 'PENDIENTE';
-        $saldo_pendiente = $monto_total - $adelanto;
-        
-        $stmtVenta = $conn->prepare("CALL sp_insertar_venta_completa(
-            :cliente, :empleado, :tipo_pago, :monto, :adelanto, :saldo, :estado, @id_venta)");
-        $stmtVenta->execute([
-            'cliente' => $id_cliente,
-            'empleado' => $user_id,
-            'tipo_pago' => $tipo_pago,
-            'monto' => $monto_total,
-            'adelanto' => $adelanto,
-            'saldo' => $saldo_pendiente,
-            'estado' => $estado
-        ]);
-        $stmtVenta->closeCursor();
-        
-        // Get the generated sale ID
-        $stmt = $conn->query("SELECT @id_venta as id_venta");
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stmt->closeCursor();
-        $id_venta = $result['id_venta'];
-        
-        // Insert sale details and update inventory
-        foreach ($productos_venta as $producto) {
-            // Insert detail using stored procedure
-            $stmtDetalle = $conn->prepare("CALL sp_insertar_detalle_venta(
-                :venta, :producto, :tipo, :precio, :cantidad, :subtotal)");
-            $stmtDetalle->execute([
-                'venta' => $id_venta,
-                'producto' => $producto['id'],
-                'tipo' => $producto['tipo'],
-                'precio' => $producto['precio'],
-                'cantidad' => $producto['cantidad'],
-                'subtotal' => $producto['subtotal']
-            ]);
-            $stmtDetalle->closeCursor();
-            
-            // Update inventory using stored procedure
-            if ($producto['tipo'] === 'motocicleta') {
-                $stmtUpdate = $conn->prepare("CALL sp_actualizar_inventario_moto(:id, :cantidad, @resultado)");
-            } else {
-                $stmtUpdate = $conn->prepare("CALL sp_actualizar_inventario_accesorio(:id, :cantidad, @resultado)");
-            }
-            
-            $stmtUpdate->execute([
-                'id' => $producto['id'],
-                'cantidad' => $producto['cantidad']
-            ]);
-            $stmtUpdate->closeCursor();
-            
-            // Check result
-            $stmtResult = $conn->query("SELECT @resultado as resultado");
-            $result = $stmtResult->fetch(PDO::FETCH_ASSOC);
-            $stmtResult->closeCursor();
-            
-            if ($result['resultado'] === 0) {
-                throw new Exception("No hay suficiente stock para el producto ID: {$producto['id']}");
-            }
-        }
-        
-        $conn->commit();
-        $_SESSION['mensaje'] = "Venta registrada exitosamente!";
-        header("Location: ventasA.php");
-        exit;
-        
-    } catch (Exception $e) {
-        $conn->rollBack();
-        $error = "Error al registrar la venta: " . $e->getMessage();
-    }
-}
-// Obtener datos del perfil del usuario
-try {
-    $stmt = $conn->prepare("SELECT p.nombre, p.apellido, e.foto, e.cargo
-                           FROM PERSONA p LEFT JOIN EMPLEADO e ON p._id = e._id
-                           WHERE p._id = :user_id");
-    $stmt->execute([':user_id' => $user_id]);
-    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $userData['foto'] = !empty($userData['foto']) ? 
-        'data:image/jpeg;base64,'.base64_encode($userData['foto']) : 
-        DEFAULT_AVATAR;
-        
-} catch (PDOException $e) {
-    $userData = [
-        'nombre' => 'Usuario',
-        'apellido' => '',
-        'foto' => DEFAULT_AVATAR,
-        'cargo' => 'No especificado'
-    ];
-}
-
-// Obtener el nombre de la página actual para resaltar el menú activo
+// Obtener datos para la vista
+$clientes = $controller->obtenerClientes();
+$ventas = $controller->obtenerVentas($filtros);
+$productos = $controller->obtenerProductosDisponibles();
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
@@ -264,44 +57,46 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <img src="../public/logo.png" alt="JC Automotors" class="img-fluid" style="max-height: 180px;">
             </a>
         </div>
+        
+        <!-- User Profile Section -->
         <div class="user-profile">
             <div class="user-avatar">
-                <img src="<?php echo htmlspecialchars($userData['foto'] ?? 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png'); ?>" alt="User">
+                <img src="<?php echo htmlspecialchars($userData['foto']); ?>" alt="User">
             </div>
             <div class="user-info">
                 <h5 class="user-name"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
-                <p class="user-role">Administrador</p>
+                <p class="user-role"><?php echo htmlspecialchars($userData['cargo']); ?></p>
             </div>
         </div>
         
         <div class="sidebar-nav">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="../index.php">
+                    <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="../index.php">
                         <i class="bi bi-house-door"></i>
                         <span>Inicio</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="admin.php">
+                    <a class="nav-link <?php echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="gestionEmpleados.php">
+                    <a class="nav-link <?php echo ($current_page == 'gestionEmpleados.php') ? 'active' : ''; ?>"  href="gestionEmpleados.php">
                         <i class="bi bi-people"></i>
                         <span>Empleados</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="catalogo.php">
+                    <a class="nav-link <?php echo ($current_page == 'catalogo.php') ? 'active' : ''; ?>" href="catalogo.php">
                         <i class="bi bi-bicycle"></i>
                         <span>Catálogo</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="ventasA.php">
+                    <a class="nav-link <?php echo ($current_page == 'ventasA.php') ? 'active' : ''; ?>" href="ventasA.php">
                         <i class="bi bi-cash-coin"></i>
                         <span>Ventas</span>
                     </a>
@@ -315,7 +110,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </ul>
         </div>
     </div>
-        
     <div class="main-content">
         <div class="content-header">
             <div>
@@ -362,7 +156,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="bi bi-check-circle"></i>
                     </div>
                     <div class="stat-info">
-                        <h3><?= count(array_filter($ventas, fn($v) => $v['estado'] === 'COMPLETADA')) ?></h3>
+                        <h3><?= count(array_filter($ventas, fn($v) => $v['estado'] === 'Completada')) ?></h3>
                         <p>Completadas</p>
                     </div>
                 </div>
@@ -373,29 +167,34 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="bi bi-clock-history"></i>
                     </div>
                     <div class="stat-info">
-                        <h3><?= count(array_filter($ventas, fn($v) => $v['estado'] === 'PENDIENTE')) ?></h3>
+                        <h3><?= count(array_filter($ventas, fn($v) => $v['estado'] === 'Pendiente')) ?></h3>
                         <p>Pendientes</p>
                     </div>
                 </div>
-                
                 <!-- Saldo Total -->
                 <div class="stat-card" style="--stat-color: var(--info); --stat-bg: var(--info-light);">
                     <div class="stat-icon">
                         <i class="bi bi-cash-stack"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>Bs. <?= number_format(array_sum(array_column($ventas, 'monto_total'))) ?></h3>
+                        <h3>
+                            $ <?= number_format(array_sum(array_column($ventas, 'monto_total'))) ?><br>
+                            <small class="text-muted">Bs. <?= number_format(array_sum(array_column($ventas, 'monto_total')) * 7) ?></small>
+                        </h3>
                         <p>Saldo Total</p>
                     </div>
                 </div>
-                
+
                 <!-- Saldo Pendiente -->
                 <div class="stat-card" style="--stat-color: var(--danger); --stat-bg: var(--danger-light);">
                     <div class="stat-icon">
                         <i class="bi bi-exclamation-triangle"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>Bs. <?= number_format(array_sum(array_column($ventas, 'saldo_pendiente'))) ?></h3>
+                        <h3>
+                            $ <?= number_format(array_sum(array_column($ventas, 'saldo_pendiente'))) ?><br>
+                            <small class="text-muted">Bs. <?= number_format(array_sum(array_column($ventas, 'saldo_pendiente')) * 7) ?></small>
+                        </h3>
                         <p>Saldo Pendiente</p>
                     </div>
                 </div>
@@ -451,8 +250,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             </label>
                             <select class="form-select" id="estado" name="estado">
                                 <option value="">Todos</option>
-                                <option value="COMPLETADA" <?= ($_GET['estado'] ?? '') === 'COMPLETADA' ? 'selected' : '' ?>>Completadas</option>
-                                <option value="PENDIENTE" <?= ($_GET['estado'] ?? '') === 'PENDIENTE' ? 'selected' : '' ?>>Pendientes</option>
+                                <option value="Completada" <?= ($_GET['estado'] ?? '') === 'Completada' ? 'selected' : '' ?>>Completadas</option>
+                                <option value="Pendiente" <?= ($_GET['estado'] ?? '') === 'Pendiente' ? 'selected' : '' ?>>Pendientes</option>
                             </select>
                         </div>
                         
@@ -513,13 +312,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                                             <?= htmlspecialchars($v['tipo_pago']) ?>
                                                         </span>
                                                     </td>
-                                                    <td>Bs. <?= number_format($v['monto_total'], 2) ?></td>
-                                                    <td>Bs. <?= number_format($v['adelanto'], 2) ?></td>
-                                                    <td>Bs. <?= number_format($v['saldo_pendiente'], 2) ?></td>
+                                                    <td>$ <?= number_format($v['monto_total']) ?></td>
+                                                    <td>$ <?= number_format($v['adelanto']) ?></td>
+                                                    <td>$ <?= number_format($v['saldo_pendiente']) ?></td>
                                                     <td>
                                                         <span class="badge bg-<?= 
-                                                            $v['estado'] == 'COMPLETADA' ? 'success' : 
-                                                            ($v['estado'] == 'PENDIENTE' ? 'warning' : 'danger') 
+                                                            $v['estado'] == 'Completada' ? 'success' : 
+                                                            ($v['estado'] == 'Pendiente' ? 'warning' : 'danger') 
                                                         ?>">
                                                             <?= htmlspecialchars($v['estado']) ?>
                                                         </span>
@@ -528,7 +327,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                                         <button class="btn btn-sm btn-outline-primary" onclick="verDetalle(<?= $v['_id'] ?>)">
                                                             <i class="bi bi-eye"></i> Detalle
                                                         </button>
-                                                        <?php if ($v['estado'] == 'PENDIENTE'): ?>
+                                                        <?php if ($v['estado'] == 'Pendiente'): ?>
                                                             <button class="btn btn-sm btn-outline-success" onclick="completarVenta(<?= $v['_id'] ?>)">
                                                                 <i class="bi bi-check-circle"></i> Completar
                                                             </button>
@@ -556,137 +355,184 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
     </div>
 
-    <!-- Modal Nueva Venta -->
-    <div class="modal fade" id="modalVenta" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="bi bi-cart-plus me-2"></i> Nueva Venta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="POST" id="formVenta">
-                    <div class="modal-body">
-                        <?php if (isset($error)): ?>
-                            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-                        <?php endif; ?>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Cliente *</label>
-                            <select class="form-select" name="cliente" required>
-                                <option value="">Seleccione un cliente</option>
-                                <?php foreach($clientes as $c): ?>
-                                    <option value="<?= $c['_id'] ?>"><?= htmlspecialchars($c['nombre_completo']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo de Pago *</label>
-                                <select class="form-select" name="tipo_pago" required>
-                                    <option value="">Seleccione...</option>
-                                    <option value="Al contado">Al contado</option>
-                                    <option value="Financiamiento bancario">Financiamiento bancario</option>
-                                    <option value="Crédito Directo">Crédito Directo</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Adelanto (Bs.) *</label>
-                                <input type="number" step="0.01" min="0" class="form-control" name="adelanto" required>
-                            </div>
-                        </div>
-                        
-                        <h5 class="mb-3"><i class="bi bi-box-seam me-2"></i> Productos Disponibles</h5>
-                        <div id="listaProductos" class="row g-3">
-                            <?php foreach($productos as $p): ?>
-                                <div class="col-md-6">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <div class="form-check">
-                                                <input class="form-check-input producto-check" type="checkbox" 
-                                                       name="productos[]" 
-                                                       value="<?= $p['_id'] ?>"
-                                                       id="producto_<?= $p['_id'] ?>"
-                                                       data-precio="<?= $p['precio'] ?>" 
-                                                       data-nombre="<?= htmlspecialchars($p['nombre']) ?>" 
-                                                       data-cantidad="<?= $p['cantidad'] ?>"
-                                                       data-tipo="<?= $p['tipo'] ?>">
-                                                <label class="form-check-label" for="producto_<?= $p['_id'] ?>">
-                                                    <strong><?= htmlspecialchars($p['nombre']) ?></strong>
-                                                    <?= $p['color'] ? ' - ' . htmlspecialchars($p['color']) : '' ?>
-                                                    <span class="badge bg-<?= $p['tipo'] === 'motocicleta' ? 'primary' : 'info' ?> ms-2">
-                                                        <?= ucfirst($p['tipo']) ?>
-                                                    </span>
-                                                </label>
+<!-- Modal Nueva Venta - Versión con Doble Moneda -->
+<div class="modal fade" id="modalVenta" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-xl-down modal-xxl">
+        <div class="modal-content" style="min-height: 80vh;">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-cart-plus me-2"></i> Nueva Venta</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" id="formVenta">
+                <div class="modal-body d-flex flex-column" style="min-height: calc(80vh - 120px);">
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-currency-exchange"></i> Tipo de cambio: 1 USD = 7 Bs.
+                    </div>
+                    
+                    <div class="row flex-grow-1">
+                        <!-- Columna Izquierda - Formulario -->
+                        <div class="col-lg-5 d-flex flex-column">
+                            <div class="card h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-3">
+                                        <label class="form-label">Cliente *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                            <select class="form-select" name="cliente" id="selectCliente" required>
+                                                <option value="">Seleccione un cliente</option>
+                                                <?php foreach($clientes as $c): ?>
+                                                    <option value="<?= $c['_id'] ?>"><?= htmlspecialchars($c['nombre_completo']) ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="row mb-3 g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Tipo de Pago *</label>
+                                            <select class="form-select" name="tipo_pago" id="tipoPago" required>
+                                                <option value="">Seleccione...</option>
+                                                <option value="Al contado">Al contado</option>
+                                                <option value="Financiamiento bancario">Financiamiento bancario</option>
+                                                <option value="Crédito Directo">Crédito Directo</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Adelanto (Bs.) *</label>
+                                            <input type="number" step="0.01" min="0" class="form-control" name="adelanto" id="adelanto" required>
+                                            <small class="text-muted" id="adelantoUSD">0.00 $</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-auto" style="margin-top: 50px;">
+                                        <h5 class="mb-3"><i class="bi bi-box-seam me-2"></i> Productos Disponibles</h5>
+                                        <div class="mb-3">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                                <input type="text" class="form-control" id="buscadorProductos" placeholder="Buscar productos...">
+                                                <button class="btn btn-outline-secondary" type="button" id="btnFiltrarMotocicletas">
+                                                    <i class="bi bi-bicycle"></i> Motos
+                                                </button>
+                                                <button class="btn btn-outline-secondary" type="button" id="btnFiltrarAccesorios">
+                                                    <i class="bi bi-tools"></i> Accesorios
+                                                </button>
                                             </div>
-                                            <div class="mt-2 d-flex justify-content-between align-items-center">
-                                                <small class="text-muted">Disponibles: <?= $p['cantidad'] ?></small>
-                                                <span class="fw-bold">Bs. <?= number_format($p['precio'], 2) ?></span>
-                                            </div>
-                                            <div class="mt-2">
-                                                <label class="form-label">Cantidad:</label>
-                                                <input type="number" min="1" max="<?= $p['cantidad'] ?>" 
-                                                       class="form-control cant-input" 
-                                                       name="cantidad[<?= $p['_id'] ?>]"
-                                                       data-producto="<?= $p['_id'] ?>"
-                                                       placeholder="Cantidad" 
-                                                       value="1"
-                                                       disabled>
-                                                <input type="hidden" name="precio[<?= $p['_id'] ?>]" value="<?= $p['precio'] ?>">
-                                                <input type="hidden" name="tipo_producto[<?= $p['_id'] ?>]" value="<?= $p['tipo'] ?>">
-                                            </div>
+                                        </div>
+                                        
+                                        <div id="listaProductos" class="row g-2 flex-grow-1" style="max-height: 300px; overflow-y: auto;">
+                                            <?php foreach($productos as $p): 
+                                                $precio_bs = $p['precio'] * 7; // Convertir $ a Bs.
+                                            ?>
+                                                <div class="col-6 producto-item" data-nombre="<?= strtolower(htmlspecialchars($p['nombre'])) ?>" data-tipo="<?= strtolower($p['tipo']) ?>">
+                                                    <div class="card h-100">
+                                                        <div class="card-body p-2">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input producto-check" type="checkbox" 
+                                                                       name="productos[]" 
+                                                                       value="<?= $p['_id'] ?>"
+                                                                       id="producto_<?= $p['_id'] ?>"
+                                                                       data-precio="<?= $precio_bs ?>" 
+                                                                       data-precio-usd="<?= $p['precio'] ?>" 
+                                                                       data-nombre="<?= htmlspecialchars($p['nombre']) ?>" 
+                                                                       data-cantidad="<?= $p['cantidad'] ?>"
+                                                                       data-tipo="<?= $p['tipo'] ?>">
+                                                                <label class="form-check-label" for="producto_<?= $p['_id'] ?>">
+                                                                    <strong><?= htmlspecialchars($p['nombre']) ?></strong>
+                                                                    <?= $p['color'] ? ' - ' . htmlspecialchars($p['color']) : '' ?>
+                                                                    <span class="badge bg-<?= $p['tipo'] === 'motocicleta' ? 'primary' : 'info' ?> ms-2">
+                                                                        <?= ucfirst($p['tipo']) ?>
+                                                                    </span>
+                                                                </label>
+                                                            </div>
+                                                            <div class="mt-2 d-flex justify-content-between align-items-center">
+                                                                <small class="text-muted">Disponibles: <?= $p['cantidad'] ?></small>
+                                                                <div class="text-end">
+                                                                    <div class="fw-bold">$ <?= number_format($p['precio']) ?></div>
+                                                                    <small class="text-muted">Bs. <?= number_format($precio_bs) ?></small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                <label class="form-label">Cantidad:</label>
+                                                                <input type="number" min="1" max="<?= $p['cantidad'] ?>" 
+                                                                       class="form-control cant-input" 
+                                                                       name="cantidad[<?= $p['_id'] ?>]"
+                                                                       data-producto="<?= $p['_id'] ?>"
+                                                                       placeholder="Cantidad" 
+                                                                       value="1"
+                                                                       disabled>
+                                                                <input type="hidden" name="precio[<?= $p['_id'] ?>]" value="<?= $precio_bs ?>">
+                                                                <input type="hidden" name="tipo_producto[<?= $p['_id'] ?>]" value="<?= $p['tipo'] ?>">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
                                         </div>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                            </div>
                         </div>
                         
-                        <div class="mt-4 p-3 bg-light rounded">
-                            <h5>Resumen de Venta</h5>
-                            <div id="resumenVenta">
-                                <p class="text-muted">Seleccione productos para ver el resumen</p>
-                            </div>
-                            <div class="d-flex justify-content-between mt-3">
-                                <h5>Total:</h5>
-                                <h4 id="totalVenta">Bs. 0.00</h4>
-                                <input type="hidden" name="guardar_venta" value="1">
+                        
+                        <div class="col-lg-7 d-flex flex-column">
+                            <div class="card h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title border-bottom pb-2">Resumen de Venta</h5>
+                                    <div id="resumenVenta" class="flex-grow-1" style="overflow-y: auto; height: 800px;">
+                                        <div class="alert alert-info mb-0">
+                                            <i class="bi bi-info-circle"></i> Seleccione productos para ver el resumen
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-auto border-top pt-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5>Subtotal:</h5>
+                                            <div class="text-end">
+                                                <h5 id="subtotalVenta">$ 0.00</h5>
+                                                <small class="text-muted" id="subtotalVentaBs">Bs. 0.00</small>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5>Adelanto:</h5>
+                                            <div class="text-end">
+                                                <h5 id="adelantoResumen">Bs. 0.00</h5>
+                                                <small class="text-muted" id="adelantoResumenUSD">$ 0.00</small>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="descuento" id="inputDescuento" value="0">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5>Saldo Pendiente:</h5>
+                                            <div class="text-end">
+                                                <h5 id="saldoResumen">Bs. 0.00</h5>
+                                                <small class="text-muted" id="saldoResumenUSD">$ 0.00</small>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                                            <h4>Total:</h4>
+                                            <div class="text-end">
+                                                <h3 id="totalVenta" class="text-primary">$ 0.00</h3>
+                                                <small class="text-muted" id="totalVentaBs">Bs. 0.00</small>
+                                            </div>
+                                            <input type="hidden" name="guardar_venta" value="1">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="bi bi-x-circle me-1"></i> Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save me-1"></i> Guardar Venta
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Detalle Venta -->
-    <div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="bi bi-receipt me-2"></i> Detalle de Venta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="detalleContenido">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-1"></i> Cerrar
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i> Guardar Venta
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
-
+</div>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
@@ -694,3 +540,37 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <script src="../public/js/ventasA.js"></script>
 </body>
 </html>
+
+<?php
+// Manejo del formulario de nueva venta
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_venta'])) {
+    try {
+        $data = [
+            'cliente' => $_POST['cliente'],
+            'tipo_pago' => $_POST['tipo_pago'],
+            'adelanto' => floatval($_POST['adelanto']),
+            'monto_total' => array_sum(array_map(fn($id) => $_POST['precio'][$id] * $_POST['cantidad'][$id], $_POST['productos'])),
+            'saldo_pendiente' => array_sum(array_map(fn($id) => $_POST['precio'][$id] * $_POST['cantidad'][$id], $_POST['productos'])) - floatval($_POST['adelanto']),
+            'estado' => (floatval($_POST['adelanto']) >= array_sum(array_map(fn($id) => $_POST['precio'][$id] * $_POST['cantidad'][$id], $_POST['productos']))) ? 'Completada' : 'Pendiente',
+            'productos' => array_map(fn($id) => [
+                'id' => $id,
+                'tipo' => $_POST['tipo_producto'][$id],
+                'cantidad' => intval($_POST['cantidad'][$id]),
+                'precio' => floatval($_POST['precio'][$id]),
+                'subtotal' => floatval($_POST['precio'][$id]) * intval($_POST['cantidad'][$id])
+            ], $_POST['productos'])
+        ];
+
+        $controller->registrarVenta($data, $_SESSION['user']['id']);
+        $_SESSION['mensaje'] = "Venta registrada exitosamente!";
+        header("Location: ventasA.php");
+        exit;
+    } catch (Exception $e) {
+        // Capturar errores y mostrarlos para depuración
+        $error = "Error al registrar la venta: " . $e->getMessage();
+        error_log($error); // Registrar el error en el log del servidor
+    }
+}
+
+ob_end_flush(); // Envía el contenido del búfer de salida
+?>
