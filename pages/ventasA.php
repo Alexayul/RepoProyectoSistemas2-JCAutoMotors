@@ -4,6 +4,38 @@ require_once '../config/conexion.php';
 require_once '../controllers/VentasAdminController.php';
 
 session_start();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    try {
+        if (!isset($_SESSION['user'])) {
+            throw new Exception('Sesión expirada');
+        }
+
+        $controller = new VentasAdminController($conn);
+        
+        switch ($_POST['action']) {
+            case 'completar_venta':
+                $controller->completarVenta($_POST['id_venta']);
+                echo json_encode(['success' => true, 'message' => 'Venta completada']);
+                break;
+                
+            // Puedes añadir más acciones AJAX aquí
+                
+            default:
+                throw new Exception('Acción no válida');
+        }
+        
+        ob_end_clean(); // Limpiar buffer antes de enviar JSON
+        exit;
+        
+    } catch (Exception $e) {
+        ob_end_clean(); // Limpiar buffer antes de enviar JSON
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
 if (!isset($_SESSION['user'])) {
     header('Location: login.php');
     exit;
@@ -80,7 +112,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
                         <i class="bi bi-speedometer2"></i>
-                        <span>Dashboard</span>
+                        <span>Panel administrativo</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -90,9 +122,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'catalogo.php') ? 'active' : ''; ?>" href="catalogo.php">
-                        <i class="bi bi-bicycle"></i>
-                        <span>Catálogo</span>
+                    <a class="nav-link <?php echo ($current_page == 'clientesA.php') ? 'active' : ''; ?>" href="clientesA.php">
+                       <i class="bi bi-person me-2"></i>
+                        <span>Clientes</span>
                     </a>
                 </li>
                 <li class="nav-item">

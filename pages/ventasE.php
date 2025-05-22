@@ -94,12 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_venta'])) {
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link text-white" href="empleado.php">
-                            <i class="bi bi-bicycle me-2"></i>Catálogo de motos
+                            <i class="bi bi-bicycle me-2"></i>Inventario de motos
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="accesorios.php">
-                            <i class="bi bi-tools me-2"></i>Catálogo de accesorios
+                            <i class="bi bi-tools me-2"></i>Inventario de accesorios
                         </a>
                     </li>
                     <li class="nav-item">
@@ -108,18 +108,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_venta'])) {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="clientes.php">
+                        <a class="nav-link text-white" href="clientesE.php">
                             <i class="bi bi-people-fill me-2"></i>Clientes
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="reportes.php">
-                            <i class="bi bi-graph-up-arrow me-2"></i>Reportes
+                        <a class="nav-link text-white" href="#">
+                            <i class="bi bi-cash-stack me-2"></i>Crédito Directo
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="horarios.php">
-                            <i class="bi bi-calendar-week me-2"></i>Horarios
+                        <a class="nav-link text-white" href="#">
+                            <i class="bi bi-tools me-2"></i>Mantenimientos
                         </a>
                     </li>
                 </ul>

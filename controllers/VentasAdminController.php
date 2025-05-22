@@ -75,4 +75,7 @@ class VentasAdminController {
     public function registrarVenta($data, $user_id) {
         return $this->model->registrarVenta($data, $user_id);
     }
+    public function completarVenta($id_venta) {
+    return $this->model->completarVenta($id_venta);
+}
 }
