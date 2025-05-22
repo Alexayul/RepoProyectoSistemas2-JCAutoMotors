@@ -330,7 +330,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
                         <i class="bi bi-speedometer2"></i>
-                        <span>Dashboard</span>
+                        <span>Panel administrativo</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -340,9 +340,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'catalogo.php') ? 'active' : ''; ?>" href="catalogo.php">
-                        <i class="bi bi-bicycle"></i>
-                        <span>Catálogo</span>
+                    <a class="nav-link <?php echo ($current_page == 'clientesA.php') ? 'active' : ''; ?>" href="clientesA.php">
+                       <i class="bi bi-person me-2"></i>
+                        <span>Clientes</span>
                     </a>
                 </li>
                 <li class="nav-item">

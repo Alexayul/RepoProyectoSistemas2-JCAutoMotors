@@ -681,6 +681,18 @@
   .modal-xxl {
     max-width: 1500px;
 }
+.badge {
+  padding: 0.5em 0.8em;
+  font-weight: 500;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.badge-entregado {
+  background-color: rgb(9, 147, 41);
+  color: white;
+}
 .producto-item .card {
     transition: all 0.3s ease;
 }
