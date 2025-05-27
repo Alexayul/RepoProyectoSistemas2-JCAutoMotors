@@ -1,144 +1,11 @@
 <?php 
 session_start(); 
-require_once '../config/conexion.php';
 
-function sanitizeInput($input) { 
-    $input = trim($input); 
-    $input = stripslashes($input); 
-    $input = htmlspecialchars($input); 
-    return $input; 
-} 
-
-function isSecurePassword($password) {
-    if (strlen($password) < 8) {
-        return "La contraseña debe tener al menos 8 caracteres";
-    }
-
-    if (!preg_match('/[A-Z]/', $password)) {
-        return "La contraseña debe contener al menos una letra mayúscula";
-    }
-
-    if (!preg_match('/[a-z]/', $password)) {
-        return "La contraseña debe contener al menos una letra minúscula";
-    }
-
-    if (!preg_match('/[0-9]/', $password)) {
-        return "La contraseña debe contener al menos un número";
-    }
-
-    if (!preg_match('/[^A-Za-z0-9]/', $password)) {
-        return "La contraseña debe contener al menos un carácter especial";
-    }
-    
-    return true;
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") { 
-    $errors = [];
-    $form_data = [];
-
-    $required_fields = ['nombre', 'email', 'usuario', 'password', 'confirm_password'];
-    foreach ($required_fields as $field) {
-        if (empty($_POST[$field])) {
-            $errors[] = "El campo " . ucfirst(str_replace('_', ' ', $field)) . " es obligatorio";
-        } else {
-            $form_data[$field] = sanitizeInput($_POST[$field]);
-        }
-    }
-    
-    if (empty($errors)) {
-        // Validar formato de email
-        if (!filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = "El formato del correo electrónico no es válido";
-        }
-        
-        if (strlen($form_data['usuario']) < 4) {
-            $errors[] = "El nombre de usuario debe tener al menos 4 caracteres";
-        }
-        
-        $password_validation = isSecurePassword($form_data['password']);
-        if ($password_validation !== true) {
-            $errors[] = $password_validation;
-        }
-        
-        if ($form_data['password'] !== $form_data['confirm_password']) {
-            $errors[] = "Las contraseñas no coinciden";
-        }
-
-        $sql = "SELECT COUNT(*) FROM PERSONA WHERE email = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(1, $form_data['email']);
-        $stmt->execute();
-        $count = $stmt->fetchColumn();
-
-        if ($count > 0) {
-            $errors[] = "El correo electrónico ya está registrado";
-        }
-
-        $sql = "SELECT COUNT(*) FROM USUARIO WHERE usuario = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(1, $form_data['usuario']);
-        $stmt->execute();
-        $count = $stmt->fetchColumn();
-
-        if ($count > 0) {
-            $errors[] = "El nombre de usuario ya está en uso";
-        }
-    }
-    
-    if (!empty($errors)) {
-        $_SESSION['registro_errors'] = $errors;
-        $_SESSION['form_data'] = $form_data;
-        header("Location: registro.php");
-        exit;
-    } else {
-        try {
-            $conn->exec('BEGIN');
-            
-            $nombre_completo = explode(' ', trim($form_data['nombre']), 2);
-            $nombre = $nombre_completo[0];
-            $apellido = isset($nombre_completo[1]) ? $nombre_completo[1] : '';
-            
-            $hashed_password = hash('sha256', $form_data['password']);
-            
-            $sql_persona = "INSERT INTO PERSONA (_id, nombre, apellido, telefono, email, documento_identidad) 
-            VALUES (NULL, ?, ?, '', ?, NULL)";
-        
-            $stmt_persona = $conn->prepare($sql_persona);
-            $stmt_persona->bindParam(1, $nombre);
-            $stmt_persona->bindParam(2, $apellido);
-            $stmt_persona->bindParam(3, $form_data['email']);
-            $stmt_persona->execute();
-        
-            $id_persona = $conn->lastInsertId();
-
-            $sql_usuario = "INSERT INTO USUARIO (_id, id_persona, usuario, password, id_rol) 
-            VALUES (NULL, ?, ?, ?, 3)";
-        
-            $stmt_usuario = $conn->prepare($sql_usuario);
-            $stmt_usuario->bindParam(1, $id_persona);
-            $stmt_usuario->bindParam(2, $form_data['usuario']);
-            $stmt_usuario->bindParam(3, $hashed_password);
-            $stmt_usuario->execute();
-            
-            // Commit the transaction
-            $conn->exec('COMMIT');
-
-            $_SESSION['registro_exitoso'] = "¡Registro exitoso! Ya puedes iniciar sesión.";
-            header("Location: login.php");
-            exit;
-            
-        } catch (Exception $e) {
-            $conn->exec('ROLLBACK');
-
-            $_SESSION['registro_errors'] = ["Error al registrar el usuario: " . $e->getMessage()];
-            $_SESSION['form_data'] = $form_data;
-            header("Location: registro.php");
-            exit;
-        }
-    }
-} 
-?>
+$errors = isset($_SESSION['registro_errors']) ? $_SESSION['registro_errors'] : []; 
+$form_data = isset($_SESSION['form_data']) ? $_SESSION['form_data'] : []; 
+unset($_SESSION['registro_errors']); 
+unset($_SESSION['form_data']); 
+?> 
 <!DOCTYPE html> 
 <html lang="es"> 
 <head> 
@@ -149,15 +16,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../public/css/registro.css"> 
     <link rel="stylesheet" href="../public/css/transiciones.css"> 
     <script src="../public/js/transiciones.js"></script> 
+    <style>
+        @keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+}
+    </style>
 </head>
 <body>
-<?php 
-$errors = isset($_SESSION['registro_errors']) ? $_SESSION['registro_errors'] : []; 
-$form_data = isset($_SESSION['form_data']) ? $_SESSION['form_data'] : []; 
-unset($_SESSION['registro_errors']); 
-unset($_SESSION['form_data']); 
-?> 
-
 <?php if (!empty($errors)): ?>
     <div class="alert-container" id="alertContainer">
         <?php foreach ($errors as $index => $error): ?>
@@ -182,7 +73,7 @@ unset($_SESSION['form_data']);
             <div class="right-content">
                 <div class="session-title">Registro</div>
                 
-                <form action="registro.php" method="POST" id="register-form" novalidate>
+                <form action="../routes/registro.route.php" method="POST" id="register-form" novalidate>
                     <div class="input-container" id="nombre-container">
                         <span class="input-icon"><i class="bi bi-person"></i></span>
                         <input type="text" class="input-field" placeholder="Nombre completo" name="nombre" id="nombre" required 
@@ -208,13 +99,14 @@ unset($_SESSION['form_data']);
                         <span class="input-icon"><i class="bi bi-lock"></i></span>
                         <input type="password" class="input-field" placeholder="Contraseña" name="password" id="password" required>
                         <span class="eye-icon" id="eye-icon-password"><i class="bi bi-eye"></i></span>
-                        <div class="error-tooltip" id="password-error"></div>
+                        
                         <div class="password-strength">
                             <div class="password-strength-meter" id="password-strength-meter"></div>
                         </div>
                     </div>
                     <div class="password-strength-container">
                         <div class="password-requirements" style="margin-top: 8px; margin-left: 15px;">
+                            <div class="error-tooltip" id="password-error"></div>
                             <div class="requirement" id="req-length" style="margin-bottom: 3px;">
                                 <i class="bi bi-x-circle"></i> Mínimo 8 caracteres
                             </div>

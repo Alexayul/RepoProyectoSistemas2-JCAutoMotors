@@ -133,16 +133,6 @@
     letter-spacing: 0.5px;
   }
   
-  .table tbody tr {
-    border-bottom: 1px solid #f0f0f0;
-    transition: all 0.2s;
-  }
-  
-  .table tbody tr:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-    transform: scale(1.01);
-  }
-  
   /* BADGES */
   .badge {
     padding: 0.5em 0.8em;
@@ -424,3 +414,26 @@
       border: 1px solid #ddd;
     }
   }
+  .modal-xxl {
+    max-width: 1350px;
+}
+.producto-item .card {
+    transition: all 0.3s ease;
+}
+.producto-item .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+#listaProductos::-webkit-scrollbar {
+    width: 8px;
+}
+#listaProductos::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+#listaProductos::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+#listaProductos::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

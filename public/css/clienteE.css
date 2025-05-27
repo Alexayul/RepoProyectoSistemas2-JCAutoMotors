@@ -1,0 +1,375 @@
+:root {
+  --primary: #a51314;        /* Rojo principal */
+  --primary-dark: #701106;   /* Rojo oscuro */
+  --primary-light: #e65657;  /* Rojo claro para hover y efectos */
+  --dark: #050506;           /* Negro */
+  --dark-gray: #1a1a1a;      /* Gris oscuro */
+  --medium-gray: #333333;    /* Gris medio */
+  --light: #f7f7f7;          /* Blanco */
+  --success: #28a745;        /* Verde para estados completados */
+  --warning: #ffc107;        /* Amarillo para estados pendientes */
+  --info: #17a2b8;           /* Azul para info */
+  --danger: #dc3545;         /* Rojo para alertas */
+  --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --hover-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+  padding-left: 0; /* Eliminamos padding por defecto */
+}
+
+/* SIDEBAR NAVIGATION - Mantenido igual que en el CSS original */
+.sidebar {
+  background-color: var(--dark) !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+  width: 250px; /* Ancho fijo del sidebar */
+  padding-top: 15px;
+}
+
+.nav-link {
+  color: var(--light) !important;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  margin: 0.25rem 0;
+  transition: all 0.3s ease;
+}
+
+.nav-link.active {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.nav-link:hover:not(.active) {
+  background-color: var(--medium-gray);
+}
+
+main {
+  margin-left: 250px;
+  padding: 20px;
+  padding-top: 0;
+  width: calc(100% - 250px);
+  transition: all 0.1s ease;
+}
+
+/* CARDS & STATS - Estilo para tarjetas de estadísticas de clientes */
+.stats-card {
+  background-color: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  transition: var(--hover-transition);
+  overflow: hidden;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stats-card h6 {
+  color: #6c757d;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.stats-card h3 {
+  font-weight: 600;
+}
+
+/* FILTER SECTION - Estilo para la sección de filtros de clientes */
+.filter-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px; /* Espacio consistente */
+}
+
+/* BUTTONS - Mantenido igual que en CSS original */
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(165, 19, 20, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(165, 19, 20, 0.4);
+}
+
+.btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+/* TABLES - Estilos para tablas de clientes */
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  border-top: none;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  color: #495057;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+/* BADGES - Personalizados para estados de documentos de clientes */
+.badge {
+  padding: 0.5em 0.8em;
+  font-weight: 500;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.badge-entregado {
+  background-color: rgb(9, 147, 41);
+  color: white;
+}
+
+/* USER PROFILE - Mantenido igual que en CSS original */
+.user-profile {
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* MODAL - Estilizado para ventanas modales de clientes */
+.modal-dialog {
+  max-width: 800px;
+}
+
+.modal-content {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+.modal-header.bg-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+  color: white;
+  border-bottom: none;
+  padding: 1.5rem;
+}
+
+.modal-header .modal-title {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-footer {
+  padding: 1.25rem 2rem;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+}
+
+/* FORM ELEMENTS - Para formularios de clientes */
+.form-control, .form-select {
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(165, 19, 20, 0.15);
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+/* ALERTS - Para notificaciones de sistema */
+.alert {
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+
+.alert-success {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border-left: 4px solid #28a745;
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  border-left: 4px solid #dc3545;
+}
+
+/* ESTILOS ESPECÍFICOS PARA CLIENTESE - Nuevos componentes */
+
+/* Estilo de previsualización de imágenes en modales de clientes */
+.image-preview-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.image-preview-container:hover {
+  transform: scale(1.05);
+}
+
+.preview-image {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 6px;
+}
+
+.image-overlay i {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.image-preview-container:hover .image-overlay {
+  opacity: 1;
+}
+
+/* Modal para visualizar imágenes de documentos */
+.modal-image-container {
+  max-height: 70vh;
+  overflow: auto;
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.modal-image-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estado de documentos específico para tabla de clientes */
+td .badge {
+  margin-right: 5px;
+}
+
+/* Estilo para nombres de clientes en la tabla */
+.fw-bold {
+  font-weight: 600 !important;
+}
+
+/* EMPTY STATE - Para cuando no hay clientes */
+.text-center.py-4 {
+  padding: 2.5rem 0;
+}
+
+.text-center.py-4 .bi {
+  font-size: 2.5rem;
+  color: #adb5bd;
+  margin-bottom: 1rem;
+}
+
+/* RESPONSIVE DESIGN - Adaptado para vista de clientes */
+@media (max-width: 991.98px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  main {
+    margin-left: 0;
+    width: 100%;
+    padding: 15px;
+  }
+  
+  .stats-card {
+    margin-bottom: 15px;
+  }
+  
+  .modal-dialog {
+    max-width: 95%;
+    margin: 10px auto;
+  }
+}
+
+/* UTILITY CLASSES - Mantenidas del CSS original */
+.text-primary {
+  color: var(--primary) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary) !important;
+}
+
+.border-primary {
+  border-color: var(--primary) !important;
+}
+
+/* PRINT FRIENDLY - Para impresión de listados de clientes */
+@media print {
+  .sidebar, .btn-toolbar, .filter-section, .user-profile {
+    display: none !important;
+  }
+  
+  main {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .table-responsive {
+    overflow: visible;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}
