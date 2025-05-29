@@ -54,7 +54,6 @@ try {
     die("<div class='alert alert-danger'>Error al cargar los datos. Por favor, intente nuevamente.</div>");
 }
 
-// El resto del código HTML permanece igual al que proporcionaste anteriormente
 ?>
 <!DOCTYPE html>
 <html lang="es">

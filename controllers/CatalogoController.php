@@ -21,52 +21,53 @@ class CatalogoController {
             'Morado' => '#6f42c1',
             'Rosado' => '#e83e8c',
             'Negro Mate' => '#0a0a0a',
-            'Turquesa' => '#40e0d0', 
+            'Turquesa' => '#40e0d0',
             'Blanco combinado' => '#f8f9fa',
         ];
-        
-        return $colorMap[$colorName] ?? '#6c757d'; 
+        return $colorMap[$colorName] ?? '#6c757d';
     }
 
     public function obtenerMotocicletas($brandFilter = '', $modelFilter = '', $ccFilter = '') {
-    try {
-        $query = "
-        SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
-          M.color, M.precio, M.estado, M.fecha_ingreso, M.cantidad 
-        FROM MOTOCICLETA M
-        INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
-        WHERE M.cantidad > 0;
-        ";
+        try {
+            $query = "
+                SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
+                       M.color, M.precio, M.estado, M.fecha_ingreso, M.cantidad 
+                FROM MOTOCICLETA M
+                INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
+                WHERE M.cantidad >= 0
+            ";
 
-        $params = [];
+            $params = [];
 
-        if (!empty($brandFilter)) {
-            $query .= " AND MM.marca LIKE :marca";
-            $params[':marca'] = "%$brandFilter%";
-        }
-        if (!empty($modelFilter)) {
-            $query .= " AND MM.modelo LIKE :modelo";
-            $params[':modelo'] = "%$modelFilter%";
-        }
-        if (!empty($ccFilter) && $ccFilter > 0) {
-            $query .= " AND MM.cilindrada = :cilindrada";
-            $params[':cilindrada'] = $ccFilter;
-        }
+            if (!empty($brandFilter)) {
+                $query .= " AND MM.marca LIKE :marca";
+                $params[':marca'] = "%$brandFilter%";
+            }
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-    } catch (Exception $e) {
-        throw new Exception("Error al cargar los datos: " . $e->getMessage());
+            if (!empty($modelFilter)) {
+                $query .= " AND MM.modelo LIKE :modelo";
+                $params[':modelo'] = "%$modelFilter%";
+            }
+
+            if (!empty($ccFilter) && $ccFilter > 0) {
+                $query .= " AND MM.cilindrada = :cilindrada";
+                $params[':cilindrada'] = $ccFilter;
+            }
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            throw new Exception("Error al cargar los datos: " . $e->getMessage());
+        }
     }
-}
 
     public function obtenerMarcas() {
         try {
-            $brandStmt = $this->conn->prepare("SELECT DISTINCT marca FROM MODELO_MOTO");
-            $brandStmt->execute();
-            return $brandStmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare("SELECT DISTINCT marca FROM MODELO_MOTO");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             throw new Exception("Error al obtener marcas: " . $e->getMessage());
         }
