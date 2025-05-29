@@ -76,16 +76,6 @@ $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="login.php">
-                            <i class="bi bi-speedometer2 me-1"></i>Administración
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="login.php">
-                            <i class="bi bi-people me-1"></i>Empleado
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link active" href="catalogo.php">
                             <i class="bi bi-bicycle me-1"></i>Catálogo
                         </a>
@@ -97,11 +87,15 @@ $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
                                 Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
                             </span>
                         </li>
-                    <?php endif; ?>
-                    <?php if ($usuario_logueado): ?>
                         <li class="nav-item">
-                            <a class="nav-link btn" href="../public/logout.php">
-                                <i class="bi bi-box-arrow-right me-1"></i>
+                            <a class="nav-link btn" href="/RepoProyectoSistemas2-JCAutoMotors/public/logout.php">
+                                <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.php">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
                             </a>
                         </li>
                     <?php endif; ?>
@@ -212,17 +206,11 @@ $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
                             <div class="image-overlay">
                                 <button class="btn btn-outline-light btn-sm rounded-pill px-3" 
                                         data-bs-toggle="modal" 
-                                        data-bs-target="#motorcycleModal"
-                                        data-marca="<?php echo htmlspecialchars($moto['marca']); ?>"
-                                        data-modelo="<?php echo htmlspecialchars($moto['modelo']); ?>"
-                                        data-cilindrada="<?php echo htmlspecialchars($moto['cilindrada']); ?>"
-                                        data-color="<?php echo htmlspecialchars($moto['color']); ?>"
-                                        data-precio="<?php echo number_format($moto['precio']); ?>"
-                                        data-estado="<?php echo htmlspecialchars($moto['estado']); ?>"
+                                        data-bs-target="#imageOnlyModal"
                                         <?php if (!empty($moto['imagen'])): ?>
                                             data-imagen="<?php echo base64_encode($moto['imagen']); ?>"
                                         <?php endif; ?>>
-                                    <i class="bi bi-zoom-in me-1"></i> Vista rápida
+                                    <i class="bi bi-image me-1"></i> Ver imagen
                                 </button>
                             </div>
                         </div>
@@ -383,6 +371,20 @@ $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
         </div>
     </div>
 </div>
+<div class="modal fade" id="imageOnlyModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-white">Vista de la imagen</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="imageOnlyModalImg" class="img-fluid rounded shadow" alt="Imagen de la motocicleta" />
+      </div>
+    </div>
+  </div>
+</div>
+
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
             <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
@@ -399,7 +401,7 @@ $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
                 <div class="row">
                     <div class="col-lg-4 mb-4">
                         <div class="footer-brand">JCAutomotors</div>
-                        <p>Tu concesionario de confianza con más de 15 años de experiencia en el mundo de las motocicletas.</p>
+                        <p>Tu concesionario de confianza con más de 7 años de experiencia en el mundo de las motocicletas.</p>
                         <div class="social-links">
                             <a href="https://www.facebook.com/JcAutomotorsLaPazBo" target="_blank"><i class="bi bi-facebook"></i></a>
                             <a href="https://www.tiktok.com/@jc_automotors" target="_blank" ><i class="bi bi-tiktok"></i></a>
@@ -410,18 +412,18 @@ $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
                         <h5>Enlaces rápidos</h5>
                         <ul>
                             <li><a href="/">Inicio</a></li>
-                            <li><a href="../pages/catalogo.php">Catálogo</a></li>
-                            <li><a href="/nosotros">Sobre nosotros</a></li>
-                            <li><a href="/contacto">Contacto</a></li>
+                            <li><a href="#">Catálogo</a></li>
+                            <li><a href="#">Sobre nosotros</a></li>
+                            <li><a href="#">Contacto</a></li>
                         </ul>
                     </div>
                     <div class="col-lg-3 col-md-4 mb-4 footer-links">
                         <h5>Servicios</h5>
                         <ul>
-                            <li><a href="/servicios/financiamiento">Financiamiento</a></li>
-                            <li><a href="/servicios/mantenimiento">Mantenimiento</a></li>
-                            <li><a href="/servicios/seguro">Seguros</a></li>
-                            <li><a href="/servicios/accesorios">Accesorios</a></li>
+                            <li><a href="#">Financiamiento</a></li>
+                            <li><a href="#">Mantenimiento</a></li>
+                            <li><a href="#">Seguros</a></li>
+                            <li><a href="#">Accesorios</a></li>
                         </ul>
                     </div>
                     <div class="col-lg-3 col-md-4 mb-4 footer-links">

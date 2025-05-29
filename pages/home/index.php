@@ -36,16 +36,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="pages/login.php">
-                            <i class="bi bi-speedometer2 me-1"></i>Administración
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="pages/login.php">
-                            <i class="bi bi-people me-1"></i>Empleado
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="pages/catalogo.php">
                             <i class="bi bi-bicycle me-1"></i>Catálogo
                         </a>
@@ -62,11 +52,15 @@
                                 Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
                             </span>
                         </li>
-                    <?php endif; ?>
-                    <?php if ($usuario_logueado): ?>
                         <li class="nav-item">
-                            <a class="nav-link btn" href="public/logout.php">
-                                <i class="bi bi-box-arrow-right me-1"></i>
+                            <a class="nav-link btn" href="/RepoProyectoSistemas2-JCAutoMotors/public/logout.php">
+                                <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/login.php">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
                             </a>
                         </li>
                     <?php endif; ?>
@@ -85,7 +79,81 @@
         </div>
     </section>
 
-    <!-- Resto del código de secciones anteriores se mantiene igual -->
+ <section class="features">
+            <div class="container">
+                <h2 class="text-center section-title">¿Por qué elegirnos?</h2>
+                <div class="row">
+                    <div class="col-md-4 feature-item">
+                        <div class="feature-box">
+                            <div class="feature-icon">
+                                <i class="bi bi-trophy"></i>
+                            </div>
+                            <h3 class="feature-title">Calidad Garantizada</h3>
+                            <p>Todas nuestras motocicletas pasan por rigurosos controles de calidad antes de llegar a tus manos.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 feature-item">
+                        <div class="feature-box">
+                            <div class="feature-icon">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <h3 class="feature-title">Mejores Precios</h3>
+                            <p>Ofrecemos precios competitivos y planes de financiamiento flexibles adaptados a tu presupuesto.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 feature-item">
+                        <div class="feature-box">
+                            <div class="feature-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <h3 class="feature-title">Servicio Experto</h3>
+                            <p>Nuestro equipo de profesionales está siempre disponible para asesorarte en tu compra o mantenimiento.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Misión, Visión y Valores -->
+        <section class="mission-vision-values py-5 bg-light">
+            <div class="container text-center">
+                <h2 class="section-title mb-4">Nuestra Empresa</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mission-card">
+                            <div class="card-body">
+                                <i class="bi bi-bullseye display-4 text-primary"></i>
+                                <h3 class="fw-bold mt-3">Misión</h3>
+                                <p>Brindar a nuestros clientes motocicletas de calidad, con un servicio excepcional y asesoramiento experto, garantizando seguridad y satisfacción en cada compra.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mission-card">
+                            <div class="card-body">
+                                <i class="bi bi-eye display-4 text-success"></i>
+                                <h3 class="fw-bold mt-3">Visión</h3>
+                                <p>Ser la concesionaria líder en Bolivia en la venta de motocicletas, destacándonos por nuestra innovación, calidad de servicio y compromiso con nuestros clientes.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mission-card">
+                            <div class="card-body">
+                                <i class="bi bi-award display-4 text-warning"></i>
+                                <h3 class="fw-bold mt-3">Valores</h3>
+                                <ul class="list-unstyled mt-2">
+                                    <li><i class="bi bi-check-circle text-primary"></i> Compromiso con la calidad</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Atención al cliente de excelencia</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Integridad y transparencia</li>
+                                    <li><i class="bi bi-check-circle text-primary"></i> Innovación y pasión por las motos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
     <section class="best-sellers py-5">
         <div class="container">
@@ -153,8 +221,10 @@
                         <a href="pages/catalogo.php" class="btn btn-primary mt-3">
                             Ver Catálogo Completo
                         </a>
+                        
                     </div>
                 <?php endif; ?>
+                <div id="ubicacion">
             </div>
         </div>
     </section>
@@ -286,7 +356,7 @@
                 <div class="row">
                     <div class="col-lg-4 mb-4">
                         <div class="footer-brand">JCAutomotors</div>
-                        <p>Tu concesionario de confianza con más de 15 años de experiencia en el mundo de las motocicletas.</p>
+                        <p>Tu concesionario de confianza con más de 7 años de experiencia en el mundo de las motocicletas.</p>
                         <div class="social-links">
                             <a href="https://www.facebook.com/JcAutomotorsLaPazBo" target="_blank"><i class="bi bi-facebook"></i></a>
                             <a href="https://www.tiktok.com/@jc_automotors" target="_blank" ><i class="bi bi-tiktok"></i></a>
@@ -297,18 +367,18 @@
                         <h5>Enlaces rápidos</h5>
                         <ul>
                             <li><a href="/">Inicio</a></li>
-                            <li><a href="/catalogo">Catálogo</a></li>
-                            <li><a href="/nosotros">Sobre nosotros</a></li>
-                            <li><a href="/contacto">Contacto</a></li>
+                            <li><a href="#">Catálogo</a></li>
+                            <li><a href="#">Sobre nosotros</a></li>
+                            <li><a href="#">Contacto</a></li>
                         </ul>
                     </div>
                     <div class="col-lg-3 col-md-4 mb-4 footer-links">
                         <h5>Servicios</h5>
                         <ul>
-                            <li><a href="/servicios/financiamiento">Financiamiento</a></li>
-                            <li><a href="/servicios/mantenimiento">Mantenimiento</a></li>
-                            <li><a href="/servicios/seguro">Seguros</a></li>
-                            <li><a href="/servicios/accesorios">Accesorios</a></li>
+                            <li><a href="#">Financiamiento</a></li>
+                            <li><a href="#">Mantenimiento</a></li>
+                            <li><a href="#">Seguros</a></li>
+                            <li><a href="#">Accesorios</a></li>
                         </ul>
                     </div>
                     <div class="col-lg-3 col-md-4 mb-4 footer-links">

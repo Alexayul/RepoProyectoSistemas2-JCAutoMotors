@@ -32,7 +32,6 @@ try {
 }
 
 // 2. Manejar solicitudes AJAX para obtener datos del empleado
-// En la sección de manejo AJAX para obtener datos del empleado
 if (isset($_GET['get_employee_data']) && isset($_GET['id'])) {
     $employeeId = $_GET['id'];
     $response = ['success' => false];
@@ -322,12 +321,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="sidebar-nav">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="../index.php">
-                        <i class="bi bi-house-door"></i>
-                        <span>Inicio</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
                         <i class="bi bi-speedometer2"></i>
                         <span>Panel administrativo</span>
@@ -491,9 +484,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                     
                                     <?php if (!isset($employee['estado']) || $employee['estado'] == 'Activo'): ?>
                                         <input type="hidden" name="action" value="fire">
-                                        <button type="submit" class="btn btn-fire">
-                                            <i class="bi bi-person-dash me-1"></i> Despedir
-                                        </button>
+                                      <button type="button" class="btn btn-fire" onclick="showFireAlert(<?php echo $employee['id']; ?>)">
+                                        <i class="bi bi-person-dash me-1"></i> Despedir
+                                    </button>
                                     <?php else: ?>
                                         <input type="hidden" name="action" value="rehire">
                                         <button type="submit" class="btn btn-rehire">
@@ -511,103 +504,125 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <!-- Modal para Agregar Empleado -->
     <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addEmployeeModalLabel"><i class="bi bi-person-plus me-2"></i>Agregar Nuevo Empleado</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="action" value="add_employee">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="apellido" class="form-label">Apellido</label>
-                                <input type="text" class="form-control" id="apellido" name="apellido" required>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="documento_identidad" class="form-label">Carnet de Identidad</label>
-                                <input type="text" class="form-control" id="documento_identidad" name="documento_identidad" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="telefono" name="telefono">
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="email" name="email">
-                        </div>
-                        
-                        <hr>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="cargo" class="form-label">Cargo</label>
-                                <select class="form-select" id="cargo" name="cargo" required>
-                                    <option value="">Seleccionar cargo</option>
-                                    <option value="Vendedor">Vendedor</option>
-                                    <option value="Mecánico">Mecánico</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="salario" class="form-label">Salario</label>
-                                <input type="number" class="form-control" id="salario" name="salario" value="2500" min="0" step="0.01" required>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="fecha_contratacion" class="form-label">Fecha de Contratación</label>
-                                <input type="date" class="form-control" id="fecha_contratacion" name="fecha_contratacion" value="<?php echo date('Y-m-d'); ?>" required>
-                            </div>
-                            <div class="col-md-6 mb-3" hidden>
-                                <label for="id_rol" class="form-label">Rol</label>
-                                <input type="number" class="form-control" id="id_rol" name="id_rol" value="2" readonly>
-                                <small class="form-text text-muted">Rol asignado por defecto</small>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="foto" class="form-label">Foto del Empleado</label>
-                            <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
-                            <small class="form-text text-muted">Formatos soportados: JPG, PNG, GIF. Tamaño máximo: 2MB.</small>
-                        </div>
-                        
-                        <div class="mb-3 text-center">
-                        <img id="foto-preview" class="upload-preview" src="data:image/png;base64,..." alt="Vista previa">
-                        </div>
-                        
-                        <hr>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="usuario" class="form-label">Usuario</label>
-                                <input type="text" class="form-control" id="usuario" name="usuario">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="password" name="password">
-                                <small class="form-text text-muted">Avise al empleado que debe cambiar su contraseña</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success" >Guardar Empleado</button>
-                    </div>
-                </form>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEmployeeModalLabel"><i class="bi bi-person-plus me-2"></i>Agregar Nuevo Empleado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="add_employee">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   maxlength="20" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
+                                   title="Solo letras (máximo 20 caracteres)" required>
+                            <small class="form-text text-muted">Máximo 20 caracteres, solo letras</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="apellido" class="form-label">Apellido</label>
+                            <input type="text" class="form-control" id="apellido" name="apellido" 
+                                   maxlength="30" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
+                                   title="Solo letras (máximo 30 caracteres)" required>
+                            <small class="form-text text-muted">Máximo 30 caracteres, solo letras</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="documento_identidad" class="form-label">Carnet de Identidad</label>
+                            <input type="text" class="form-control" id="documento_identidad" name="documento_identidad"
+                                inputmode="numeric" pattern="\d{5,10}" 
+                                title="Solo números (hasta 10 dígitos)" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono"
+                                inputmode="numeric" pattern="\d{7,8}" 
+                                title="Solo números (8 dígitos)" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email"
+                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               title="Ejemplo: usuario@dominio.com">
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cargo" class="form-label">Cargo</label>
+                            <select class="form-select" id="cargo" name="cargo" required>
+                                <option value="">Seleccionar cargo</option>
+                                <option value="Vendedor">Vendedor</option>
+                                <option value="Mecánico">Mecánico</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="salario" class="form-label">Salario</label>
+                            <input type="number" class="form-control" id="salario" name="salario" 
+                                   value="2500" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_contratacion" class="form-label">Fecha de Contratación</label>
+                            <input type="date" class="form-control" id="fecha_contratacion" 
+                                   name="fecha_contratacion" value="<?php echo date('Y-m-d'); ?>" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3" hidden>
+                            <label for="id_rol" class="form-label">Rol</label>
+                            <input type="number" class="form-control" id="id_rol" name="id_rol" value="2" readonly>
+                            <small class="form-text text-muted">Rol asignado por defecto</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="foto" class="form-label">Foto del Empleado</label>
+                        <input type="file" class="form-control" id="foto" name="foto" 
+                               accept="image/jpeg, image/png, image/gif">
+                        <small class="form-text text-muted">Formatos soportados: JPG, PNG, GIF. Tamaño máximo: 2MB.</small>
+                    </div>
+                    
+                    <div class="mb-3 text-center">
+                        <img id="foto-preview" class="upload-preview" src="data:image/png;base64,..." alt="Vista previa">
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="usuario" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="usuario" name="usuario"
+                                   maxlength="10" pattern="[A-Za-z0-9]+" 
+                                   title="Solo letras y números (máximo 10 caracteres)">
+                            <small class="form-text text-muted">Máximo 10 caracteres alfanuméricos</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   minlength="6" maxlength="20"
+                                   title="Entre 6 y 20 caracteres">
+                            <small class="form-text text-muted">Avise al empleado que debe cambiar su contraseña (6-20 caracteres)</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar Empleado</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- Modal para Editar Empleado -->
     <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
@@ -625,28 +640,40 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="edit_nombre" class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
+                                <input type="text" class="form-control" id="edit_nombre" name="nombre"  maxlength="20" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
+                                   title="Solo letras (máximo 20 caracteres)" required>
+                                <small class="form-text text-muted">Máximo 20 caracteres, solo letras</small>
+
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="edit_apellido" class="form-label">Apellido</label>
-                                <input type="text" class="form-control" id="edit_apellido" name="apellido" required>
+                                <input type="text" class="form-control" id="edit_apellido" name="apellido" maxlength="30" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" 
+                                   title="Solo letras (máximo 30 caracteres)" required>
+                            <small class="form-text text-muted">Máximo 30 caracteres, solo letras</small>
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="edit_documento_identidad" class="form-label">Carnet de Identidad</label>
-                                <input type="text" class="form-control" id="edit_documento_identidad" name="documento_identidad" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="edit_telefono" name="telefono">
-                            </div>
+                            <label for="documento_identidad" class="form-label">Carnet de Identidad</label>
+                            <input type="text" class="form-control" id="documento_identidad" name="documento_identidad"
+                                inputmode="numeric" pattern="\d{5,10}" 
+                                title="Solo números (hasta 10 dígitos)" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono"
+                                inputmode="numeric" pattern="\d{7,8}" 
+                                title="Solo números (8 dígitos)" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);">
+                        </div>
                         </div>
                         
                         <div class="mb-3">
                             <label for="edit_email" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="edit_email" name="email">
+                            <input type="email" class="form-control" id="edit_email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               title="Ejemplo: usuario@dominio.com">
                         </div>
                         
                         <hr>
@@ -662,7 +689,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="edit_salario" class="form-label">Salario</label>
-                                <input type="number" class="form-control" id="edit_salario" name="salario" min="0" step="0.01" required>
+                                <input type="number" class="form-control" id="edit_salario" name="salario" value="2500" min="0" step="0.01" required>
                             </div>
                         </div>
                         
@@ -692,7 +719,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="edit_password" class="form-label">Nueva Contraseña (opcional)</label>
-                                <input type="password" class="form-control" id="edit_password" name="password">
+                                <input type="password" class="form-control" id="edit_password" name="password" readonly>
                                 <small class="form-text text-muted">Dejar vacío para mantener la contraseña actual</small>
                             </div>
                         </div>
@@ -708,8 +735,41 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom JavaScript -->
     <script src="../public/js/gestionE.js"></script>
+    <script>
+       function showFireAlert(employeeId, employeeName) {
+    // Confirmación más elegante con opción de cancelar
+    const confirmation = confirm(`⚠️ ¿Estás seguro de despedir a este empleado?`);
+    
+    if (!confirmation) {
+        return; // Si el usuario cancela, no hacemos nada
+    }
+
+    // Crear formulario de manera más limpia
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'gestionEmpleados.php';
+    form.style.display = 'none'; // Ocultamos el formulario
+
+    // Función helper para crear inputs
+    const createHiddenInput = (name, value) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        return input;
+    };
+
+    // Añadir campos al formulario
+    form.appendChild(createHiddenInput('employee_id', employeeId));
+    form.appendChild(createHiddenInput('action', 'fire'));
+
+    // Añadir al documento y enviar
+    document.body.appendChild(form);
+    form.submit();
+}
+    </script>
 </body>
 </html>

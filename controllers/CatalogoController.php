@@ -32,10 +32,10 @@ class CatalogoController {
     try {
         $query = "
         SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
-               M.color, M.precio, M.estado, M.fecha_ingreso, M.cantidad 
+          M.color, M.precio, M.estado, M.fecha_ingreso, M.cantidad 
         FROM MOTOCICLETA M
         INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
-        WHERE 1=1
+        WHERE M.cantidad > 0;
         ";
 
         $params = [];

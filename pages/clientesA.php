@@ -155,12 +155,6 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
         <div class="sidebar-nav">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="../index.php">
-                        <i class="bi bi-house-door"></i>
-                        <span>Inicio</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
                         <i class="bi bi-speedometer2"></i>
                         <span>Panel administrativo</span>

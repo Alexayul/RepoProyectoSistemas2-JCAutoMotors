@@ -1,6 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('motorcycleModal');
+    const imageOnlyModal = document.getElementById('imageOnlyModal');
     
+    imageOnlyModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const imagenBase64 = button.dataset.imagen;
+        const imgElement = document.getElementById('imageOnlyModalImg');
+
+        const fallback = 'https://via.placeholder.com/800x500?text=Imagen+no+disponible';
+
+        if (imagenBase64) {
+            imgElement.src = `data:image/jpeg;base64,${imagenBase64}`;
+            imgElement.onerror = function () {
+                this.src = fallback;
+            };
+        } else {
+            imgElement.src = fallback;
+        }
+    });
     modal.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget;
         const modalImage = document.getElementById('modalImage');
