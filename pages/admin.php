@@ -71,61 +71,67 @@ $top_modelos = $adminController->getTopModelos();
     <link rel="stylesheet" href="../public/css/administrador.css">
 </head>
 <body>
-<div class="sidebar">
-    <div class="sidebar-header">
-        <a href="#" class="sidebar-brand">
-            <img src="../public/logo.png" alt="JC Automotors" class="img-fluid" style="max-height: 180px;">
-        </a>
-    </div>
-    
-    <!-- User Profile Section -->
-    <div class="user-profile">
-        <div class="d-flex align-items-center">
-            <div class="user-avatar me-3">
+<!-- Sidebar Vertical -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <img src="../public/logo.png" alt="JC Automotors" class="img-fluid" style="max-height: 180px;">
+            </a>
+        </div>
+        
+        <!-- User Profile Section -->
+        <div class="user-profile">
+            <div class="user-avatar">
                 <img src="<?php echo htmlspecialchars($userData['foto']); ?>" alt="User">
             </div>
             <div class="user-info">
-                <h5 class="user-name mb-1"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
-                <p class="user-role mb-0 small">Administrador</p>
+                <h5 class="user-name"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
+                <p class="user-role"><?php echo htmlspecialchars($userData['cargo']); ?></p>
             </div>
         </div>
-    </div>
-    
-    <div class="sidebar-nav">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
-                    <i class="bi bi-speedometer2"></i>
-                    <span>Panel administrativo</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'gestionEmpleados.php') ? 'active' : ''; ?>"  href="gestionEmpleados.php">
-                    <i class="bi bi-people"></i>
-                    <span>Empleados</span>
-                </a>
-            </li>
-            <li class="nav-item">
+        
+        <div class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Panel administrativo</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'gestionEmpleados.php') ? 'active' : ''; ?>"  href="gestionEmpleados.php">
+                        <i class="bi bi-people"></i>
+                        <span>Empleados</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'catalogoA.php') ? 'active' : ''; ?>" href="catalogoA.php">
+                      <i class="bi bi-bicycle"></i>
+                        <span>Inventario de motos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'clientesA.php') ? 'active' : ''; ?>" href="clientesA.php">
                        <i class="bi bi-person me-2"></i>
                         <span>Clientes</span>
                     </a>
                 </li>
-            <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'ventasA.php') ? 'active' : ''; ?>" href="ventasA.php">
-                    <i class="bi bi-cash-coin"></i>
-                    <span>Ventas</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../public/logout.php">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Cerrar Sesión</span>
-                </a>
-            </li>
-        </ul>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'ventasA.php') ? 'active' : ''; ?>" href="ventasA.php">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>Ventas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../public/logout.php">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
+        
 
 <div class="main-content">
     <div class="container-fluid py-4">

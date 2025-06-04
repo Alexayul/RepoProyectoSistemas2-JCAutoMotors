@@ -82,7 +82,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link rel="stylesheet" href="../public/css/ventasA.css">
 </head>
 <body>
-    <!-- Sidebar Vertical -->
+   <!-- Sidebar Vertical -->
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
@@ -116,6 +116,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'catalogoA.php') ? 'active' : ''; ?>" href="catalogoA.php">
+                      <i class="bi bi-bicycle"></i>
+                        <span>Inventario de motos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'clientesA.php') ? 'active' : ''; ?>" href="clientesA.php">
                        <i class="bi bi-person me-2"></i>
                         <span>Clientes</span>
@@ -136,6 +142,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </ul>
         </div>
     </div>
+        
     <div class="main-content">
         <div class="content-header">
             <div>

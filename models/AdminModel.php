@@ -14,7 +14,7 @@ private $db;
         
         try {
             // Total motocicletas disponibles
-            $stmt = $this->db->query("SELECT SUM(cantidad) FROM MOTOCICLETA WHERE estado = 'Disponible'");
+            $stmt = $this->db->query("SELECT SUM(cantidad) FROM MOTOCICLETA WHERE cantidad > 0");
             $stats['motocicletas'] = $stmt->fetchColumn() ?? 0;
 
             // Ventas del mes
@@ -34,7 +34,7 @@ private $db;
             $stats['mantenimientos_total'] = $mantenimientos['total'] ?? 0;
 
             // Accesorios en stock
-            $stmt = $this->db->query("SELECT SUM(cantidad) FROM ACCESORIO WHERE estado = 'Disponible'");
+            $stmt = $this->db->query("SELECT SUM(cantidad) FROM ACCESORIO WHERE cantidad > 0");
             $stats['accesorios'] = $stmt->fetchColumn() ?? 0;
             
         } catch (PDOException $e) {

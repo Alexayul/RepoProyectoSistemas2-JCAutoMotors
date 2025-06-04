@@ -26,7 +26,7 @@ try {
     $catalogoController = new CatalogoController($conn);
     $brandFilter = isset($_GET['brand']) ? $_GET['brand'] : '';
 
-    $motocicletas = $catalogoController->obtenerMotocicletas($brandFilter);
+    $motocicletas = $catalogoController->obtenerMotocicletasC($brandFilter);
     $brands = $catalogoController->obtenerMarcas();
     
 } catch (Exception $e) {

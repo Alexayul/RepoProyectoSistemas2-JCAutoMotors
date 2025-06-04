@@ -310,11 +310,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <!-- User Profile Section -->
         <div class="user-profile">
             <div class="user-avatar">
-                <img src="<?php echo htmlspecialchars($userData['foto'] ?? 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png'); ?>" alt="User">
+                <img src="<?php echo htmlspecialchars($userData['foto']); ?>" alt="User">
             </div>
             <div class="user-info">
                 <h5 class="user-name"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
-                <p class="user-role">Administrador</p>
+                <p class="user-role"><?php echo htmlspecialchars($userData['cargo']); ?></p>
             </div>
         </div>
         
@@ -330,6 +330,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <a class="nav-link <?php echo ($current_page == 'gestionEmpleados.php') ? 'active' : ''; ?>"  href="gestionEmpleados.php">
                         <i class="bi bi-people"></i>
                         <span>Empleados</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'catalogoA.php') ? 'active' : ''; ?>" href="catalogoA.php">
+                      <i class="bi bi-bicycle"></i>
+                        <span>Inventario de motos</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -353,6 +359,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </ul>
         </div>
     </div>
+        
 
     <!-- Contenido Principal -->
     <div class="main-content">

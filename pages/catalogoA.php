@@ -3,6 +3,7 @@ include '../config/conexion.php';
 include '../controllers/CatalogoController.php';
 
 session_start();
+define('DEFAULT_AVATAR', 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40NzcgMiAyIDYuNDc3IDIgMTJzNC40NzcgMTAgMTAgMTAgMTAtNC40NzcgMTAtMTBTMTcuNTIzIDIgMTIgMnptMCAyYzQuNDE4IDAgOCAzLjU4MiA4IDhzLTMuNTgyIDgtOCA4LTgtMy41ODItOC04IDMuNTgyLTggOC04eiIvPjxwYXRoIGQ9Ik0xMiAzYy0yLjIxIDAtNCAxLjc5LTQgNHMxLjc5IDQgNCA0IDQtMS43OSA0LTRzLTEuNzktNC00LTR6bTAgN2MtMy4zMTMgMC02IDIuNjg3LTYgNnYxaDEydi0xYzAtMy4zMTMtMi42ODctNi02LTZ6Ii8+PC9zdmc+');
 
 if (!isset($_SESSION['user'])) {
     header('Location: login.php');
@@ -10,7 +11,14 @@ if (!isset($_SESSION['user'])) {
 }
 
 $usuario_logueado = $_SESSION['user'];
-
+$user_id = $_SESSION['user']['id'] ?? null;
+$controller = new CatalogoController($conn);
+$userData = $controller->obtenerDatosUsuario($user_id) ?? [
+    'nombre' => 'Usuario',
+    'apellido' => '',
+    'foto' => 'https://cdn-icons-png.flaticon.com/512/10307/10307911.png',
+    'cargo' => 'Administrador'
+];
 // Crear instancia del CatalogoController
 $catalogoController = new CatalogoController($conn);
 
@@ -61,6 +69,7 @@ foreach ($motocicletas as $moto) {
         $marcas[] = $moto['marca'];
     }
 }
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -69,160 +78,137 @@ foreach ($motocicletas as $moto) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Motos - JC Automotors</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../public/css/CatalogoMotosE.css">       
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../public/css/CatalogoMotosA.css">       
 </head>
 <body>
-    <div class="container-fluid p-0">
-        <nav id="sidebar" class="sidebar">
-            <div class="d-flex flex-column h-100">
-                <div class="text-center mb-4">
-                    <img src="../public/logo.png" alt="JC Automotors" class="img-fluid" style="max-height: 180px;">
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active">
-                            <i class="bi bi-bicycle me-2"></i>Inventario de motos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="accesorios.php">
-                            <i class="bi bi-tools me-2"></i>Inventario de accesorios
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="ventasE.php">
-                            <i class="bi bi-credit-card me-2"></i>Ventas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="clientesE.php">
-                            <i class="bi bi-people-fill me-2"></i>Clientes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
-                            <i class="bi bi-cash-stack me-2"></i>Crédito Directo
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
-                            <i class="bi bi-tools me-2"></i>Mantenimientos
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="mt-auto p-3 user-profile">
-                    <div class="d-flex align-items-center text-white mb-3">
-                        <div class="me-3">
-                            <i class="bi bi-person-circle fs-4"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold"><?php echo htmlspecialchars($usuario_logueado['usuario']); ?></div>
-                            <small>Empleado</small>
-                        </div>
-                    </div>
-                    <a href="../public/logout.php" class="btn btn-outline-light btn-sm w-100">
-                        <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
-                    </a>
-                </div>
-            </div>
-        </nav>
+    <!-- Sidebar Vertical -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <img src="../public/logo.png" alt="JC Automotors" class="img-fluid" style="max-height: 180px;">
+            </a>
+        </div>
         
-        <main>
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">
-                    <i class="bi bi-bicycle text-primary me-2"></i> Inventario de Motos
-                </h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group me-2">
-                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarMoto">
-                            <i class="bi bi-plus-circle me-1"></i> Agregar Moto
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-printer me-1"></i> Imprimir
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-upload me-1"></i> Exportar
-                        </button>
-                    </div>
+        <!-- User Profile Section -->
+        <div class="user-profile">
+            <div class="user-avatar">
+                <img src="<?php echo htmlspecialchars($userData['foto']); ?>" alt="User">
+            </div>
+            <div class="user-info">
+                <h5 class="user-name"><?php echo htmlspecialchars($userData['nombre'] . ' ' . $userData['apellido']); ?></h5>
+                <p class="user-role"><?php echo htmlspecialchars($userData['cargo']); ?></p>
+            </div>
+        </div>
+        
+        <div class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Panel administrativo</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'gestionEmpleados.php') ? 'active' : ''; ?>"  href="gestionEmpleados.php">
+                        <i class="bi bi-people"></i>
+                        <span>Empleados</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'catalogoA.php') ? 'active' : ''; ?>" href="catalogoA.php">
+                      <i class="bi bi-bicycle"></i>
+                        <span>Inventario de motos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'clientesA.php') ? 'active' : ''; ?>" href="clientesA.php">
+                       <i class="bi bi-person me-2"></i>
+                        <span>Clientes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'ventasA.php') ? 'active' : ''; ?>" href="ventasA.php">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>Ventas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../public/logout.php">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+        
+        <div class="main-content">
+           <div class="content-header">
+            <div>
+            <h1 class="h2">
+              <i class="bi bi-bicycle"></i></i> Inventario de Motocicletas
+            </h1>
+                <div class="breadcrumbs">
+                    <i class="bi bi-house-door me-1"></i> Inicio / Inventario de Motocicletas
                 </div>
             </div>
-            <!-- Mostrar mensajes de éxito o error -->
-            <?php if (isset($_SESSION['success'])): ?>
+            <div class="action-buttons">
+            <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalAgregarMoto">
+                                <i class="bi bi-plus-circle me-1"></i> Nueva Moto
+                            </button>
+                <a href="#" class="btn btn-dark">
+                    <i class="bi bi-upload me-1"></i>Exportar
+                </a>
+            </div>
+        </div>
+            <?php if (isset($_SESSION['mensaje'])): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i><?php echo $_SESSION['success']; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <i class="bi bi-info-circle me-2"></i><?= $_SESSION['mensaje'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <?php unset($_SESSION['success']); ?>
+                <?php unset($_SESSION['mensaje']); ?>
             <?php endif; ?>
 
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i><?php echo $_SESSION['error']; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                <?php unset($_SESSION['error']); ?>
-            <?php endif; ?>
-
-            <!-- Quick Stats -->
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card stats-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="text-muted mb-1">
-                                        <i class="bi bi-speedometer2 me-1"></i> Motos en Stock
-                                    </h6>
-                                    <h3 class="mb-0 text-primary"><?php echo $totalMotos; ?></h3>
-                                </div>
-                                <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                    <i class="bi bi-bicycle fs-3 text-primary"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="card stats-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="text-muted mb-1">
-                                        <i class="bi bi-collection me-1"></i> Modelos Disponibles
-                                    </h6>
-                                    <h3 class="mb-0 text-primary"><?php echo $modelosUnicos; ?></h3>
-                                </div>
-                                <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                    <i class="bi bi-tags fs-3 text-primary"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="card stats-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="text-muted mb-1">
-                                        <i class="bi bi-building me-1"></i> Marcas Disponibles
-                                    </h6>
-                                    <h3 class="mb-0 text-primary"><?php echo $marcasUnicas; ?></h3>
-                                </div>
-                                <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                    <i class="bi bi-building fs-3 text-primary"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Quick Stats - Estilo Actualizado -->
+<div class="stats-row mb-4">
+    <!-- Motos en Stock -->
+    <div class="stat-card" style="--stat-color: var(--primary); --stat-bg: var(--primary-light);">
+        <div class="stat-icon">
+            <i class="bi bi-bicycle"></i>
+        </div>
+        <div class="stat-info">
+            <h3><?php echo $totalMotos; ?></h3>
+            <p>Motos en Stock</p>
+        </div>
+    </div>
+    
+    <!-- Modelos Disponibles -->
+    <div class="stat-card" style="--stat-color: var(--success); --stat-bg: var(--success-light);">
+        <div class="stat-icon">
+            <i class="bi bi-tags"></i>
+        </div>
+        <div class="stat-info">
+            <h3><?php echo $modelosUnicos; ?></h3>
+            <p>Modelos Disponibles</p>
+        </div>
+    </div>
+    
+    <!-- Marcas Disponibles -->
+    <div class="stat-card" style="--stat-color: var(--info); --stat-bg: var(--info-light);">
+        <div class="stat-icon">
+            <i class="bi bi-building"></i>
+        </div>
+        <div class="stat-info">
+            <h3><?php echo $marcasUnicas; ?></h3>
+            <p>Marcas Disponibles</p>
+        </div>
+    </div>
+</div>
 
             <!-- Filtros -->
             <div class="filter-section mb-4 p-4 bg-white rounded shadow-sm">
@@ -255,7 +241,7 @@ foreach ($motocicletas as $moto) {
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="bi bi-funnel-fill me-1"></i> Aplicar Filtros
                         </button>
-                        <a href="empleado.php" class="btn btn-outline-secondary">
+                        <a href="catalogoA.php" class="btn btn-outline-secondary">
                             <i class="bi bi-x-circle me-1"></i> Limpiar
                         </a>
                     </div>
@@ -312,7 +298,6 @@ foreach ($motocicletas as $moto) {
                                     </div>
                                 </div>
                                 
-                                <!-- Acciones para empleados -->
                                 <div class="card-footer bg-white border-0 pt-0">
                                     <div class="card-footer bg-white border-0 pt-0">
                                         <div class="d-flex gap-2"> <!-- Flexbox con espacio entre botones -->
@@ -628,7 +613,7 @@ foreach ($motocicletas as $moto) {
         </div>
     </div>
 </div>
-        </main>
+                                    </div>
     </div>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

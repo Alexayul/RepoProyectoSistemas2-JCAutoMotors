@@ -167,6 +167,12 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'catalogoA.php') ? 'active' : ''; ?>" href="catalogoA.php">
+                      <i class="bi bi-bicycle"></i>
+                        <span>Inventario de motos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'clientesA.php') ? 'active' : ''; ?>" href="clientesA.php">
                        <i class="bi bi-person me-2"></i>
                         <span>Clientes</span>
@@ -187,6 +193,7 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
             </ul>
         </div>
     </div>
+        
         
     <div class="main-content">
     <div class="content-header">
