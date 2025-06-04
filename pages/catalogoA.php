@@ -166,12 +166,21 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </div>
         </div>
-            <?php if (isset($_SESSION['mensaje'])): ?>
+           <!-- Mostrar mensajes de éxito o error -->
+            <?php if (isset($_SESSION['success'])): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-info-circle me-2"></i><?= $_SESSION['mensaje'] ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <i class="bi bi-check-circle me-2"></i><?php echo $_SESSION['success']; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                <?php unset($_SESSION['mensaje']); ?>
+                <?php unset($_SESSION['success']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i><?php echo $_SESSION['error']; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
 
             <!-- Quick Stats - Estilo Actualizado -->
@@ -422,6 +431,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
             <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="agregar">
+                <input type="hidden" name="origen" value="catalogoA"><!-- <--- agrega esto -->
                 <div class="modal-body p-4">
                     <div class="row g-4">
                         <div class="col-md-6">
@@ -521,6 +531,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
             <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="editar">
+                <input type="hidden" name="origen" value="catalogoA"><!-- <--- agrega esto -->
                 <input type="hidden" id="edit_moto_id" name="moto_id">
                 <div class="modal-body p-4">
                     <div class="row g-4">
