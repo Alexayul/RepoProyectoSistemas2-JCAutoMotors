@@ -108,7 +108,7 @@ foreach ($motocicletas as $moto) {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-white" href="mantenimientosE.php">
                             <i class="bi bi-tools me-2"></i>Mantenimientos
                         </a>
                     </li>
