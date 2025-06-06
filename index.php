@@ -17,3 +17,4 @@ function getColorCode($colorName) {
 
 // Resto del código de la vista permanece igual
 include 'pages/home/index.php';
+
