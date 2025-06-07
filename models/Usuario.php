@@ -24,37 +24,47 @@ class Usuario {
     }
 
     public function registrarUsuario($nombre, $apellido, $email, $usuario, $passwordHash) {
-        try {
-            $this->conn->beginTransaction();
-            
-            $stmt_persona = $this->conn->prepare(
-                "INSERT INTO PERSONA (_id, nombre, apellido, telefono, email, documento_identidad) 
-                VALUES (NULL, :nombre, :apellido, '', :email, NULL)"
-            );
-            $stmt_persona->execute([
-                ':nombre' => $nombre,
-                ':apellido' => $apellido,
-                ':email' => $email
-            ]);
+    try {
+        $this->conn->beginTransaction();
         
-            $id_persona = $this->conn->lastInsertId();
+        $stmt_persona = $this->conn->prepare(
+            "INSERT INTO PERSONA (nombre, apellido, telefono, email, documento_identidad) 
+            VALUES (:nombre, :apellido, '', :email, NULL)"
+        );
+        $stmt_persona->execute([
+            ':nombre' => $nombre,
+            ':apellido' => $apellido,
+            ':email' => $email
+        ]);
+    
+        $id_persona = $this->conn->lastInsertId();
 
-            $stmt_usuario = $this->conn->prepare(
-                "INSERT INTO USUARIO (_id, id_persona, usuario, password, id_rol) 
-                VALUES (NULL, :id_persona, :usuario, :password, 3)"
-            );
-            $stmt_usuario->execute([
-                ':id_persona' => $id_persona,
-                ':usuario' => $usuario,
-                ':password' => $passwordHash
-            ]);
-            
-            $this->conn->commit();
-            return true;
-            
-        } catch (Exception $e) {
-            $this->conn->rollBack();
-            throw $e;
-        }
+        $stmt_usuario = $this->conn->prepare(
+            "INSERT INTO USUARIO (_id, id_persona, usuario, password, id_rol) 
+            VALUES (NULL, :id_persona, :usuario, :password, 3)"
+        );
+        $stmt_usuario->execute([
+            ':id_persona' => $id_persona,
+            ':usuario' => $usuario,
+            ':password' => $passwordHash
+        ]);
+        
+        // Insertar en CLIENTE por defecto
+        $stmt_cliente = $this->conn->prepare(
+            "INSERT INTO CLIENTE (_id, croquis_domicilio, factura_servicio, id_rol) 
+            VALUES (:id_persona, NULL, NULL, 3)"
+        );
+        $stmt_cliente->execute([
+            ':id_persona' => $id_persona
+        ]);
+        
+        $this->conn->commit();
+        return true;
+        
+    } catch (Exception $e) {
+        $this->conn->rollBack();
+        throw $e;
     }
+}
+
 }
