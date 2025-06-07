@@ -41,16 +41,34 @@ $motocicletas = $mantenimientoController->getMotocicletas();
 $mantenimientos = $mantenimientoController->getMantenimientosEmpleado($id_empleado);
 
 // Aplicar filtros si existen
-if (isset($_GET['action']) && $_GET['action'] === 'filter') {
-    $filtros = [
-        'fecha_desde' => $_GET['fecha_desde'] ?? null,
-        'fecha_hasta' => $_GET['fecha_hasta'] ?? null,
-        'tipo' => $_GET['tipo'] ?? null,
-        'cliente' => $_GET['cliente'] ?? null
-    ];
+$filtros = [
+    'fecha_desde' => $_GET['fecha_desde'] ?? null,
+    'fecha_hasta' => $_GET['fecha_hasta'] ?? null,
+    'tipo' => $_GET['tipo'] ?? null,
+    'cliente' => $_GET['cliente'] ?? null
+];
 
-    $mantenimientos = $mantenimientoController->filtrarMantenimientos($mantenimientos, $filtros);
+// Eliminar filtros nulos o vacíos
+$filtros = array_filter($filtros, function($value) {
+    return $value !== null && $value !== '';
+});
+
+// Variable para mensaje cuando no hay resultados
+$mensaje_filtro = 'No se encontraron mantenimientos con los filtros seleccionados.';
+
+// Aplicar filtros solo si hay filtros válidos
+if (!empty($filtros) && isset($_GET['action']) && $_GET['action'] === 'filter') {
+    $mantenimientos_filtrados = $mantenimientoController->filtrarMantenimientos($mantenimientos, $filtros);
+    
+    // Si no hay resultados, mantener un mensaje informativo
+    if (empty($mantenimientos_filtrados)) {
+        $mantenimientos = [];
+    } else {
+        $mantenimientos = $mantenimientos_filtrados;
+    }
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -63,6 +81,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'filter') {
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../public/css/MantemientoE.css">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container-fluid p-0">
@@ -238,6 +259,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'filter') {
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+
                             </div>
                             
                             <div class="col-12 text-end">
@@ -255,45 +277,52 @@ if (isset($_GET['action']) && $_GET['action'] === 'filter') {
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Cliente</th>
-                                            <th>Motocicleta</th>
-                                            <th>Tipo</th>
-                                            <th>Costo</th>
-                                            <th>Estado</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach(($mantenimientos ?? []) as $m): ?>
+                                <?php if (!empty($mantenimientos)): ?>
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
                                             <tr>
-                                                <td><?= date('d/m/Y', strtotime($m['fecha'])) ?></td>
-                                                <td><?= htmlspecialchars($m['nombre_cliente']) ?></td>
-                                                <td><?= htmlspecialchars($m['modelo_motocicleta']) ?></td>
-                                                <td><?= htmlspecialchars($m['tipo']) ?></td>
-                                                <td>$ <?= number_format($m['costo'], 2) ?></td>
-                                                <td>
-                                                    <span class="badge bg-<?= 
-                                                        $m['es_gratuito'] ? 'success' : 'primary'
-                                                    ?>">
-                                                        <?= $m['es_gratuito'] ? 'Gratuito' : 'Pagado' ?>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-outline-primary" onclick="verDetalleMantenimiento(<?= $m['_id'] ?>)">
-                                                        <i class="bi bi-eye"></i> Detalle
-                                                    </button>
-                                                </td>
+                                                <th>Fecha</th>
+                                                <th>Cliente</th>
+                                                <th>Motocicleta</th>
+                                                <th>Tipo</th>
+                                                <th>Costo</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
                                             </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($mantenimientos as $m): ?>
+                                                <tr>
+                                                    <td><?= date('d/m/Y', strtotime($m['fecha'])) ?></td>
+                                                    <td><?= htmlspecialchars($m['nombre_cliente']) ?></td>
+                                                    <td><?= htmlspecialchars($m['modelo_motocicleta']) ?></td>
+                                                    <td><?= htmlspecialchars($m['tipo']) ?></td>
+                                                    <td>Bs <?= number_format($m['costo'], 2) ?></td>
+                                                    <td>
+                                                        <span class="badge bg-<?= 
+                                                            $m['es_gratuito'] ? 'success' : 'primary'
+                                                        ?>">
+                                                            <?= $m['es_gratuito'] ? 'Gratuito' : 'Pagado' ?>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="verDetalleMantenimiento(<?= $m['_id'] ?>)">
+                                                            <i class="bi bi-eye"></i> Detalle
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                <?php else: ?>
+                                    <div class="alert alert-info text-center" role="alert">
+                                        <?= $mensaje_filtro ?? 'No hay mantenimientos disponibles.' ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </main>
@@ -340,13 +369,29 @@ if (isset($_GET['action']) && $_GET['action'] === 'filter') {
                                     <option value="Reparación">Reparación</option>
                                 </select>
                             </div>
+                            <!-- ¿Es gratuito? -->
                             <div class="col-md-6">
-                                <label class="form-label">Costo *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" step="0.01" min="0" class="form-control" name="costo" required>
-                                </div>
+                                <label for="es_gratuito" class="form-label">¿Es gratuito?</label>
+                                <select class="form-select" id="es_gratuito" name="es_gratuito" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Sí</option>
+                                </select>
                             </div>
+                            <input type="number" 
+                                step="0.01" 
+                                min="0" 
+                                max="10000" 
+                                class="form-control" 
+                                name="costo_bs" 
+                                id="costo_bs" 
+                                required
+                                placeholder="Ingrese el costo"
+                                oninput="this.value = Math.abs(this.value)">
+                            <div class="invalid-feedback">
+                                Por favor, ingrese un costo válido (entre 0 y 10,000)
+                            </div>
+
+
                             <div class="col-12">
                                 <label class="form-label">Observaciones</label>
                                 <textarea class="form-control" name="observaciones" rows="3"></textarea>
