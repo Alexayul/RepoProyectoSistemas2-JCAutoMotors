@@ -140,7 +140,7 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-white" href="creditosE.php">
                             <i class="bi bi-cash-stack me-2"></i>Crédito Directo
                         </a>
                     </li>

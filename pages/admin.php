@@ -122,6 +122,12 @@ $top_modelos = $adminController->getTopModelos();
                         <span>Ventas</span>
                     </a>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'creditosA.php') ? 'active' : ''; ?>" href="creditosA.php">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Créditos Directos</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
@@ -134,16 +140,19 @@ $top_modelos = $adminController->getTopModelos();
         
 
 <div class="main-content">
-    <div class="container-fluid py-4">
-        <div class="content-header mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h3 mb-0">
-                        <i class="bi bi-speedometer2 me-2"></i>
-                        Panel de Administración
-                    </h1>
-                    <p class="text-muted mb-0">Bienvenido al panel de administración del concesionario de motos.</p>
+        <div class="content-header">
+            <div>
+            <h1 class="h2">
+             <i class="bi bi-speedometer2 text-dark me-2"></i> Panel de Administración
+            </h1>
+                <div class="breadcrumbs">
+                    <i class="bi bi-house-door me-1"></i> Bienvenido al panel de administración del concesionario de motos.
                 </div>
+            </div>
+            <div class="action-buttons">
+                <a href="#" class="btn btn-dark">
+                    <i class="bi bi-upload me-1"></i>Exportar
+                </a>
             </div>
         </div>
 
