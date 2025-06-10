@@ -157,7 +157,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <button type="button" class="btn btn-primary me-2" onclick="abrirModal()">
                                 <i class="bi bi-plus-circle me-1"></i> Nueva Venta
                             </button>
-                <a href="#" class="btn btn-dark">
+                <a href="../helpers/PruebaRepVentasA.php" class="btn btn-dark">
                     <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>

@@ -1,11 +1,12 @@
 /* administrador.css - Optimizado */
 :root {
   --primary-color: #a51314;
-  --secondary-color: #701106;
+  --secondary-color: #770707;
   --primary-light: #f1d6d6;
   --dark: #050506;
   --light: #f7f7f7;
-  --gray: #333333;
+  --gray: #868686;
+  --dark-light: #222222;
   --light-gray: #e9ecef;
   --success: #198754;
   --success-light: #d1e7dd;
@@ -14,6 +15,7 @@
   --warning: #ffc107;
   --info: #42c4de;
   --purple: #9d4edd;
+  --red: #b60e1c;
 }
 
 body {
