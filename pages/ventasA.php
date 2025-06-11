@@ -82,7 +82,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link rel="stylesheet" href="../public/css/ventasA.css">
 </head>
 <body>
-   <!-- Sidebar Vertical -->
+ <!-- Sidebar Vertical -->
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
@@ -133,6 +133,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <span>Ventas</span>
                     </a>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'creditosA.php') ? 'active' : ''; ?>" href="creditosA.php">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Créditos Directos</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
@@ -157,7 +163,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <button type="button" class="btn btn-primary me-2" onclick="abrirModal()">
                                 <i class="bi bi-plus-circle me-1"></i> Nueva Venta
                             </button>
-                <a href="#" class="btn btn-dark">
+                <a href="../helpers/PruebaRepVentasA.php" class="btn btn-dark">
                     <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>
