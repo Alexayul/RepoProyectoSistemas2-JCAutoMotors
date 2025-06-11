@@ -299,7 +299,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link rel="stylesheet" href="../public/css/gestionE.css">
 </head>
 <body>
-    <!-- Sidebar Vertical -->
+<!-- Sidebar Vertical -->
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
@@ -350,6 +350,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <span>Ventas</span>
                     </a>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'creditosA.php') ? 'active' : ''; ?>" href="creditosA.php">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Créditos Directos</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
@@ -359,8 +365,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </ul>
         </div>
     </div>
-        
-
     <!-- Contenido Principal -->
     <div class="main-content">
         <div class="content-header">

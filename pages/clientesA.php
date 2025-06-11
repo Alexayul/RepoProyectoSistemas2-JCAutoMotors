@@ -133,7 +133,7 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
     <link rel="stylesheet" href="../public/css/clienteA.css">
 </head>
 <body>
-    <!-- Sidebar Vertical -->
+<!-- Sidebar Vertical -->
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
@@ -184,6 +184,12 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
                         <span>Ventas</span>
                     </a>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'creditosA.php') ? 'active' : ''; ?>" href="creditosA.php">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Créditos Directos</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
@@ -193,8 +199,6 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
             </ul>
         </div>
     </div>
-        
-        
     <div class="main-content">
     <div class="content-header">
                 <div>
@@ -239,7 +243,7 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
                                     </h3>
                                 </div>
                                 <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                    <i class="bi bi-people-fill fs-3 text-primary"></i>
+                                    <i class="bi bi-people-fill fs-3 text-white"></i>
                                 </div>
                             </div>
                         </div>
