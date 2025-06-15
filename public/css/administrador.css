@@ -1,33 +1,31 @@
-/* administrador.css - Optimizado */
 :root {
-  --primary-color: #a51314;
-  --secondary-color: #770707;
-  --primary-light: #f1d6d6;
-  --dark: #050506;
-  --light: #f7f7f7;
-  --gray: #868686;
-  --dark-light: #222222;
-  --light-gray: #e9ecef;
-  --success: #198754;
-  --success-light: #d1e7dd;
-  --danger: #dc3545;
-  --danger-light: #f8d7da;
-  --warning: #ffc107;
-  --info: #42c4de;
-  --purple: #9d4edd;
-  --red: #b60e1c;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  background-color: var(--light);
-  display: flex;
-  min-height: 100vh;
-  margin: 0;
-  overflow-x: hidden;
-}
-
-/* Sidebar mejorado */
+    --primary: #a51314;
+    --primary-dark: #701106;
+    --primary-light: #f1d6d6;
+    --dark: #050506;
+    --light: #f7f7f7;
+    --gray: #333333;
+    --light-gray: #e9ecef;
+    --success: #198754;
+    --success-light: #d1e7dd;
+    --danger: #dc3545;
+    --danger-light: #f8d7da;
+    --warning: #ffc107;
+    --warning-light: #fff3cd;
+    --info: #0dcaf0;
+    --info-light: #cff4fc;
+    --purple: #9d4edd;
+  }
+  
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--light);
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+  }
+  
+/* Sidebar Styles */
 .sidebar {
   width: 280px;
   background-color: var(--dark);
@@ -36,18 +34,18 @@ body {
   height: 100vh;
   overflow-y: auto;
   z-index: 1000;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
 .sidebar-header {
-  padding: 1.2rem;
+  padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
 }
 
 .sidebar-brand img {
-  max-height: 130px;
+  height: 120px;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
@@ -57,27 +55,34 @@ body {
 }
 
 .sidebar-nav {
-  padding: 0.8rem 0;
+  padding: 1rem 0;
 }
 
 .user-profile {
   padding: 1rem 1.5rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
 }
 
 .user-avatar {
-  width: 48px;
-  height: 48px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid var(--primary-color);
+  margin-right: 12px;
+  border: 2px solid var(--primary);
 }
 
 .user-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.user-info {
+  flex: 1;
 }
 
 .user-name {
@@ -106,15 +111,44 @@ body {
 
 .nav-link:hover,
 .nav-link.active {
-  background-color: var(--primary-color) !important;
+  background-color: var(--primary) !important;
   color: white;
-  border-left: 4px solid var(--primary-color);
+  border-left: 4px solid var(--primary);
 }
 
 .nav-link i {
   margin-right: 12px;
   font-size: 1.25rem;
 }
+.nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s;
+  border-left: 4px solid transparent;
+  border-radius: 0 30px 30px 0;
+  margin: 0.25rem 0;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background-color: var(--primary) !important;
+  color: white;
+  border-left: 4px solid var(--primary);
+}
+  /* UTILITY CLASSES */
+  .text-primary {
+    color: var(--primary) !important;
+  }
+  
+  .bg-primary {
+    background-color: var(--primary) !important;
+  }
+  
+  .border-primary {
+    border-color: var(--primary) !important;
+  }
 
 /* Main Content */
 .main-content {

@@ -71,7 +71,7 @@ $top_modelos = $adminController->getTopModelos();
     <link rel="stylesheet" href="../public/css/administrador.css">
 </head>
 <body>
-<!-- Sidebar Vertical -->
+ <!-- Sidebar Vertical -->
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
@@ -137,7 +137,6 @@ $top_modelos = $adminController->getTopModelos();
             </ul>
         </div>
     </div>
-        
 
 <div class="main-content">
         <div class="content-header">
