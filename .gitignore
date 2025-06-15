@@ -1,0 +1,7 @@
+# Directorios de vendor
+/vendor/
+/vendor/dompdf/
+/vendor/composer/
+
+# Archivos de configuración IDE
+.vscode/

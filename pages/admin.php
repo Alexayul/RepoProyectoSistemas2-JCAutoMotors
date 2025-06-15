@@ -71,7 +71,7 @@ $top_modelos = $adminController->getTopModelos();
     <link rel="stylesheet" href="../public/css/administrador.css">
 </head>
 <body>
-<!-- Sidebar Vertical -->
+ <!-- Sidebar Vertical -->
     <div class="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
@@ -122,6 +122,12 @@ $top_modelos = $adminController->getTopModelos();
                         <span>Ventas</span>
                     </a>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'creditosA.php') ? 'active' : ''; ?>" href="creditosA.php">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Créditos Directos</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
@@ -131,19 +137,21 @@ $top_modelos = $adminController->getTopModelos();
             </ul>
         </div>
     </div>
-        
 
 <div class="main-content">
-    <div class="container-fluid py-4">
-        <div class="content-header mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h3 mb-0">
-                        <i class="bi bi-speedometer2 me-2"></i>
-                        Panel de Administración
-                    </h1>
-                    <p class="text-muted mb-0">Bienvenido al panel de administración del concesionario de motos.</p>
+        <div class="content-header">
+            <div>
+            <h1 class="h2">
+             <i class="bi bi-speedometer2 text-dark me-2"></i> Panel de Administración
+            </h1>
+                <div class="breadcrumbs">
+                    <i class="bi bi-house-door me-1"></i> Bienvenido al panel de administración del concesionario de motos.
                 </div>
+            </div>
+            <div class="action-buttons">
+                <a href="#" class="btn btn-dark">
+                    <i class="bi bi-upload me-1"></i>Exportar
+                </a>
             </div>
         </div>
 
@@ -166,7 +174,7 @@ $top_modelos = $adminController->getTopModelos();
             
             <!-- Tarjeta 2: Ventas del mes -->
             <div class="col-xl col-lg-2 col-md-4 col-6 mb-4">
-                <div class="card stat-card bg-success h-100">
+                <div class="card stat-card bg-dark h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -182,15 +190,16 @@ $top_modelos = $adminController->getTopModelos();
             
             <!-- Tarjeta 3: Accesorios en inventario -->
             <div class="col-xl col-lg-2 col-md-4 col-6 mb-4">
-                <div class="card stat-card bg-warning h-100">
+                <div class="card stat-card bg-light h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-uppercase text-dark-50 mb-1">Accesorios</h6>
-                                <h2 class="mb-0"><?php echo $stats['accesorios']; ?></h2>
-                                <small class="text-dark-50">En inventario</small>
+                                <h6 class="text-uppercase text-black mb-1">Accesorios</h6>
+                                <h2 class="mb-0 text-black"><?php echo $stats['accesorios']; ?></h2>
+                                <small class="text-black-50">En inventario</small>
                             </div>
-                            <i class="bi bi-box-seam card-icon"></i>
+                            <i class="bi bi-box-seam card-icon text-black"></i>
+
                         </div>
                     </div>
                 </div>
@@ -198,7 +207,7 @@ $top_modelos = $adminController->getTopModelos();
             
             <!-- Tarjeta 4: Mantenimientos del mes -->
             <div class="col-xl col-lg-2 col-md-4 col-6 mb-4">
-                <div class="card stat-card bg-purple h-100">
+                <div class="card stat-card bg-secondary h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -214,7 +223,7 @@ $top_modelos = $adminController->getTopModelos();
             
             <!-- Tarjeta 5: Ingresos del mes en Bs. -->
             <div class="col-xl col-lg-2 col-md-4 col-6 mb-4">
-                <div class="card stat-card bg-info h-100">
+                <div class="card stat-card bg-primary h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -379,7 +388,8 @@ const colors = {
         success: '#198754',
         warning: '#ffc107',
         info: '#42c4de',
-        purple: '#9d4edd'
+        purple: '#9d4edd',
+        red: '#b60e1c'
     }
 };
 

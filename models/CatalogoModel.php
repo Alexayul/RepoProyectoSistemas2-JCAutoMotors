@@ -126,31 +126,33 @@ public function obtenerDatosUsuario($user_id) {
 
     // Métodos para el catálogo
     public function obtenerMotocicletas($brandFilter = '', $modelFilter = '', $ccFilter = '') {
-        $query = "SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
-                         M.color, M.precio, M.fecha_ingreso, M.cantidad 
-                  FROM MOTOCICLETA M
-                  INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
-                  WHERE M.cantidad >= 0";
-        
-        $params = [];
+    // Consulta base
+    $query = "SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
+                 M.color, M.precio, M.fecha_ingreso, M.cantidad 
+          FROM MOTOCICLETA M
+          INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
+          WHERE M.cantidad > 0";
+    
+    $params = [];
 
-        if (!empty($brandFilter)) {
-            $query .= " AND MM.marca LIKE :marca";
-            $params[':marca'] = "%$brandFilter%";
-        }
-        if (!empty($modelFilter)) {
-            $query .= " AND MM.modelo LIKE :modelo";
-            $params[':modelo'] = "%$modelFilter%";
-        }
-        if (!empty($ccFilter) && $ccFilter > 0) {
-            $query .= " AND MM.cilindrada = :cilindrada";
-            $params[':cilindrada'] = $ccFilter;
-        }
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Agregar filtros solo si no están vacíos
+    if (!empty($brandFilter)) {
+        $query .= " AND MM.marca LIKE :marca";
+        $params[':marca'] = "%$brandFilter%";
     }
+    if (!empty($modelFilter)) {
+        $query .= " AND MM.modelo LIKE :modelo";
+        $params[':modelo'] = "%$modelFilter%";
+    }
+    if (!empty($ccFilter) && $ccFilter > 0) {
+        $query .= " AND MM.cilindrada = :cilindrada";
+        $params[':cilindrada'] = $ccFilter;
+    }
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     public function obtenerMarcas() {
         $stmt = $this->conn->prepare("SELECT DISTINCT marca FROM MODELO_MOTO");
