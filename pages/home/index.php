@@ -61,7 +61,7 @@
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="../login.php">
+                        <a class="nav-link" href="pages/login.php">
                             <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
                         </a>
                     </li>

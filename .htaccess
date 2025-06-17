@@ -1,0 +1,39 @@
+RewriteEngine On
+RewriteBase /RepoProyectoSistemas2-JCAutoMotors/
+
+# 1. Páginas de error personalizadas (rutas absolutas)
+ErrorDocument 400 /RepoProyectoSistemas2-JCAutoMotors/errors/400.php
+ErrorDocument 403 /RepoProyectoSistemas2-JCAutoMotors/errors/403.php
+ErrorDocument 404 /RepoProyectoSistemas2-JCAutoMotors/errors/404.php
+ErrorDocument 500 /RepoProyectoSistemas2-JCAutoMotors/errors/500.php
+
+# 2. Redirigir recursos estáticos
+RewriteRule ^(.+/)?(css|js|images|fonts)/(.*)$ public/$2/$3 [L,NC]
+
+# 3. Manejo especial para archivos PHP en /pages/
+RewriteCond %{REQUEST_URI} ^/RepoProyectoSistemas2-JCAutoMotors/pages/.*\.php$ [NC]
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
+RewriteRule ^ - [R=404,L]
+
+# Si quieres bloquear el acceso directo a PHP, descomenta la siguiente línea:
+RewriteRule ^server-down$ - [R=500,L]
+
+# 4. Permitir acceso a archivos existentes (excepto PHP)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} !\.php$ [NC]
+RewriteRule ^ - [L]
+
+# 5. Redirección principal (DESPUÉS de todas las verificaciones)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]
+
+# Configuraciones de seguridad
+Options -Indexes
+Options -Includes
+ServerSignature Off
+
+# Cache para archivos estáticos
+<FilesMatch "\.(css|js|png|jpe?g|gif|ico|webp|woff2?)$">
+    Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
