@@ -397,6 +397,52 @@ $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
                 </div>
             </div>
         </div>
+               <!-- Widget flotante del chatbot -->
+    <div class="chatbot-widget" id="chatbotWidget">
+        <div class="chatbot-header">
+            <h5>
+                <i class="bi bi-robot"></i>
+                ¡Consulta sobre tu motocicleta ideal!
+            </h5>
+            <button type="button" class="btn-close" id="closeChatbot">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <div class="chatbot-body">
+            <div class="chatbot-container" id="chatbotContainer">
+                <div class="message bot">
+                    <div class="message-content">
+                        ¡Hola! 👋 Soy tu asistente especializado en motocicletas. Voy a guiarte para encontrar la moto perfecta para ti.
+                        <br><br>
+                        Primero, dime qué tipo de moto te interesa:
+                        <br>• <strong>Deportiva</strong> (para velocidad y estilo)
+                        <br>• <strong>Naked</strong> (para ciudad y versatilidad)
+                        <br>• <strong>Cruiser</strong> (para comodidad en ruta)
+                        <br>• <strong>Aventura</strong> (para todo terreno)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-options" id="quickOptions">
+                <div class="quick-option" data-query="deportiva">🏍️ Deportiva</div>
+                <div class="quick-option" data-query="naked">🛵 Naked</div>
+                <div class="quick-option" data-query="cruiser">🛣️ Cruiser</div>
+                <div class="quick-option" data-query="aventura">🏕️ Aventura</div>
+            </div>
+            
+            <div class="chatbot-input" hide>
+                <input type="text" id="userInput" placeholder="Escribe tu mensaje..." hidden>
+                <button id="sendButton" hidden><i class="bi bi-send-fill"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón para abrir el widget -->
+    <div class="chatbot-btn" id="chatbotBtn">
+        <i class="bi bi-robot"></i>
+    </div>
+
 <footer>
             <div class="container">
                 <div class="row">
@@ -445,5 +491,7 @@ $usuario_logueado = isset($_SESSION['user']) ? $_SESSION['user'] : null;
         </footer>
 
     <script src="../public/js/catalogo.js"></script>
+    <link rel="stylesheet" href="../public/css/chatbot.css">
+<script src="../public/js/chatbot.js"></script>
 </body>
 </html>
