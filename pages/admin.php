@@ -175,7 +175,7 @@ $top_modelos = $adminController->getTopModelos();
             
             <!-- Tarjeta 2: Ventas del mes -->
             <div class="col-xl col-lg-2 col-md-4 col-6 mb-4">
-                <div class="card stat-card bg-success h-100">
+                <div class="card stat-card bg-dark h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -191,15 +191,16 @@ $top_modelos = $adminController->getTopModelos();
             
             <!-- Tarjeta 3: Accesorios en inventario -->
             <div class="col-xl col-lg-2 col-md-4 col-6 mb-4">
-                <div class="card stat-card bg-warning h-100">
+                <div class="card stat-card bg-light h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-uppercase text-dark-50 mb-1">Accesorios</h6>
-                                <h2 class="mb-0"><?php echo $stats['accesorios']; ?></h2>
-                                <small class="text-dark-50">En inventario</small>
+                                <h6 class="text-uppercase text-black mb-1">Accesorios</h6>
+                                <h2 class="mb-0 text-black"><?php echo $stats['accesorios']; ?></h2>
+                                <small class="text-black-50">En inventario</small>
                             </div>
-                            <i class="bi bi-box-seam card-icon"></i>
+                            <i class="bi bi-box-seam card-icon text-black"></i>
+
                         </div>
                     </div>
                 </div>
@@ -207,7 +208,7 @@ $top_modelos = $adminController->getTopModelos();
             
             <!-- Tarjeta 4: Mantenimientos del mes -->
             <div class="col-xl col-lg-2 col-md-4 col-6 mb-4">
-                <div class="card stat-card bg-purple h-100">
+                <div class="card stat-card bg-secondary h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -223,7 +224,7 @@ $top_modelos = $adminController->getTopModelos();
             
             <!-- Tarjeta 5: Ingresos del mes en Bs. -->
             <div class="col-xl col-lg-2 col-md-4 col-6 mb-4">
-                <div class="card stat-card bg-info h-100">
+                <div class="card stat-card bg-primary h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -388,7 +389,8 @@ const colors = {
         success: '#198754',
         warning: '#ffc107',
         info: '#42c4de',
-        purple: '#9d4edd'
+        purple: '#9d4edd',
+        red: '#b60e1c'
     }
 };
 
