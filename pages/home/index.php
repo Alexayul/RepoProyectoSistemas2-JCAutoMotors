@@ -46,30 +46,31 @@
                         </a>
                     </li>
                     <?php if ($usuario_logueado): ?>
-                        <li class="nav-item me-3">
-                            <span class="navbar-text text-light">
-                                <i class="bi bi-person-circle me-1"></i>
-                                Bienvenido, <?php echo htmlspecialchars($usuario_logueado['usuario']); ?>
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn" href="/RepoProyectoSistemas2-JCAutoMotors/public/logout.php">
-                                <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/login.php">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
-                            </a>
-                        </li>
-                    <?php endif; ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1 text-white"></i>
+                            <span class="text-light"><?php echo htmlspecialchars($usuario_logueado['usuario']); ?></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><h6 class="dropdown-header">Mi Cuenta</h6></li>
+                            <li><a class="dropdown-item" href="pages/comprasC.php"><i class="bi bi-wallet2 me-2"></i>Mis Compras</a></li>
+                            <li><a class="dropdown-item" href="pages/pagosP.php"><i class="bi bi-exclamation-circle me-2"></i>Pagos Pendientes</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/RepoProyectoSistemas2-JCAutoMotors/public/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../login.php">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
+                        </a>
+                    </li>
+                <?php endif; ?>
                 </ul>
             </div>
         </div>
     </nav>
 </header>
-
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">

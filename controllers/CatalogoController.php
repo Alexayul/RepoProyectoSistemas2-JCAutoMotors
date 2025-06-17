@@ -259,36 +259,35 @@ class CatalogoController {
     }
 
     public function obtenerMotocicletasC($brandFilter = '', $modelFilter = '', $ccFilter = '') {
-        try {
-            $query = "
-            SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
-              M.color, M.precio, M.fecha_ingreso, M.cantidad 
-            FROM MOTOCICLETA M
-            INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
-            WHERE M.cantidad > 0;
-            ";
+    try {
+        $query = "
+        SELECT M._id AS moto_id, MM.marca, MM.modelo, MM.cilindrada, MM.imagen,
+          M.color, M.precio, M.fecha_ingreso, M.cantidad 
+        FROM MOTOCICLETA M
+        INNER JOIN MODELO_MOTO MM ON M.id_modelo = MM._id
+        WHERE M.cantidad > 0";  // Eliminé el punto y coma aquí
 
-            $params = [];
+        $params = [];
 
-            if (!empty($brandFilter)) {
-                $query .= " AND MM.marca LIKE :marca";
-                $params[':marca'] = "%$brandFilter%";
-            }
-            if (!empty($modelFilter)) {
-                $query .= " AND MM.modelo LIKE :modelo";
-                $params[':modelo'] = "%$modelFilter%";
-            }
-            if (!empty($ccFilter) && $ccFilter > 0) {
-                $query .= " AND MM.cilindrada = :cilindrada";
-                $params[':cilindrada'] = $ccFilter;
-            }
-
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-        } catch (Exception $e) {
-            throw new Exception("Error al cargar los datos: " . $e->getMessage());
+        if (!empty($brandFilter)) {
+            $query .= " AND MM.marca LIKE :marca";
+            $params[':marca'] = "%$brandFilter%";
         }
+        if (!empty($modelFilter)) {
+            $query .= " AND MM.modelo LIKE :modelo";
+            $params[':modelo'] = "%$modelFilter%";
+        }
+        if (!empty($ccFilter) && $ccFilter > 0) {
+            $query .= " AND MM.cilindrada = :cilindrada";
+            $params[':cilindrada'] = $ccFilter;
+        }
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (Exception $e) {
+        throw new Exception("Error al cargar los datos: " . $e->getMessage());
     }
+}
 }
