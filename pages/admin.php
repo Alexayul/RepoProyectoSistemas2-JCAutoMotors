@@ -69,6 +69,7 @@ $top_modelos = $adminController->getTopModelos();
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="../public/css/administrador.css">
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 </head>
 <body>
  <!-- Sidebar Vertical -->
@@ -149,7 +150,7 @@ $top_modelos = $adminController->getTopModelos();
                 </div>
             </div>
             <div class="action-buttons">
-                <a href="#" class="btn btn-dark">
+                <a href="../helpers/RepDashboarAdmin.php" class="btn btn-dark">
                     <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>
@@ -433,7 +434,21 @@ const performanceChart = new Chart(performanceCtx, {
                 fill: true,
                 pointBackgroundColor: colors.ventas.primary,
                 pointRadius: 4,
-                pointHoverRadius: 6
+                pointHoverRadius: 6,
+                datalabels: {
+                    color: colors.ventas.primary,
+                    anchor: 'end',
+                    align: 'right',
+                    offset: 10,
+                    formatter: function(value) {
+                        return 'Bs. ' + value.toLocaleString();
+                    },
+                    font: {
+                        weight: 'bold',
+                        family: 'Montserrat',
+                        size: 10
+                    }
+                }
             },
             {
                 label: 'Mantenimientos (Bs.)',
@@ -445,12 +460,33 @@ const performanceChart = new Chart(performanceCtx, {
                 fill: true,
                 pointBackgroundColor: colors.mantenimientos.primary,
                 pointRadius: 4,
-                pointHoverRadius: 6
+                pointHoverRadius: 6,
+                datalabels: {
+                    display: false  // Ocultar etiquetas para mantenimientos
+                }
             }
         ]
     },
-    options: getChartOptions('Comparativa Mensual (Bs.)')
+    options: {
+        ...getChartOptions('Comparativa Mensual (Bs.)'),
+        plugins: {
+            legend: {
+                onClick: (e, legendItem, legend) => {
+                    // Método vacío para prevenir la desactivación
+                    return false;
+                },
+                datalabels: {
+                    display: function(context) {
+                        // Solo mostrar etiquetas para el primer conjunto de datos (ventas)
+                        return context.datasetIndex === 0;
+                    }
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
 });
+
 
 // Gráfico de Distribución de Ventas
 const salesDistributionCtx = document.getElementById('salesDistributionChart').getContext('2d');
@@ -467,7 +503,24 @@ const salesDistributionChart = new Chart(salesDistributionCtx, {
                 colors.otros.purple
             ],
             borderWidth: 0,
-            cutout: '70%'
+            cutout: '70%',
+            datalabels: {
+                color: 'black',
+                font: {
+                    family: 'Montserrat',
+                    weight: 'bold',
+                    size: 10
+                },
+                formatter: function(value, context) {
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = ((value / total) * 100).toFixed(1);
+                    const amount = Math.round(value * monthlyData.ventas.reduce((a,b) => a + b, 0) / 100);
+                    return `${percentage}%\nBs. ${amount.toLocaleString()}`;
+                },
+                textAlign: 'center',
+                anchor: 'center',
+                align: 'center'
+            }
         }]
     },
     options: {
@@ -475,6 +528,10 @@ const salesDistributionChart = new Chart(salesDistributionCtx, {
         maintainAspectRatio: false,
         plugins: {
             legend: {
+                onClick: (e, legendItem, legend) => {
+                    // Método vacío para prevenir la desactivación
+                    return false;
+                },
                 position: 'right',
                 labels: {
                     font: {
@@ -494,7 +551,8 @@ const salesDistributionChart = new Chart(salesDistributionCtx, {
                 }
             }
         }
-    }
+    },
+    plugins: [ChartDataLabels]
 });
 
 // Gráfica de Ventas Mensuales
@@ -510,11 +568,37 @@ const ventasChart = new Chart(ventasCtx, {
             borderColor: colors.ventas.primary,
             borderWidth: 0,
             borderRadius: 6,
-            barPercentage: 0.7
+            barPercentage: 0.7,
+            datalabels: {
+                color: 'black',
+                anchor: 'end',
+                align: 'right',
+                offset: 5,
+                formatter: function(value) {
+                    return 'Bs. ' + value.toLocaleString();
+                },
+                font: {
+                    family: 'Montserrat',
+                    weight: 'bold',
+                    size: 8
+                }
+            }
         }]
     },
-    options: getChartOptions('Ventas Mensuales (Bs.)', false)
+    options: {
+        ...getChartOptions('Ventas Mensuales (Bs.)', false),
+        plugins: {
+            legend: {
+                onClick: (e, legendItem, legend) => {
+                    // Método vacío para prevenir la desactivación
+                    return false;
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
 });
+
 
 // Gráfica de Mantenimientos Mensuales
 const mantenimientosCtx = document.getElementById('mantenimientosChart').getContext('2d');
@@ -532,10 +616,39 @@ const mantenimientosChart = new Chart(mantenimientosCtx, {
             fill: true,
             pointBackgroundColor: colors.mantenimientos.primary,
             pointRadius: 4,
-            pointHoverRadius: 6
+            pointHoverRadius: 6,
+            datalabels: {
+                color: colors.mantenimientos.primary,
+                anchor: 'end',
+                align: 'right',
+                offset: 10,
+                formatter: function(value) {
+                    return 'Bs. ' + value.toLocaleString();
+                },
+                font: {
+                    family: 'Montserrat',
+                    weight: 'bold',
+                    size: 10
+                },
+                display: function(context) {
+                    // Solo mostrar etiquetas para algunos puntos para evitar saturación
+                    return context.dataIndex % 2 === 0 || context.dataIndex === context.dataset.data.length - 1;
+                }
+            }
         }]
     },
-    options: getChartOptions('Mantenimientos Mensuales (Bs.)', false)
+    options: {
+        ...getChartOptions('Mantenimientos Mensuales (Bs.)', false),
+        plugins: {
+            legend: {
+                onClick: (e, legendItem, legend) => {
+                    // Método vacío para prevenir la desactivación
+                    return false;
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
 });
 
 // Gráfico de Progreso de Metas
@@ -552,7 +665,10 @@ const goalsChart = new Chart(goalsCtx, {
                 borderColor: hexToRgba(colors.ventas.primary, 0.5),
                 borderWidth: 1,
                 pointBackgroundColor: hexToRgba(colors.ventas.primary, 0.5),
-                pointRadius: 0
+                pointRadius: 0,
+                datalabels: {
+                    display: false
+                }
             },
             {
                 label: 'Actual',
@@ -561,7 +677,21 @@ const goalsChart = new Chart(goalsCtx, {
                 borderColor: colors.ventas.primary,
                 borderWidth: 2,
                 pointBackgroundColor: colors.ventas.primary,
-                pointRadius: 4
+                pointRadius: 4,
+                datalabels: {
+                    color: colors.ventas.primary,
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 10,
+                    formatter: function(value) {
+                        return value + '%';
+                    },
+                    font: {
+                        family: 'Montserrat',
+                        weight: 'bold',
+                        size: 10
+                    }
+                }
             }
         ]
     },
@@ -570,6 +700,10 @@ const goalsChart = new Chart(goalsCtx, {
         maintainAspectRatio: false,
         plugins: {
             legend: {
+                onClick: (e, legendItem, legend) => {
+                    // Método vacío para prevenir la desactivación
+                    return false;
+                },
                 position: 'top',
                 labels: {
                     font: {
@@ -586,6 +720,9 @@ const goalsChart = new Chart(goalsCtx, {
                         return `${context.dataset.label}: ${context.raw}%`;
                     }
                 }
+            },
+            datalabels: {
+                display: true
             }
         },
         scales: {
@@ -601,7 +738,8 @@ const goalsChart = new Chart(goalsCtx, {
                 }
             }
         }
-    }
+    },
+    plugins: [ChartDataLabels]
 });
 
 // Función para crear gradientes en los gráficos
