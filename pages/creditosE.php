@@ -88,7 +88,7 @@ if (
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-white" href="mantenimientosE.php">
                             <i class="bi bi-tools me-2"></i>Mantenimientos
                         </a>
                     </li>
@@ -120,12 +120,12 @@ if (
                         </h1>
                         <div class="btn-toolbar mb-2 mb-md-0">
                             <div class="btn-group me-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <!-- <button type="button" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-printer me-1"></i> Imprimir
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-upload me-1"></i> Exportar
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>

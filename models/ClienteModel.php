@@ -9,6 +9,9 @@ class ClienteModel {
         $this->db = $db;
     }
     
+    public function getDb() {
+        return $this->db;
+    }
 
     // Obtener todos los clientes (uniendo PERSONA y CLIENTE)
     public function getAll() {
@@ -81,5 +84,31 @@ class ClienteModel {
         $clientes = $stmtClientes->fetchAll(PDO::FETCH_ASSOC);
         $stmtClientes->closeCursor();
         return $clientes;
+    }
+
+    // Verificar si el documento de identidad ya existe
+    public function existeDocumento($documento, $excluir_id = null) {
+        $sql = "SELECT COUNT(*) FROM PERSONA WHERE documento_identidad = ?";
+        $params = [$documento];
+        if ($excluir_id) {
+            $sql .= " AND _id != ?";
+            $params[] = $excluir_id;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    // Verificar si el email ya existe
+    public function existeEmail($email, $excluir_id = null) {
+        $sql = "SELECT COUNT(*) FROM PERSONA WHERE email = ?";
+        $params = [$email];
+        if ($excluir_id) {
+            $sql .= " AND _id != ?";
+            $params[] = $excluir_id;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn() > 0;
     }
 }

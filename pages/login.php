@@ -55,7 +55,11 @@ unset($_SESSION['login_error']);
                     <span class="eye-icon" id="eye-icon"><i class="bi bi-eye"></i></span>
                 </div>
                 <div class="forgot-password"><a href="../index.php">Entrar como invitado</a></div>
-                <div class="forgot-password"><a href="recuperar.php">¿Olvidaste tu contraseña?</a></div>
+                <div class="forgot-password">
+                    <a href="https://wa.me/59177206162?text=Hola,%20necesito%20cambiar%20mi%20contraseña%20de%20JC%20Automotors." target="_blank" id="forgot-link">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
                 <button type="submit" class="login-btn">Iniciar sesión</button>
             </form>
         </div>

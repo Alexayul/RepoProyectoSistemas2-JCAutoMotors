@@ -154,12 +154,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_venta'])) {
                                 <i class="bi bi-plus-circle me-1"></i> Nueva Venta
                             </button>
                             <div class="btn-group me-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <!-- <button type="button" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-printer me-1"></i> Imprimir
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                </button> -->
+                                <!-- <button type="button" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-upload me-1"></i> Exportar
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>

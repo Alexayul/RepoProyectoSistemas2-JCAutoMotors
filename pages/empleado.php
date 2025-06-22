@@ -141,12 +141,12 @@ foreach ($motocicletas as $moto) {
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarMoto">
                             <i class="bi bi-plus-circle me-1"></i> Agregar Moto
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">
+                        <!-- <button type="button" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-printer me-1"></i> Imprimir
                         </button>
                         <button type="button" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-upload me-1"></i> Exportar
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             </div>

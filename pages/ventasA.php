@@ -140,6 +140,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'mantenimientosA.php') ? 'active' : ''; ?>" href="mantenimientosA.php">
+                        <i class="bi bi-wrench"></i>
+                        <span>Mantenimientos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
                         <span>Cerrar Sesión</span>
@@ -163,7 +169,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <button type="button" class="btn btn-primary me-2" onclick="abrirModal()">
                                 <i class="bi bi-plus-circle me-1"></i> Nueva Venta
                             </button>
-                <a href="../helpers/PruebaRepVentasA.php" target="_blank" class="btn btn-dark">
+                <a href="#" id="exportarVentas" target="_blank" class="btn btn-dark">
                     <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>
@@ -344,10 +350,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                                     <td><?= htmlspecialchars($v['nombre_cliente'] ?? 'Cliente no registrado') ?></td>
                                                     <td><?= htmlspecialchars($v['nombre_empleado'] ?? 'Empleado no registrado') ?></td>
                                                     <td>
-                                                        <span class="badge bg-<?= 
-                                                            $v['tipo_pago'] == 'Al contado' ? 'success' : 
-                                                            ($v['tipo_pago'] == 'Financiamiento bancario' ? 'info' : 'primary') 
-                                                        ?>">
+                                                        <?php
+                                                            $colorTipo = $v['tipo_pago'] == 'Al contado' ? '#050506'
+                                                                        : ($v['tipo_pago'] == 'Financiamiento bancario' ? '#701106' : '#868686');
+                                                        ?>
+                                                        <span class="badge" style="background:<?= $colorTipo ?>; color:#fff;">
                                                             <?= htmlspecialchars($v['tipo_pago']) ?>
                                                         </span>
                                                     </td>
@@ -355,10 +362,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                                     <td>$ <?= number_format($v['adelanto']) ?></td>
                                                     <td>$ <?= number_format($v['saldo_pendiente']) ?></td>
                                                     <td>
-                                                        <span class="badge bg-<?= 
-                                                            $v['estado'] == 'Completada' ? 'success' : 
-                                                            ($v['estado'] == 'Pendiente' ? 'warning' : 'danger') 
-                                                        ?>">
+                                                        <?php
+                                                            $colorEstado = $v['estado'] == 'Completada' ? '#050506'
+                                                                        : ($v['estado'] == 'Pendiente' ? '#868686' : '#701106');
+                                                        ?>
+                                                        <span class="badge" style="background:<?= $colorEstado ?>; color:#fff;">
                                                             <?= htmlspecialchars($v['estado']) ?>
                                                         </span>
                                                     </td>
@@ -577,6 +585,25 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../public/js/ventasA.js"></script>
+    <script>
+document.getElementById('exportarVentas').addEventListener('click', function(e) {
+    e.preventDefault();
+    // Obtén los valores de los filtros
+    const fecha_desde = document.getElementById('fecha_desde').value;
+    const fecha_hasta = document.getElementById('fecha_hasta').value;
+    const estado = document.getElementById('estado').value;
+    const tipo_pago = document.getElementById('tipo_pago').value;
+    const empleado = document.getElementById('empleado').value;
+    // Construye la URL con los filtros
+    let url = '../helpers/PruebaRepVentasA.php?';
+    if (fecha_desde) url += 'fecha_desde=' + encodeURIComponent(fecha_desde) + '&';
+    if (fecha_hasta) url += 'fecha_hasta=' + encodeURIComponent(fecha_hasta) + '&';
+    if (estado) url += 'estado=' + encodeURIComponent(estado) + '&';
+    if (tipo_pago) url += 'tipo_pago=' + encodeURIComponent(tipo_pago) + '&';
+    if (empleado) url += 'empleado=' + encodeURIComponent(empleado) + '&';
+    window.open(url, '_blank');
+});
+</script>
 </body>
 </html>
 
