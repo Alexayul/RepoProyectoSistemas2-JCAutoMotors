@@ -34,6 +34,14 @@ $options->set('defaultFont', 'Arial');
 
 // Crear instancia de DomPDF
 $dompdf = new Dompdf($options);
+// ...código PHP antes de $html...
+$logoPath = $_SERVER['DOCUMENT_ROOT'] . '/RepoProyectoSistemas2-JCAutoMotors/public/logo.png';
+$logoData = '';
+if (file_exists($logoPath)) {
+    $logoType = pathinfo($logoPath, PATHINFO_EXTENSION);
+    $logoBase64 = base64_encode(file_get_contents($logoPath));
+    $logoData = 'data:image/' . $logoType . ';base64,' . $logoBase64;
+}
 
 // Generar HTML para el PDF
 $html = '
@@ -51,10 +59,32 @@ $html = '
             margin: 20px;
         }
         .header {
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
             border-bottom: 2px solid #A51314;
+            margin-bottom: 20px;
             padding-bottom: 10px;
+        }
+        .header div {
+            flex: 1;
+        }
+        .header img {
+            max-width: 170px; /* Aumenta el tamaño */
+            max-height: 110px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #701106;
+            font-size: 22px;
+            text-align: left;
+            padding-left: 18px;
+        }
+        .header p {
+            color: #666;
+            margin: 0;
+            font-size: 13px;
+            text-align: left;
+            padding-left: 18px;
         }
         .stats-container {
             display: flex;
@@ -82,9 +112,6 @@ $html = '
             margin: 5px 0;
             font-weight: bold;
             color: #333;
-        }
-        .header h1 {
-            color: #701106;
         }
         .logo {
             max-width: 150px;
@@ -150,9 +177,13 @@ $html = '
 </head>
 <body>
     <div class="header">
-        <img src="logo.png" alt="Concesionaria JC Automotors" class="logo">
-        <h1>Reporte de Ventas - JC Automotors</h1>
-        <p style="color: #666; margin: 0; font-size: 13px;">Generado el ' . date('d/m/Y H:i:s') . '</p>
+        <div style="flex:0 0 auto;">
+            <img src="' . $logoData . '" alt="JC Automotors" style="max-width:170px; max-height:110px;">
+        </div>
+        <div style="flex:1 1 auto; text-align:left; padding-left:18px;">
+            <h1 style="margin:0; color:#701106; font-size:22px;">Reporte de Ventas - JC Automotors</h1>
+            <p style="color:#666; margin:0; font-size:13px;">Generado el ' . date('d/m/Y H:i:s') . '</p>
+        </div>
     </div>
 
     <div class="stats-row">
@@ -184,6 +215,18 @@ $html = '
             <p>$ ' . number_format(array_sum(array_column($ventas, 'saldo_pendiente')), 2) . '</p>
             <p>Bs. ' . number_format(array_sum(array_column($ventas, 'saldo_pendiente')) * 7, 2) . '</p>
         </div>
+    </div>
+
+    <div style="margin-bottom:15px; font-size:13px;">
+        <strong>Filtros aplicados:</strong>
+        <ul style="margin:0; padding-left:18px;">
+            '.($filtros['fecha_desde'] ? "<li>Desde: <b>".htmlspecialchars($filtros['fecha_desde'])."</b></li>" : "").'
+            '.($filtros['fecha_hasta'] ? "<li>Hasta: <b>".htmlspecialchars($filtros['fecha_hasta'])."</b></li>" : "").'
+            '.($filtros['estado'] ? "<li>Estado: <b>".htmlspecialchars($filtros['estado'])."</b></li>" : "").'
+            '.($filtros['tipo_pago'] ? "<li>Tipo de pago: <b>".htmlspecialchars($filtros['tipo_pago'])."</b></li>" : "").'
+            '.($filtros['empleado'] ? "<li>Empleado: <b>".htmlspecialchars($filtros['empleado'])."</b></li>" : "").'
+            '.(!$filtros['fecha_desde'] && !$filtros['fecha_hasta'] && !$filtros['estado'] && !$filtros['tipo_pago'] && !$filtros['empleado'] ? "<li>Ninguno (mostrando todas las ventas)</li>" : "").'
+        </ul>
     </div>
 
     <table>

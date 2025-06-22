@@ -357,6 +357,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'mantenimientosA.php') ? 'active' : ''; ?>" href="mantenimientosA.php">
+                        <i class="bi bi-wrench"></i>
+                        <span>Mantenimientos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
                         <span>Cerrar Sesión</span>
@@ -378,7 +384,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
                     <i class="bi bi-plus-circle me-1"></i>Nuevo Empleado
                 </button>
-                <a href="../helpers/RepGestionEmpleados.php" class="btn btn-dark">
+                <a href="../helpers/RepGestionEmpleados.php" target="_blank" class="btn btn-dark">
                     <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>

@@ -191,6 +191,12 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'mantenimientosA.php') ? 'active' : ''; ?>" href="mantenimientosA.php">
+                        <i class="bi bi-wrench"></i>
+                        <span>Mantenimientos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
                         <span>Cerrar Sesión</span>
@@ -214,7 +220,7 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
                     <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalCrearCliente">
                         <i class="bi bi-person-plus-fill me-1"></i> Nuevo Cliente
                     </button>
-                    <a href="#" class="btn btn-dark">
+                    <a href="../helpers/ReporteClientesA.php" target="_blank" class="btn btn-dark">
                         <i class="bi bi-upload me-1"></i> Exportar
                     </a>
                 </div>
@@ -360,16 +366,16 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
                                         </td>
                                         <td>
                                             <?php if (!empty($c['croquis_domicilio'])): ?>
-                                                <span class="badge bg-success rounded-pill">Entregado</span>
+                                                <span class="badge" style="background:#701106; color:#fff;">Entregado</span>
                                             <?php else: ?>
-                                                <span class="text-muted">No entregado</span>
+                                                <span class="badge" style="background:#050506; color:#fff;">No entregado</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>
                                             <?php if (!empty($c['factura_servicio'])): ?>
-                                                <span class="badge bg-success rounded-pill">Entregado</span>
+                                                <span class="badge" style="background:#701106; color:#fff;">Entregado</span>
                                             <?php else: ?>
-                                                <span class="text-muted">No entregado</span>
+                                                <span class="badge" style="background:#050506; color:#fff;">No entregado</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>
