@@ -45,7 +45,8 @@ $filtros = [
     'fecha_desde' => $_GET['fecha_desde'] ?? null,
     'fecha_hasta' => $_GET['fecha_hasta'] ?? null,
     'tipo' => $_GET['tipo'] ?? null,
-    'cliente' => $_GET['cliente'] ?? null
+    'cliente' => $_GET['cliente'] ?? null,
+    'cliente_nombre' => $_GET['cliente_nombre'] ?? null // <-- agrega esto
 ];
 
 // Eliminar filtros nulos o vacíos
@@ -84,6 +85,10 @@ if (!empty($filtros) && isset($_GET['action']) && $_GET['action'] === 'filter') 
     <!-- SweetAlert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!-- jQuery UI JS -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 </head>
 <body>
     <div class="container-fluid p-0">
@@ -115,7 +120,7 @@ if (!empty($filtros) && isset($_GET['action']) && $_GET['action'] === 'filter') 
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-white" href="creditosE.php">
                             <i class="bi bi-cash-stack me-2"></i>Crédito Directo
                         </a>
                     </li>
@@ -248,18 +253,11 @@ if (!empty($filtros) && isset($_GET['action']) && $_GET['action'] === 'filter') 
                             </div>
                             
                             <div class="col-md-3">
-                                <label for="cliente" class="form-label">
+                                <label for="cliente_nombre" class="form-label">
                                     <i class="bi bi-person text-primary me-1"></i>Cliente
                                 </label>
-                                <select class="form-select" id="cliente" name="cliente">
-                                    <option value="">Todos</option>
-                                    <?php foreach(($clientes ?? []) as $cliente): ?>
-                                        <option value="<?= $cliente['_id'] ?>">
-                                            <?= htmlspecialchars($cliente['nombre_completo']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-
+                                <input type="text" class="form-control" id="cliente_nombre" name="cliente_nombre" placeholder="Buscar cliente..." autocomplete="off" value="<?= htmlspecialchars($_GET['cliente_nombre'] ?? '') ?>">
+                                <input type="hidden" id="cliente" name="cliente" value="<?= htmlspecialchars($_GET['cliente'] ?? '') ?>">
                             </div>
                             
                             <div class="col-12 text-end">
@@ -416,5 +414,44 @@ if (!empty($filtros) && isset($_GET['action']) && $_GET['action'] === 'filter') 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../public/js/mantenimientosE.js"></script>
+    <script>
+$(function() {
+    $("#cliente_nombre").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "../routes/mantenimiento.route.php",
+                dataType: "json",
+                data: {
+                    action: "get_clientes",
+                    term: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item.nombre_completo,
+                            value: item.nombre_completo,
+                            id: item._id
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            $("#cliente").val(ui.item.id); // Guarda el ID en el input oculto
+        },
+        change: function(event, ui) {
+            if (!ui.item) {
+                $("#cliente").val('');
+            }
+        }
+    });
+
+    // Si el usuario borra o cambia el texto manualmente, limpia el campo oculto
+    $("#cliente_nombre").on('input', function() {
+        $("#cliente").val('');
+    });
+});
+</script>
 </body>
 </html>

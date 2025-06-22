@@ -180,12 +180,12 @@ $clientes_nuevos = count(array_filter($clientes, function($c) {
                                 <i class="bi bi-person-plus-fill me-1"></i> Nuevo Cliente
                             </button>
                             <div class="btn-group me-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <!-- <button type="button" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-printer me-1"></i> Imprimir
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                </button> -->
+                                <!-- <button type="button" class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-upload me-1"></i> Exportar
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>

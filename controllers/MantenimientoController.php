@@ -128,6 +128,11 @@ public function filtrarMantenimientos($mantenimientos, $filtros) {
             }
             
             return false;
+        } elseif (!empty($filtros['cliente_nombre'])) {
+            $nombre_cliente = strtolower(trim($filtros['cliente_nombre']));
+            if (strpos(strtolower($mantenimiento['nombre_cliente']), $nombre_cliente) === false) {
+                return false;
+            }
         }
 
         return true;
@@ -318,66 +323,68 @@ private function getClienteById($cliente_id) {
         }
     }
     public function obtenerDetalleMantenimiento($mantenimiento_id) {
-    try {
-        $query = "
-            SELECT 
-                m._id AS id,
-                m.fecha,
-                m.observaciones AS descripcion,
-                m.costo AS costo_bs,
-                m.es_gratuito,
-                p_cli.nombre AS cliente_nombre,
-                p_cli.apellido AS cliente_apellido,
-                p_cli.documento_identidad AS cliente_cedula,
-                modelo.modelo AS moto_modelo,
-                modelo.marca AS moto_marca,
-                p_emp.nombre AS empleado_nombre,
-                p_emp.apellido AS empleado_apellido,
-                m.tipo AS tipo_mantenimiento
-            FROM 
-                MANTENIMIENTO m
-            LEFT JOIN 
-                CLIENTE cli ON m.id_cliente = cli._id
-            LEFT JOIN 
-                PERSONA p_cli ON cli._id = p_cli._id
-            LEFT JOIN 
-                MOTOCICLETA moto ON m.id_motocicleta = moto._id
-            LEFT JOIN 
-                MODELO_MOTO modelo ON moto.id_modelo = modelo._id
-            LEFT JOIN 
-                EMPLEADO emp ON m.id_empleado = emp._id
-            LEFT JOIN 
-                PERSONA p_emp ON emp._id = p_emp._id
-            WHERE 
-                m._id = :id
-        ";
+        try {
+            $query = "
+                SELECT 
+                    m._id AS id,
+                    m.fecha,
+                    m.observaciones AS descripcion,
+                    m.costo AS costo_bs,
+                    m.es_gratuito,
+                    p_cli.nombre AS cliente_nombre,
+                    p_cli.apellido AS cliente_apellido,
+                    p_cli.documento_identidad AS cliente_cedula,
+                    modelo.modelo AS moto_modelo,
+                    modelo.marca AS moto_marca,
+                    p_emp.nombre AS empleado_nombre,
+                    p_emp.apellido AS empleado_apellido,
+                    m.tipo AS tipo_mantenimiento
+                FROM 
+                    MANTENIMIENTO m
+                LEFT JOIN 
+                    CLIENTE cli ON m.id_cliente = cli._id
+                LEFT JOIN 
+                    PERSONA p_cli ON cli._id = p_cli._id
+                LEFT JOIN 
+                    MOTOCICLETA moto ON m.id_motocicleta = moto._id
+                LEFT JOIN 
+                    MODELO_MOTO modelo ON moto.id_modelo = modelo._id
+                LEFT JOIN 
+                    EMPLEADO emp ON m.id_empleado = emp._id
+                LEFT JOIN 
+                    PERSONA p_emp ON emp._id = p_emp._id
+                WHERE 
+                    m._id = :id
+            ";
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $mantenimiento_id, PDO::PARAM_INT);
-        $stmt->execute();
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $mantenimiento_id, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $detalle = $stmt->fetch(PDO::FETCH_ASSOC);
+            $detalle = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$detalle) {
+            if (!$detalle) {
+                return [
+                    'success' => false,
+                    'message' => 'Mantenimiento no encontrado'
+                ];
+            }
+
+            // Formatear fecha (corregido para evitar error si es null)
+            $detalle['fecha_formateada'] = $detalle['fecha'] 
+                ? date('d/m/Y H:i', strtotime($detalle['fecha'])) 
+                : 'Fecha no disponible';
+            
+            // Formatear costo
+            $detalle['costo_formateado'] = number_format($detalle['costo_bs'], 2, ',', '.');
+
+            // Combinar modelo y marca de moto
+            $detalle['moto_modelo_completo'] = trim($detalle['moto_marca'] . ' ' . $detalle['moto_modelo']);
+
             return [
-                'success' => false,
-                'message' => 'Mantenimiento no encontrado'
+                'success' => true,
+                'detalle' => $detalle
             ];
-        }
-
-        // Formatear fecha
-        $detalle['fecha_formateada'] = date('d/m/Y H:i', strtotime($detalle['fecha']));
-        
-        // Formatear costo
-        $detalle['costo_formateado'] = number_format($detalle['costo_bs'], 2, ',', '.');
-
-        // Combinar modelo y marca de moto
-        $detalle['moto_modelo_completo'] = trim($detalle['moto_marca'] . ' ' . $detalle['moto_modelo']);
-
-        return [
-            'success' => true,
-            'detalle' => $detalle
-        ];
 
         } catch (Exception $e) {
             return [
@@ -386,5 +393,6 @@ private function getClienteById($cliente_id) {
             ];
         }
     }
+
 
 }
