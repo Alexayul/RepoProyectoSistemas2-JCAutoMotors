@@ -70,6 +70,7 @@ $top_modelos = $adminController->getTopModelos();
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="../public/css/administrador.css">
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
  <!-- Sidebar Vertical -->
@@ -130,6 +131,12 @@ $top_modelos = $adminController->getTopModelos();
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'mantenimientosA.php') ? 'active' : ''; ?>" href="mantenimientosA.php">
+                        <i class="bi bi-wrench"></i>
+                        <span>Mantenimientos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
                         <span>Cerrar Sesión</span>
@@ -150,7 +157,7 @@ $top_modelos = $adminController->getTopModelos();
                 </div>
             </div>
             <div class="action-buttons">
-                <a href="../helpers/RepDashboarAdmin.php" class="btn btn-dark">
+                <a href="../helpers/RepDashboarAdmin.php" target="_blank" class="btn btn-dark">
                     <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>

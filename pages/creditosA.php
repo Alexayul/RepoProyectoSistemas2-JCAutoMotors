@@ -126,6 +126,12 @@ if (
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'mantenimientosA.php') ? 'active' : ''; ?>" href="mantenimientosA.php">
+                        <i class="bi bi-wrench"></i>
+                        <span>Mantenimientos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
                         <span>Cerrar Sesión</span>
@@ -146,7 +152,7 @@ if (
                 </div>
             </div>
             <div class="action-buttons">
-                <a href="#" class="btn btn-dark">
+                <a href="#" id="exportarCreditos" target="_blank" class="btn btn-dark">
                     <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>
@@ -326,9 +332,12 @@ if (
                                     <div class="card-body">
                                         <h5 class="card-title d-flex justify-content-between align-items-start">
                                             <span><?= htmlspecialchars($credito['nombre']) ?></span>
-                                            <span class="badge bg-<?= $credito['estado'] == 'Pendiente' ? 'warning' : 'success' ?> status-badge">
-                                                <?= ucfirst($credito['estado']) ?>
-                                            </span>
+                                            <?php
+$badgeColor = $credito['estado'] == 'Pendiente' ? '#701106' : '#050506';
+?>
+<span class="badge status-badge" style="background:<?= $badgeColor ?>; color:#fff;">
+    <?= ucfirst($credito['estado']) ?>
+</span>
                                         </h5>
                                         
                                         <div class="mb-3">
@@ -510,10 +519,19 @@ if (
                                                                     <strong>$<?= number_format($pago['monto_pagado'], 2) ?></strong>
                                                                 </td>
                                                                 <td>
-                                                                    <span class="badge bg-<?= 
-                                                                        $pago['estado'] == 'Completada' ? 'success' : 
-                                                                        ($estaAtrasado ? 'danger' : 'warning') ?>">
-                                                                        <?= ucfirst($pago['estado']) ?>
+                                                                    <?php if ($pago['estado'] == 'Completada') {
+                                                                        $badgePagoColor = '#050506';
+                                                                        $badgeTextColor = '#fff';
+                                                                    } elseif ($estaAtrasado) {
+                                                                        $badgePagoColor = '#fff';
+                                                                        $badgeTextColor = '#701106';
+                                                                    } else {
+                                                                        $badgePagoColor = '#701106';
+                                                                        $badgeTextColor = '#fff';
+                                                                    }
+                                                                    ?>
+                                                                    <span class="badge" style="background:<?= $badgePagoColor ?>; color:<?= $badgeTextColor ?>; border:1px solid #701106;">
+                                                                        <?= ucfirst($pago['estado'] == 'Atrasado' ? 'Atrasado' : $pago['estado']) ?>
                                                                     </span>
                                                                 </td>
                                                                 <td>
@@ -764,6 +782,26 @@ if (
                 if (btnGuardar) btnGuardar.style.display = 'none';
             });
         });
+    });
+
+    document.getElementById('exportarCreditos').addEventListener('click', function(e) {
+        e.preventDefault();
+        // Obtén los valores de los filtros
+        const cliente = document.getElementById('cliente').value;
+        const fecha_venta = document.getElementById('fecha_venta').value;
+        const fecha_desde = document.querySelector('input[name="fecha_desde"]').value;
+        const fecha_hasta = document.querySelector('input[name="fecha_hasta"]').value;
+        const saldo = document.getElementById('saldo').value;
+        const atraso = document.getElementById('atraso').value;
+        // Construye la URL con los filtros
+        let url = '../helpers/ReporteCreditosA.php?';
+        if (cliente) url += 'cliente=' + encodeURIComponent(cliente) + '&';
+        if (fecha_venta) url += 'fecha_venta=' + encodeURIComponent(fecha_venta) + '&';
+        if (fecha_desde) url += 'fecha_desde=' + encodeURIComponent(fecha_desde) + '&';
+        if (fecha_hasta) url += 'fecha_hasta=' + encodeURIComponent(fecha_hasta) + '&';
+        if (saldo) url += 'saldo=' + encodeURIComponent(saldo) + '&';
+        if (atraso) url += 'atraso=' + encodeURIComponent(atraso) + '&';
+        window.open(url, '_blank');
     });
     </script>
 </body>

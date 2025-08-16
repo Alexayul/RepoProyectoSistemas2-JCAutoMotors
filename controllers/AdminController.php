@@ -30,4 +30,14 @@ class AdminController {
     public function getUserData($user_id) {
         return $this->model->getUserData($user_id);
     }
+    function limpiarData($data) {
+        return array_map(function($v) {
+            if (is_array($v)) {
+                $v = array_values($v)[0];
+                if (is_array($v)) $v = 0;
+            }
+            return (float)$v;
+        }, $data);
+    }
+
 }

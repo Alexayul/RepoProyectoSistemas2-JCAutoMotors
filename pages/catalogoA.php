@@ -144,6 +144,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'mantenimientosA.php') ? 'active' : ''; ?>" href="mantenimientosA.php">
+                        <i class="bi bi-wrench"></i>
+                        <span>Mantenimientos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="../public/logout.php">
                         <i class="bi bi-box-arrow-right"></i>
                         <span>Cerrar Sesión</span>
@@ -166,7 +172,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalAgregarMoto">
                                 <i class="bi bi-plus-circle me-1"></i> Nueva Moto
                             </button>
-                <a href="#" class="btn btn-dark">
+                <a 
+                    href="#" 
+                    id="exportarCatalogo" 
+                    target="_blank" 
+                    class="btn btn-dark">
                     <i class="bi bi-upload me-1"></i>Exportar
                 </a>
             </div>
@@ -752,6 +762,20 @@ $(document).ready(function() {
             }));
         }
     });
+
+document.getElementById('exportarCatalogo').addEventListener('click', function(e) {
+    e.preventDefault();
+    // Obtén los valores de los filtros
+    const brand = document.getElementById('brand').value;
+    const model = document.getElementById('model').value;
+    const cc = document.getElementById('cc').value;
+    // Construye la URL con los filtros
+    let url = '../helpers/ReporteCatalogoA.php?';
+    if (brand) url += 'brand=' + encodeURIComponent(brand) + '&';
+    if (model) url += 'model=' + encodeURIComponent(model) + '&';
+    if (cc) url += 'cc=' + encodeURIComponent(cc) + '&';
+    window.open(url, '_blank');
+});
     </script>
 </body>
 </html>
